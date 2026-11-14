@@ -134,6 +134,19 @@
   .rule {
     @apply h-px w-full bg-gradient-to-r from-transparent via-cream/15 to-transparent;
   }
+
+  /* Dark theme keeps the previous crest, light theme uses the AU logo. */
+  .logo-light {
+    display: none;
+  }
+
+  [data-theme='light'] .logo-dark {
+    display: none;
+  }
+
+  [data-theme='light'] .logo-light {
+    display: block;
+  }
 }
 
 @layer utilities {
