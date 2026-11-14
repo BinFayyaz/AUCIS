@@ -1,4 +1,4 @@
-.eagle-sparks {
+.robot-sparks {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -8,7 +8,7 @@
   pointer-events: none;
 }
 
-.eagle-spark {
+.robot-spark {
   position: absolute;
   left: 0;
   top: 0;
@@ -19,18 +19,18 @@
   will-change: transform, opacity;
 }
 
-.eagle-spark-star {
+.robot-spark-star {
   border-radius: 0;
   clip-path: polygon(50% 0, 62% 36%, 100% 50%, 62% 64%, 50% 100%, 38% 64%, 0 50%, 38% 36%);
   filter: drop-shadow(0 0 3px var(--spark-color));
 }
 
-/* Idle: sparks wind around the eagle in random spiral directions. */
-.eagle-sparks.is-idle .eagle-spark {
-  animation: eagle-spiral var(--spark-duration) linear var(--spark-delay) infinite;
+/* Idle: motes wind around the robot in random spiral directions. */
+.robot-sparks.is-idle .robot-spark {
+  animation: robot-spiral var(--spark-duration) linear var(--spark-delay) infinite;
 }
 
-@keyframes eagle-spiral {
+@keyframes robot-spiral {
   0% {
     opacity: 0;
     transform: rotate(var(--spark-a)) translateY(calc(var(--spark-r) * 0.2)) scale(0.35);
@@ -43,13 +43,13 @@
   }
 }
 
-/* Travelling: the dust is left behind, opposite to the bird's motion. */
-.eagle-sparks.is-up .eagle-spark,
-.eagle-sparks.is-down .eagle-spark {
-  animation: eagle-stream calc(var(--spark-duration) * 0.55) linear var(--spark-delay) infinite;
+/* Travelling: the motes are left behind, opposite to the robot's motion. */
+.robot-sparks.is-up .robot-spark,
+.robot-sparks.is-down .robot-spark {
+  animation: robot-stream calc(var(--spark-duration) * 0.55) linear var(--spark-delay) infinite;
 }
 
-@keyframes eagle-stream {
+@keyframes robot-stream {
   0% {
     opacity: 0;
     transform: translate3d(var(--spark-x0), var(--spark-y0), 0) scale(0.5);
@@ -61,21 +61,21 @@
   }
 }
 
-/* Bird climbing → dust falls downward (positive Y is down). */
-.eagle-sparks.is-up .eagle-spark {
+/* Climbing → motes fall downward (positive Y is down). */
+.robot-sparks.is-up .robot-spark {
   --spark-y0: calc(var(--spark-r) * -0.4);
   --spark-y1: calc(var(--spark-r) * 1.15);
 }
 
-/* Bird diving → dust rises upward. */
-.eagle-sparks.is-down .eagle-spark {
+/* Dropping → motes rise upward. */
+.robot-sparks.is-down .robot-spark {
   --spark-y0: calc(var(--spark-r) * 0.6);
   --spark-y1: calc(var(--spark-r) * -1.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eagle-spark { animation: none; }
-  .eagle-spark:nth-child(4n) {
+  .robot-spark { animation: none; }
+  .robot-spark:nth-child(4n) {
     opacity: 0.6;
     transform: rotate(var(--spark-a)) translateY(var(--spark-r));
   }

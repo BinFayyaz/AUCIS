@@ -2,7 +2,7 @@
 
 Website for **AUCIS**, the student computing and innovation society of Air University, Kamra Campus.
 
-Dark, animated theme: a spread-wing eagle emblem, drifting colour fields, and scroll-reveal sections.
+Dark, animated theme: a hovering mech-robot emblem, drifting colour fields, and scroll-reveal sections.
 Palette: `#0D1B2A` · `#1B263B` · `#415A77` · `#778D7A` · `#D4C4A8` · `#F4F1DE`.
 
 ## Pages

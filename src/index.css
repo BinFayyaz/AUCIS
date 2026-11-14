@@ -77,8 +77,8 @@
     @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
   }
 
-  /* Home page reserves a right-hand lane so the flying eagle never sits on
-     top of text or cards. Below md the eagle sits inline instead. */
+  /* Home page reserves a right-hand lane so the flying robot never sits on
+     top of text or cards. Below md the robot sits inline instead. */
   @media (min-width: 768px) {
     .home-page .container-page {
       padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
@@ -150,7 +150,7 @@
 }
 
 @layer utilities {
-  /* Solid accent title colour (eagle brown) — no gradient. */
+  /* Solid accent title colour — no gradient. */
   .text-gradient {
     color: rgb(var(--c-title));
   }

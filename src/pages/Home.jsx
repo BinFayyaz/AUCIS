@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
-import FlyingEagle from '../components/FlyingEagle.jsx'
+import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { pillars, site, upcomingEvents } from '../data/site.js'
@@ -43,7 +43,7 @@ export default function Home() {
 
   return (
     <div className="home-page relative">
-      <FlyingEagle />
+      <FlyingRobot />
 
       {/* Hero */}
       <section className="relative overflow-hidden">

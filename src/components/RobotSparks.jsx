@@ -1,12 +1,12 @@
-import './EagleSparks.css'
+import './RobotSparks.css'
 
-const COLORS = ['#fff7e0', '#ffe08a', '#f5c518', '#e8edf5']
+const COLORS = ['#eafff9', '#8ff0d9', '#5cd6c0', '#dfe9ff']
 
 // Fixed seeds keep the effect stable across scroll-driven renders.
 const SPARKS = Array.from({ length: 18 }, (_, i) => {
   const clockwise = i % 2 === 0 ? 1 : -1
   return {
-    // golden angle spreads the orbit start points evenly around the bird
+    // golden angle spreads the orbit start points evenly around the robot
     angle: (i * 137.5) % 360,
     radius: 54 + ((i * 31) % 96),
     size: i % 5 === 0 ? 6 : 2.5 + (i % 3),
@@ -21,18 +21,18 @@ const SPARKS = Array.from({ length: 18 }, (_, i) => {
 })
 
 /**
- * Stardust around the eagle.
- * - idle:    each spark spirals around the bird in its own random direction
- * - up:      the bird climbs, so the dust streams downward
- * - down:    the bird dives, so the dust streams upward
+ * Energy motes around the robot.
+ * - idle:    each mote spirals around the mech in its own random direction
+ * - up:      the robot climbs, so the motes stream downward
+ * - down:    the robot drops, so the motes stream upward
  */
-export default function EagleSparks({ mode = 'idle' }) {
+export default function RobotSparks({ mode = 'idle' }) {
   return (
-    <div aria-hidden="true" className={`eagle-sparks is-${mode}`}>
+    <div aria-hidden="true" className={`robot-sparks is-${mode}`}>
       {SPARKS.map((spark, i) => (
         <span
           key={i}
-          className={`eagle-spark ${spark.star ? 'eagle-spark-star' : ''}`}
+          className={`robot-spark ${spark.star ? 'robot-spark-star' : ''}`}
           style={{
             width: spark.size,
             height: spark.size,
