@@ -107,7 +107,7 @@ function Arm({ side = 1, armRef }) {
   )
 }
 
-function Robot({ reduced }) {
+function Robot({ reduced, externalPose }) {
   const body = useRef(null)
   const head = useRef(null)
   const core = useRef(null)
@@ -122,7 +122,6 @@ function Robot({ reduced }) {
   const pointer = useRef({ x: 0, y: 0 })
   const aim = useRef({ x: 0, y: 0 })
 
-  // The chassis is revolved from a profile so the barrel reads as moulded shell.
   const torsoGeometry = useMemo(() => {
     const profile = [
       [0, -0.36],
@@ -134,7 +133,6 @@ function Robot({ reduced }) {
       [0.26, 0.59],
       [0, 0.61],
     ].map(([x, y]) => new THREE.Vector2(x, y))
-
     return new THREE.LatheGeometry(profile, 64)
   }, [])
 
@@ -147,13 +145,12 @@ function Robot({ reduced }) {
         y: (event.clientY / window.innerHeight) * 2 - 1,
       }
     }
-
     window.addEventListener('pointermove', onMove)
     return () => window.removeEventListener('pointermove', onMove)
   }, [])
 
-  // Click interactions: head click raises arms to head, body click giggles.
   const triggerPose = (newPose) => {
+    if (externalPose) return
     setPose(newPose)
     if (poseTimer.current) clearTimeout(poseTimer.current)
     poseTimer.current = setTimeout(() => setPose('idle'), 2500)
@@ -164,6 +161,7 @@ function Robot({ reduced }) {
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
     const ease = Math.min(delta, 0.05)
+    const eff = externalPose || pose
 
     if (reduced) {
       pointer.current.x = THREE.MathUtils.damp(pointer.current.x, 0, 4, ease)
@@ -174,11 +172,10 @@ function Robot({ reduced }) {
     }
 
     if (body.current) {
-      // Hover bob + slow drift, with a little lean towards the cursor.
       body.current.position.y = reduced ? 0 : Math.sin(t * 1.1) * 0.06
       body.current.rotation.y = reduced ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
       body.current.rotation.x = reduced ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
-      if (pose === 'giggle') {
+      if (eff === 'giggle') {
         body.current.rotation.z = Math.sin(t * 28) * 0.1
         body.current.position.x = Math.sin(t * 28) * 0.04
       } else {
@@ -187,18 +184,28 @@ function Robot({ reduced }) {
       }
     }
 
-    // Animate arms: raise to head when 'hands-to-head', return otherwise.
-    const rightArmTarget = pose === 'hands-to-head' ? 2.3 : -0.26
-    const leftArmTarget = pose === 'hands-to-head' ? -2.3 : 0.26
-    if (rightArmRef.current) {
-      rightArmRef.current.rotation.z = THREE.MathUtils.damp(
-        rightArmRef.current.rotation.z, rightArmTarget, 8, ease,
-      )
-    }
-    if (leftArmRef.current) {
-      leftArmRef.current.rotation.z = THREE.MathUtils.damp(
-        leftArmRef.current.rotation.z, leftArmTarget, 8, ease,
-      )
+    // Arm animation driven by the effective pose.
+    if (eff === 'hands-down') {
+      // Arms point straight down and stretch downward.
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, 0, 8, ease)
+        rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, 1.8, 8, ease)
+      }
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.z = THREE.MathUtils.damp(leftArmRef.current.rotation.z, 0, 8, ease)
+        leftArmRef.current.scale.y = THREE.MathUtils.damp(leftArmRef.current.scale.y, 1.8, 8, ease)
+      }
+    } else {
+      const rightArmTarget = eff === 'hands-to-head' ? 2.3 : -0.26
+      const leftArmTarget = eff === 'hands-to-head' ? -2.3 : 0.26
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, rightArmTarget, 8, ease)
+        rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, 1, 8, ease)
+      }
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.z = THREE.MathUtils.damp(leftArmRef.current.rotation.z, leftArmTarget, 8, ease)
+        leftArmRef.current.scale.y = THREE.MathUtils.damp(leftArmRef.current.scale.y, 1, 8, ease)
+      }
     }
 
     if (head.current) {
@@ -241,41 +248,18 @@ function Robot({ reduced }) {
       >
         <mesh scale={[1, 0.94, 0.92]}>
           <sphereGeometry args={[0.5, 64, 64]} />
-          <meshPhysicalMaterial
-            color={CERAMIC}
-            roughness={0.26}
-            metalness={0.06}
-            clearcoat={1}
-            clearcoatRoughness={0.18}
-          />
+          <meshPhysicalMaterial color={CERAMIC} roughness={0.26} metalness={0.06} clearcoat={1} clearcoatRoughness={0.18} />
         </mesh>
-
-        {/* wraparound visor */}
         <mesh position={[0, 0.01, 0.1]} scale={[0.95, 0.52, 0.74]}>
           <sphereGeometry args={[0.5, 48, 48]} />
-          <meshPhysicalMaterial
-            color={DEEP}
-            roughness={0.1}
-            metalness={0.6}
-            clearcoat={1}
-            clearcoatRoughness={0.08}
-          />
+          <meshPhysicalMaterial color={DEEP} roughness={0.1} metalness={0.6} clearcoat={1} clearcoatRoughness={0.08} />
         </mesh>
-
-        {/* eyes */}
         {[-1, 1].map((side) => (
-          <mesh
-            key={side}
-            position={[0.145 * side, 0.055, 0.452]}
-            scale={[0.078, 0.042, 0.03]}
-            rotation={[0, 0, -0.08 * side]}
-          >
+          <mesh key={side} position={[0.145 * side, 0.055, 0.452]} scale={[0.078, 0.042, 0.03]} rotation={[0, 0, -0.08 * side]}>
             <sphereGeometry args={[1, 24, 24]} />
             <meshStandardMaterial color="#c9fff4" emissive={TEAL} emissiveIntensity={3} toneMapped={false} />
           </mesh>
         ))}
-
-        {/* ear discs */}
         {[-1, 1].map((side) => (
           <mesh key={side} position={[0.47 * side, 0, 0]} rotation={[0, 0, Math.PI / 2]}>
             <cylinderGeometry args={[0.11, 0.11, 0.08, 32]} />
@@ -288,8 +272,6 @@ function Robot({ reduced }) {
             <meshStandardMaterial color={TEAL} emissive={TEAL} emissiveIntensity={1.8} toneMapped={false} />
           </mesh>
         ))}
-
-        {/* antenna */}
         <mesh position={[0.16, 0.55, -0.08]}>
           <cylinderGeometry args={[0.016, 0.02, 0.3, 12]} />
           <meshStandardMaterial color={NAVY} metalness={0.8} roughness={0.3} />
@@ -308,13 +290,7 @@ function Robot({ reduced }) {
 
       {/* ---- torso ---- */}
       <mesh geometry={torsoGeometry}>
-        <meshPhysicalMaterial
-          color={CERAMIC}
-          roughness={0.28}
-          metalness={0.07}
-          clearcoat={1}
-          clearcoatRoughness={0.2}
-        />
+        <meshPhysicalMaterial color={CERAMIC} roughness={0.28} metalness={0.07} clearcoat={1} clearcoatRoughness={0.2} />
       </mesh>
 
       {/* chest core */}
@@ -324,13 +300,7 @@ function Robot({ reduced }) {
       </mesh>
       <mesh ref={core} position={[0, 0.16, 0.45]}>
         <circleGeometry args={[0.165, 48]} />
-        <meshStandardMaterial
-          color={TEAL}
-          emissive={TEAL}
-          emissiveIntensity={1.8}
-          toneMapped={false}
-          side={THREE.DoubleSide}
-        />
+        <meshStandardMaterial color={TEAL} emissive={TEAL} emissiveIntensity={1.8} toneMapped={false} side={THREE.DoubleSide} />
       </mesh>
       <mesh position={[0, -0.08, 0.44]} rotation={[0, 0, Math.PI / 2]}>
         <capsuleGeometry args={[0.032, 0.2, 6, 20]} />
@@ -354,18 +324,9 @@ function Robot({ reduced }) {
         <ringGeometry args={[0.1, 0.24, 48]} />
         <meshBasicMaterial color={TEAL_LIGHT} transparent opacity={0.85} side={THREE.DoubleSide} toneMapped={false} />
       </mesh>
-      {/* thruster wash */}
       <mesh position={[0, -0.98, 0]}>
         <coneGeometry args={[0.3, 0.6, 32, 1, true]} />
-        <meshBasicMaterial
-          color={TEAL}
-          transparent
-          opacity={0.16}
-          side={THREE.DoubleSide}
-          depthWrite={false}
-          blending={THREE.AdditiveBlending}
-          toneMapped={false}
-        />
+        <meshBasicMaterial color={TEAL} transparent opacity={0.16} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
       </mesh>
 
       {/* ---- orbit accents ---- */}
@@ -381,9 +342,8 @@ function Robot({ reduced }) {
   )
 }
 
-function Scene() {
+function Scene({ externalPose }) {
   const reduced = useReducedMotion()
-
   return (
     <>
       <StudioEnvironment />
@@ -392,18 +352,12 @@ function Scene() {
       <directionalLight position={[-5, 2, -4]} intensity={1.1} color="#8fd8ff" />
       <pointLight position={[-2.6, -1.4, 2.6]} intensity={9} distance={9} color={TEAL} />
       <pointLight position={[2.4, 2.2, -3]} intensity={6} distance={9} color={SAND} />
-      <Robot reduced={reduced} />
+      <Robot reduced={reduced} externalPose={externalPose} />
     </>
   )
 }
 
-/**
- * The AUCIS mascot as a live 3D scene: a hovering android modelled from
- * primitives, lit in the site palette, that turns towards the cursor.
- * Mounted inside the flying robot lane, so it keeps the same scroll journey.
- * Click the head to make it raise its hands; click the body to make it giggle.
- */
-export default function Robot3D({ className = '' }) {
+export default function Robot3D({ className = '', externalPose }) {
   return (
     <div className={`robot-3d ${className}`}>
       <div className="robot-3d-glow" aria-hidden="true" />
@@ -414,7 +368,7 @@ export default function Robot3D({ className = '' }) {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
-          <Scene />
+          <Scene externalPose={externalPose} />
         </Suspense>
       </Canvas>
     </div>

@@ -1,9 +1,12 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
 import CountUp from '../components/CountUp.jsx'
 import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
+import JoinFormOverlay from '../components/JoinFormOverlay.jsx'
 import Reveal from '../components/Reveal.jsx'
+import RobotSpeechBubble from '../components/RobotSpeechBubble.jsx'
 import { pillars, site, upcomingEvents } from '../data/site.js'
 
 const quickLinks = [
@@ -48,10 +51,80 @@ const societyStats = [
 
 export default function Home() {
   const nextEvent = upcomingEvents[0]
+  const [joinPhase, setJoinPhase] = useState(null)
+  const [formErrors, setFormErrors] = useState(null)
+  const sequenceTimeouts = useRef([])
+
+  const startJoinSequence = () => {
+    sequenceTimeouts.current.forEach(clearTimeout)
+    sequenceTimeouts.current = []
+    setFormErrors(null)
+
+    const phases = [
+      ['flying-center', 0],
+      ['enlarging', 800],
+      ['hands-down', 1600],
+      ['hands-up', 2500],
+      ['flying-up', 3300],
+      ['returning', 4000],
+      ['form', 4800],
+    ]
+    phases.forEach(([phase, delay]) => {
+      sequenceTimeouts.current.push(setTimeout(() => setJoinPhase(phase), delay))
+    })
+  }
+
+  const closeJoin = () => {
+    sequenceTimeouts.current.forEach(clearTimeout)
+    sequenceTimeouts.current = []
+    setJoinPhase(null)
+    setFormErrors(null)
+  }
+
+  const handleFormError = (msg) => {
+    setFormErrors(msg)
+    setJoinPhase('error')
+  }
+
+  const clearFormError = () => {
+    if (formErrors) {
+      setFormErrors(null)
+      setJoinPhase('form')
+    }
+  }
+
+  useEffect(() => {
+    if (joinPhase) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [joinPhase])
+
+  useEffect(
+    () => () => {
+      sequenceTimeouts.current.forEach(clearTimeout)
+    },
+    [],
+  )
 
   return (
     <div className="home-page relative">
-      <FlyingRobot />
+      <FlyingRobot joinPhase={joinPhase} />
+
+      {joinPhase && <RobotSpeechBubble message={formErrors} />}
+
+      {joinPhase && (
+        <JoinFormOverlay
+          joinPhase={joinPhase}
+          onError={handleFormError}
+          onClearError={clearFormError}
+          onClose={closeJoin}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -85,10 +158,10 @@ export default function Home() {
 
             <Reveal delay={300}>
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link to="/join" className="btn-primary">
+                <button type="button" onClick={startJoinSequence} className="btn-primary">
                   Join AUCIS
                   <Icon name="arrowRight" size={16} />
-                </Link>
+                </button>
                 <Link to="/events" className="btn-ghost">
                   Explore events
                 </Link>
