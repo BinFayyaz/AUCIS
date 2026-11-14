@@ -3,14 +3,15 @@ export default {
   content: ['./index.html', './src/**/*.{js,jsx}'],
   theme: {
     extend: {
+      // Driven by CSS variables so the theme switcher can flip the palette.
       colors: {
-        ink: '#070E17',
-        navy: '#0D1B2A',
-        depth: '#1B263B',
-        steel: '#415A77',
-        sage: '#778D7A',
-        sand: '#D4C4A8',
-        cream: '#F4F1DE',
+        ink: 'rgb(var(--c-ink) / <alpha-value>)',
+        navy: 'rgb(var(--c-navy) / <alpha-value>)',
+        depth: 'rgb(var(--c-depth) / <alpha-value>)',
+        steel: 'rgb(var(--c-steel) / <alpha-value>)',
+        sage: 'rgb(var(--c-sage) / <alpha-value>)',
+        sand: 'rgb(var(--c-sand) / <alpha-value>)',
+        cream: 'rgb(var(--c-cream) / <alpha-value>)',
       },
       fontFamily: {
         display: ['"Cormorant Garamond"', 'Georgia', 'serif'],

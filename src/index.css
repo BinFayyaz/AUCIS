@@ -7,6 +7,28 @@
 @layer base {
   :root {
     color-scheme: dark;
+
+    /* dark palette (default) */
+    --c-ink: 7 14 23;
+    --c-navy: 13 27 42;
+    --c-depth: 27 38 59;
+    --c-steel: 65 90 119;
+    --c-sage: 119 141 122;
+    --c-sand: 212 196 168;
+    --c-cream: 244 241 222;
+  }
+
+  /* light palette — same tokens, inverted roles */
+  [data-theme='light'] {
+    color-scheme: light;
+
+    --c-ink: 246 243 233;
+    --c-navy: 236 231 217;
+    --c-depth: 219 211 191;
+    --c-steel: 65 90 119;
+    --c-sage: 119 141 122;
+    --c-sand: 150 112 44;
+    --c-cream: 26 32 42;
   }
 
   html {
@@ -22,9 +44,21 @@
     background-attachment: fixed;
   }
 
+  [data-theme='light'] body {
+    background-image:
+      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.16), transparent 62%),
+      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.14), transparent 60%),
+      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.35), transparent 65%);
+  }
+
   ::selection {
     background: rgba(212, 196, 168, 0.28);
     color: #f4f1de;
+  }
+
+  [data-theme='light'] ::selection {
+    background: rgba(150, 112, 44, 0.25);
+    color: #1a2029;
   }
 
   h1,
@@ -76,6 +110,13 @@
     box-shadow: 0 26px 50px -22px rgba(212, 196, 168, 0.95);
   }
 
+  /* On paper, the primary button flips to a dark fill. */
+  [data-theme='light'] .btn-primary {
+    color: #f4f1de;
+    background-image: linear-gradient(115deg, #1b263b, #2c3a4e 45%, #3d4c60 100%);
+    box-shadow: 0 18px 34px -22px rgba(27, 38, 59, 0.8);
+  }
+
   .btn-ghost {
     @apply btn border border-cream/15 text-cream/85 hover:border-sand/40 hover:text-cream;
   }
@@ -101,6 +142,10 @@
     background-clip: text;
     color: transparent;
     animation: shimmer 16s ease infinite;
+  }
+
+  [data-theme='light'] .text-gradient {
+    background-image: linear-gradient(100deg, #17202b 0%, #6f5330 40%, #4f6a54 72%, #3c5471 100%);
   }
 
   .tracking-mega {
