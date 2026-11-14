@@ -83,6 +83,13 @@
     .home-page .container-page {
       padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
     }
+
+    /* Sections where the robot flies on the left: mirror the lane to the
+       right so content sits on the opposite side. */
+    .home-page .container-page.robot-left {
+      padding-right: 2rem;
+      padding-left: calc(clamp(210px, 26vw, 440px) + 3.5rem);
+    }
   }
 
   .eyebrow {

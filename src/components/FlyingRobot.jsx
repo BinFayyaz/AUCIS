@@ -16,9 +16,11 @@ const TOP_SAFE = 88
  * on phones and small tablets it sits centred in the band above the hero.
  *
  * Scrolling carries it down, spools the thrusters up, weaves it left and right
- * across its lane, and streams energy motes the other way. As soon as the
- * footer rises into view it climbs back towards the top of the page, so it
- * never lands on the footer.
+ * across its lane, and streams energy motes the other way. The robot
+ * alternates sides with each section — right on even sections, left on odd —
+ * so it diagonally flies across as the reader moves between sections. As soon
+ * as the footer rises into view it climbs back towards the top of the page,
+ * so it never lands on the footer.
  */
 export default function FlyingRobot() {
   const [drift, setDrift] = useState(0)
@@ -26,11 +28,13 @@ export default function FlyingRobot() {
   const [tilt, setTilt] = useState(0)
   const [mode, setMode] = useState('idle')
   const [fade, setFade] = useState(1)
+  const [onLeft, setOnLeft] = useState(false)
   const lastY = useRef(0)
   const settle = useRef(null)
   const laneRef = useRef(null)
   const robotRef = useRef(null)
   const base = useRef({ top: 0, bottom: 0 })
+  const maxOffset = useRef(0)
 
   useEffect(() => {
     // Only the fixed (md and up) lane can travel down the page; below that the
@@ -43,6 +47,15 @@ export default function FlyingRobot() {
       if (!lane || !robot) return
       const top = lane.getBoundingClientRect().top + robot.offsetTop
       base.current = { top, bottom: top + robot.offsetHeight }
+
+      // Distance the robot travels when switching from the right lane to the left.
+      const containerEl = lane.firstElementChild
+      if (containerEl) {
+        const styles = getComputedStyle(containerEl)
+        const padL = parseFloat(styles.paddingLeft)
+        const padR = parseFloat(styles.paddingRight)
+        maxOffset.current = containerEl.clientWidth - padL - padR - robot.offsetWidth
+      }
     }
 
     const onScroll = () => {
@@ -74,6 +87,17 @@ export default function FlyingRobot() {
       // On phones the robot has no side lane, so it turns into a faint companion
       // once the hero copy starts scrolling under it.
       setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
+
+      // Alternate the robot between right and left sides based on the active section.
+      const sections = document.querySelectorAll('.home-page > section')
+      let activeIndex = 0
+      for (let i = 0; i < sections.length; i++) {
+        const rect = sections[i].getBoundingClientRect()
+        if (rect.top <= window.innerHeight * 0.5) {
+          activeIndex = i
+        }
+      }
+      setOnLeft(activeIndex % 2 === 1)
 
       if (Math.abs(delta) > 1) {
         setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
@@ -116,8 +140,8 @@ export default function FlyingRobot() {
       <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
         <div
           ref={robotRef}
-          className="transition-transform duration-700 ease-in-out"
-          style={{ transform: `translate3d(${sway}px, ${drift}px, 0)` }}
+          className="md:pointer-events-auto md:cursor-pointer transition-transform duration-700 ease-in-out"
+          style={{ transform: `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)` }}
         >
           <div
             style={{ transform: `rotate(${tilt + sway * 0.05}deg)` }}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
+import CountUp from '../components/CountUp.jsx'
 import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
@@ -36,6 +37,13 @@ const quickLinks = [
     text: 'Reach the executive body or find us on campus.',
     icon: 'mail',
   },
+]
+
+const societyStats = [
+  { value: 150, label: 'Members' },
+  { value: 20, label: 'Events' },
+  { value: 12, label: 'Projects' },
+  { value: 8, label: 'Teams' },
 ]
 
 export default function Home() {
@@ -103,7 +111,7 @@ export default function Home() {
 
       {/* Intro */}
       <section className="relative border-y border-cream/5 bg-navy/25">
-        <div className="container-page grid gap-10 py-20 md:grid-cols-[0.8fr_1.2fr] md:items-start">
+        <div className="container-page robot-left grid gap-10 py-20 md:grid-cols-[0.8fr_1.2fr] md:items-start">
           <Reveal>
             <span className="eyebrow">
               <span className="h-px w-8 bg-sand/50" />
@@ -129,8 +137,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Upcoming event highlight */}
+      {/* Society stats */}
       <section className="container-page py-20">
+        <Reveal>
+          <div className="mb-8 text-center">
+            <span className="eyebrow justify-center">
+              <span className="h-px w-8 bg-sand/50" />
+              By the numbers
+            </span>
+            <h2 className="mt-5 text-3xl sm:text-4xl">A growing community of builders</h2>
+          </div>
+        </Reveal>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {societyStats.map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 80}>
+              <div className="surface h-full p-6 text-center sm:p-8">
+                <p className="text-4xl font-semibold tracking-tight text-sand sm:text-5xl">
+                  <CountUp value={stat.value} />
+                </p>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-cream/55">
+                  {stat.label}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Upcoming event highlight */}
+      <section className="container-page robot-left py-20">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>

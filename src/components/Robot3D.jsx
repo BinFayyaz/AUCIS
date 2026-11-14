@@ -55,9 +55,9 @@ function useReducedMotion() {
 }
 
 /** A single arm: ceramic upper, navy joint, ceramic forearm, glowing palm. */
-function Arm({ side = 1 }) {
+function Arm({ side = 1, armRef }) {
   return (
-    <group position={[0.56 * side, 0.4, 0]} rotation={[0, 0, -0.26 * side]}>
+    <group ref={armRef} position={[0.56 * side, 0.4, 0]} rotation={[0, 0, -0.26 * side]}>
       {/* shoulder cap */}
       <mesh>
         <sphereGeometry args={[0.17, 32, 32]} />
@@ -112,10 +112,12 @@ function Robot({ reduced }) {
   const head = useRef(null)
   const core = useRef(null)
   const thruster = useRef(null)
-  const ringA = useRef(null)
-  const ringB = useRef(null)
   const orbA = useRef(null)
   const orbB = useRef(null)
+  const [pose, setPose] = useState('idle')
+  const poseTimer = useRef(null)
+  const leftArmRef = useRef(null)
+  const rightArmRef = useRef(null)
 
   const pointer = useRef({ x: 0, y: 0 })
   const aim = useRef({ x: 0, y: 0 })
@@ -150,6 +152,15 @@ function Robot({ reduced }) {
     return () => window.removeEventListener('pointermove', onMove)
   }, [])
 
+  // Click interactions: head click raises arms to head, body click giggles.
+  const triggerPose = (newPose) => {
+    setPose(newPose)
+    if (poseTimer.current) clearTimeout(poseTimer.current)
+    poseTimer.current = setTimeout(() => setPose('idle'), 2500)
+  }
+
+  useEffect(() => () => clearTimeout(poseTimer.current), [])
+
   useFrame((state, delta) => {
     const t = state.clock.elapsedTime
     const ease = Math.min(delta, 0.05)
@@ -167,7 +178,27 @@ function Robot({ reduced }) {
       body.current.position.y = reduced ? 0 : Math.sin(t * 1.1) * 0.06
       body.current.rotation.y = reduced ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
       body.current.rotation.x = reduced ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
-      body.current.rotation.z = reduced ? 0 : Math.sin(t * 0.55) * 0.03
+      if (pose === 'giggle') {
+        body.current.rotation.z = Math.sin(t * 28) * 0.1
+        body.current.position.x = Math.sin(t * 28) * 0.04
+      } else {
+        body.current.rotation.z = reduced ? 0 : Math.sin(t * 0.55) * 0.03
+        body.current.position.x = THREE.MathUtils.damp(body.current.position.x, 0, 8, ease)
+      }
+    }
+
+    // Animate arms: raise to head when 'hands-to-head', return otherwise.
+    const rightArmTarget = pose === 'hands-to-head' ? 2.3 : -0.26
+    const leftArmTarget = pose === 'hands-to-head' ? -2.3 : 0.26
+    if (rightArmRef.current) {
+      rightArmRef.current.rotation.z = THREE.MathUtils.damp(
+        rightArmRef.current.rotation.z, rightArmTarget, 8, ease,
+      )
+    }
+    if (leftArmRef.current) {
+      leftArmRef.current.rotation.z = THREE.MathUtils.damp(
+        leftArmRef.current.rotation.z, leftArmTarget, 8, ease,
+      )
     }
 
     if (head.current) {
@@ -187,8 +218,6 @@ function Robot({ reduced }) {
     }
 
     if (!reduced) {
-      if (ringA.current) ringA.current.rotation.z = t * 0.42
-      if (ringB.current) ringB.current.rotation.z = -t * 0.3
       if (orbA.current) {
         orbA.current.position.x = Math.cos(t * 0.8) * 1.12
         orbA.current.position.z = Math.sin(t * 0.8) * 1.12
@@ -203,9 +232,13 @@ function Robot({ reduced }) {
   })
 
   return (
-    <group ref={body}>
+    <group ref={body} onClick={(e) => { e.stopPropagation(); triggerPose('giggle') }}>
       {/* ---- head ---- */}
-      <group ref={head} position={[0, 1.1, 0]}>
+      <group
+        ref={head}
+        position={[0, 1.1, 0]}
+        onClick={(e) => { e.stopPropagation(); triggerPose('hands-to-head') }}
+      >
         <mesh scale={[1, 0.94, 0.92]}>
           <sphereGeometry args={[0.5, 64, 64]} />
           <meshPhysicalMaterial
@@ -305,8 +338,8 @@ function Robot({ reduced }) {
       </mesh>
 
       {/* shoulder arms */}
-      <Arm side={1} />
-      <Arm side={-1} />
+      <Arm side={1} armRef={rightArmRef} />
+      <Arm side={-1} armRef={leftArmRef} />
 
       {/* ---- hover drive ---- */}
       <mesh position={[0, -0.47, 0]}>
@@ -336,18 +369,6 @@ function Robot({ reduced }) {
       </mesh>
 
       {/* ---- orbit accents ---- */}
-      <group ref={ringA} rotation={[Math.PI / 2.35, 0.2, 0]}>
-        <mesh>
-          <torusGeometry args={[0.95, 0.008, 8, 96]} />
-          <meshBasicMaterial color={SAND} transparent opacity={0.34} toneMapped={false} />
-        </mesh>
-      </group>
-      <group ref={ringB} rotation={[Math.PI / 2.9, -0.35, 0]}>
-        <mesh>
-          <torusGeometry args={[1.14, 0.007, 8, 96]} />
-          <meshBasicMaterial color={TEAL} transparent opacity={0.42} toneMapped={false} />
-        </mesh>
-      </group>
       <mesh ref={orbA} position={[1.12, 0.5, 0]}>
         <sphereGeometry args={[0.045, 20, 20]} />
         <meshStandardMaterial color={TEAL_LIGHT} emissive={TEAL} emissiveIntensity={2.4} toneMapped={false} />
@@ -380,6 +401,7 @@ function Scene() {
  * The AUCIS mascot as a live 3D scene: a hovering android modelled from
  * primitives, lit in the site palette, that turns towards the cursor.
  * Mounted inside the flying robot lane, so it keeps the same scroll journey.
+ * Click the head to make it raise its hands; click the body to make it giggle.
  */
 export default function Robot3D({ className = '' }) {
   return (
