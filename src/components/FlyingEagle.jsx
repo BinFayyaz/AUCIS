@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import EagleMark from './EagleMark.jsx'
 
-const MAX_DRIFT = 260
+const MAX_DRIFT = 240
 
 /**
- * The home-page eagle: parked to the right of the AUCIS heading and fixed to
- * the viewport. Scrolling down carries it down (and noses it into the dive),
- * scrolling up carries it back up — and it keeps beating its wings throughout.
+ * The home-page eagle. It holds the reserved right-hand flight lane (the home
+ * page keeps that gutter clear) and stays locked to the viewport: scrolling
+ * down carries it down and noses it into the dive, scrolling up lifts it again.
  */
 export default function FlyingEagle() {
   const [drift, setDrift] = useState(0)
@@ -20,10 +20,10 @@ export default function FlyingEagle() {
       const delta = y - lastY.current
       lastY.current = y
 
-      setDrift(Math.min(y * 0.55, MAX_DRIFT))
+      setDrift(Math.min(y * 0.5, MAX_DRIFT))
 
       if (Math.abs(delta) > 1) {
-        setTilt(Math.max(-9, Math.min(9, delta * 0.35)))
+        setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
         window.clearTimeout(settle.current)
         settle.current = window.setTimeout(() => setTilt(0), 180)
       }
@@ -38,19 +38,16 @@ export default function FlyingEagle() {
   }, [])
 
   return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed -z-10 right-[1vw] top-[12vh] hidden select-none md:block"
-    >
-      <div
-        className="transition-transform duration-700 ease-out"
-        style={{ transform: `translate3d(0, ${drift}px, 0)` }}
-      >
+    <div aria-hidden="true" className="pointer-events-none fixed inset-x-0 top-[13vh] -z-10 hidden md:block">
+      {/* aligned to the content container so the bird sits in its own lane */}
+      <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
         <div
-          className="animate-floaty transition-transform duration-300 ease-out"
-          style={{ transform: `rotate(${tilt}deg)` }}
+          className="transition-transform duration-700 ease-out"
+          style={{ transform: `translate3d(0, ${drift}px, 0)` }}
         >
-          <EagleMark className="w-[clamp(280px,30vw,520px)] opacity-90" />
+          <div style={{ transform: `rotate(${tilt}deg)` }} className="transition-transform duration-300 ease-out">
+            <EagleMark className="w-[clamp(210px,26vw,440px)] drop-shadow-[0_24px_60px_rgba(0,0,0,0.5)]" />
+          </div>
         </div>
       </div>
     </div>

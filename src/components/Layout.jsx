@@ -6,17 +6,11 @@ import { nav, site } from '../data/site.js'
 function Logo() {
   return (
     <Link to="/" className="group flex items-center gap-3" aria-label="AUCIS home">
-      <span className="relative grid h-10 w-10 place-items-center rounded-full border border-cream/15 bg-white/[0.04] transition duration-500 group-hover:border-sand/40">
-        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-          <path
-            d="M12 3.2 14.4 9l6.1.6-4.6 4.1 1.3 6-5.2-3.1-5.2 3.1 1.3-6L3.5 9.6 9.6 9Z"
-            fill="none"
-            stroke="#D4C4A8"
-            strokeWidth="1.3"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </span>
+      <img
+        src="/au-logo.png"
+        alt="Air University Kamra"
+        className="h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
+      />
       <span className="leading-none">
         <span className="block font-heavy text-lg tracking-[0.22em] text-cream">AUCIS</span>
         <span className="mt-1 block text-[9px] uppercase tracking-[0.28em] text-cream/40">

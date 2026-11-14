@@ -43,14 +43,14 @@ export default function Home() {
   const nextEvent = upcomingEvents[0]
 
   return (
-    <>
+    <div className="home-page relative">
       <FlyingEagle />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Aurora />
         <div className="container-page relative pb-24 pt-16 lg:pb-28 lg:pt-20">
-          <div className="md:max-w-[62%] lg:max-w-[58%]">
+          <div>
             <Reveal>
               <span className="eyebrow">
                 <span className="h-px w-8 bg-sand/50" />
@@ -253,6 +253,6 @@ export default function Home() {
           ))}
         </div>
       </section>
-    </>
+    </div>
   )
 }

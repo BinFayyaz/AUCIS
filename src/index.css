@@ -41,6 +41,14 @@
     @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
   }
 
+  /* Home page reserves a right-hand lane so the flying eagle never sits on
+     top of text or cards. Below md the eagle sits inline instead. */
+  @media (min-width: 768px) {
+    .home-page .container-page {
+      padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
+    }
+  }
+
   .eyebrow {
     @apply inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-sand/70;
   }
