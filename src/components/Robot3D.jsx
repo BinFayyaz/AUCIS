@@ -201,10 +201,16 @@ function Robot({ reduced, externalPose }) {
     } else {
       const isRolling = eff === 'rolling'
       const isHolding = eff === 'holding-scroll'
-      const rightArmTarget = eff === 'hands-to-head' ? 2.3 : isHolding ? -1.05 : isRolling ? -0.65 : -0.26
+      const rightArmTarget = eff === 'hands-to-head' ? 2.3 : isHolding ? -0.45 : isRolling ? -0.65 : -0.26
       const leftArmTarget = eff === 'hands-to-head' ? -2.3 : isRolling ? 0.65 : 0.26
-      if (rightArmRef.current) rightArmRef.current.rotation.x = isRolling && !reduced ? Math.sin(t * 10) * 0.22 : 0
-      if (leftArmRef.current) leftArmRef.current.rotation.x = isRolling && !reduced ? -Math.sin(t * 10) * 0.22 : 0
+      if (rightArmRef.current) {
+        const targetX = isHolding ? -1.1 : isRolling && !reduced ? Math.sin(t * 10) * 0.22 : 0
+        rightArmRef.current.rotation.x = THREE.MathUtils.damp(rightArmRef.current.rotation.x, targetX, 8, ease)
+      }
+      if (leftArmRef.current) {
+        const targetX = isRolling && !reduced ? -Math.sin(t * 10) * 0.22 : 0
+        leftArmRef.current.rotation.x = THREE.MathUtils.damp(leftArmRef.current.rotation.x, targetX, 8, ease)
+      }
       if (rightArmRef.current) {
         rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, rightArmTarget, 8, ease)
         rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, 1, 8, ease)

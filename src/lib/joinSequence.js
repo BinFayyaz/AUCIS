@@ -22,7 +22,7 @@ export function getJoinRobotTarget(phase, viewport, robot) {
   const mobile = vw < 640
   const parked = { x: vw - (mobile ? 59 : 108), y: mobile ? 70 : 230, scale: mobile ? 0.48 : 0.68 }
   const bottom = { x: vw / 2, y: vh - height * 0.4, scale: 1 }
-  const lifted = { x: vw / 2, y: Math.max(90, height * 0.4), scale: 1 }
+  const lifted = { x: vw / 2, y: Math.max(150, height * 0.55), scale: 1 }
 
   switch (phase) {
     case 'flying-bottom': return bottom
@@ -32,7 +32,7 @@ export function getJoinRobotTarget(phase, viewport, robot) {
     case 'flying-up': return lifted
     case 'collecting':
     case 'rolling':
-    case 'shrinking': return { ...lifted, x: Math.max(width / 2, (vw - (mobile ? 0 : 210)) / 2) }
+    case 'shrinking': return { x: Math.max(width / 2, (vw - (mobile ? 0 : 210)) / 2), y: Math.max(110, height * 0.34), scale: 0.72 }
     default: return parked
   }
 }

@@ -121,77 +121,79 @@ export default function JoinFormOverlay({ joinPhase, onError, onSuccess, onClose
           className="join-panel"
           style={{ '--join-slide': `${JOIN_SEQUENCE[joinPhase]?.panel ?? 100}%` }}
         >
-          <div className="join-panel-content">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <span className="eyebrow"><span className="h-px w-8 bg-sand/50" />Application</span>
-                <h2 id="join-title" className="mt-3 text-2xl sm:text-3xl">Join AUCIS</h2>
-              </div>
-              <button type="button" onClick={close} disabled={status === 'sending' || isFinishing} className="join-close" aria-label="Close registration">
-                <Icon name="close" size={16} />
-              </button>
-            </div>
-
-            <form onSubmit={onSubmit} noValidate className="mt-6">
-              <fieldset disabled={!isActive || status !== 'idle'}>
-                <div className="grid gap-5 sm:grid-cols-2">
-                  {fields.map((field) => (
-                    <RegistrationField key={field.name} name={field.name} label={field.label} errors={errors}>
-                      <input
-                        id={`overlay-${field.name}`}
-                        type={field.type || 'text'}
-                        autoComplete={field.autoComplete}
-                        className="field"
-                        value={form[field.name]}
-                        onChange={(event) => update(field.name, event.target.value)}
-                        placeholder={field.placeholder}
-                        required={field.required}
-                        aria-invalid={Boolean(errors[field.name])}
-                        aria-describedby={errors[field.name] ? `error-${field.name}` : undefined}
-                      />
-                    </RegistrationField>
-                  ))}
-                  <div className="sm:col-span-2">
-                    <RegistrationField name="year" label="Year of study" errors={errors}>
-                      <select id="overlay-year" className="field appearance-none" value={form.year} onChange={(event) => update('year', event.target.value)} required aria-invalid={Boolean(errors.year)} aria-describedby={errors.year ? 'error-year' : undefined}>
-                        <option value="">Select your year</option>
-                        {years.map((year) => <option key={year} value={year}>{year}</option>)}
-                      </select>
-                    </RegistrationField>
-                  </div>
+          <div className="join-sheet">
+            <div className="join-panel-content">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <span className="eyebrow"><span className="h-px w-8 bg-sand/50" />Application</span>
+                  <h2 id="join-title" className="mt-3 text-2xl sm:text-3xl">Join AUCIS</h2>
                 </div>
-
-                <fieldset className="mt-6">
-                  <legend className="label">Areas of interest</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {interests.map((interest) => (
-                      <button type="button" key={interest} onClick={() => toggleInterest(interest)} aria-pressed={form.interests.includes(interest)} className={`rounded-full border px-4 py-2 text-xs transition ${form.interests.includes(interest) ? 'border-sand/60 bg-sand/15 text-cream' : 'border-cream/10 text-cream/55 hover:border-cream/30 hover:text-cream/80'}`}>{interest}</button>
-                    ))}
-                  </div>
-                </fieldset>
-
-                <div className="mt-6">
-                  <label className="label" htmlFor="overlay-motivation">Why do you want to join?</label>
-                  <textarea id="overlay-motivation" className="field min-h-[100px] resize-y" value={form.motivation} onChange={(event) => update('motivation', event.target.value)} placeholder="A few honest lines are enough." />
-                </div>
-
-                <div className="registration-field mt-6" data-invalid={errors.agreed ? 'true' : undefined}>
-                  <label className="flex items-start gap-3 text-sm leading-relaxed text-cream/70" htmlFor="overlay-agreed">
-                    <input id="overlay-agreed" type="checkbox" checked={form.agreed} onChange={(event) => update('agreed', event.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded border-cream/30 bg-navy accent-sand" required aria-invalid={Boolean(errors.agreed)} aria-describedby={errors.agreed ? 'error-agreed' : undefined} />
-                    I have read and agree to the AUCIS code of conduct.
-                  </label>
-                  {errors.agreed && <p id="error-agreed" className="registration-error" role="alert">{errors.agreed}</p>}
-                </div>
-
-                {serverError && <p className="registration-error mt-4" role="alert">{serverError}</p>}
-                <button type="submit" disabled={status !== 'idle'} className="btn-primary mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60">
-                  {status === 'sending' ? 'Sending…' : 'Submit application'}
-                  {status === 'idle' && <Icon name="arrowRight" size={16} />}
+                <button type="button" onClick={close} disabled={status === 'sending' || isFinishing} className="join-close" aria-label="Close registration">
+                  <Icon name="close" size={16} />
                 </button>
-              </fieldset>
-            </form>
+              </div>
+
+              <form onSubmit={onSubmit} noValidate className="mt-6">
+                <fieldset disabled={!isActive || status !== 'idle'}>
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {fields.map((field) => (
+                      <RegistrationField key={field.name} name={field.name} label={field.label} errors={errors}>
+                        <input
+                          id={`overlay-${field.name}`}
+                          type={field.type || 'text'}
+                          autoComplete={field.autoComplete}
+                          className="field"
+                          value={form[field.name]}
+                          onChange={(event) => update(field.name, event.target.value)}
+                          placeholder={field.placeholder}
+                          required={field.required}
+                          aria-invalid={Boolean(errors[field.name])}
+                          aria-describedby={errors[field.name] ? `error-${field.name}` : undefined}
+                        />
+                      </RegistrationField>
+                    ))}
+                    <div className="sm:col-span-2">
+                      <RegistrationField name="year" label="Year of study" errors={errors}>
+                        <select id="overlay-year" className="field appearance-none" value={form.year} onChange={(event) => update('year', event.target.value)} required aria-invalid={Boolean(errors.year)} aria-describedby={errors.year ? 'error-year' : undefined}>
+                          <option value="">Select your year</option>
+                          {years.map((year) => <option key={year} value={year}>{year}</option>)}
+                        </select>
+                      </RegistrationField>
+                    </div>
+                  </div>
+
+                  <fieldset className="mt-6">
+                    <legend className="label">Areas of interest</legend>
+                    <div className="flex flex-wrap gap-2">
+                      {interests.map((interest) => (
+                        <button type="button" key={interest} onClick={() => toggleInterest(interest)} aria-pressed={form.interests.includes(interest)} className={`rounded-full border px-4 py-2 text-xs transition ${form.interests.includes(interest) ? 'border-sand/60 bg-sand/15 text-cream' : 'border-cream/10 text-cream/55 hover:border-cream/30 hover:text-cream/80'}`}>{interest}</button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  <div className="mt-6">
+                    <label className="label" htmlFor="overlay-motivation">Why do you want to join?</label>
+                    <textarea id="overlay-motivation" className="field min-h-[100px] resize-y" value={form.motivation} onChange={(event) => update('motivation', event.target.value)} placeholder="A few honest lines are enough." />
+                  </div>
+
+                  <div className="registration-field mt-6" data-invalid={errors.agreed ? 'true' : undefined}>
+                    <label className="flex items-start gap-3 text-sm leading-relaxed text-cream/70" htmlFor="overlay-agreed">
+                      <input id="overlay-agreed" type="checkbox" checked={form.agreed} onChange={(event) => update('agreed', event.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 rounded border-cream/30 bg-navy accent-sand" required aria-invalid={Boolean(errors.agreed)} aria-describedby={errors.agreed ? 'error-agreed' : undefined} />
+                      I have read and agree to the AUCIS code of conduct.
+                    </label>
+                    {errors.agreed && <p id="error-agreed" className="registration-error" role="alert">{errors.agreed}</p>}
+                  </div>
+
+                  {serverError && <p className="registration-error mt-4" role="alert">{serverError}</p>}
+                  <button type="submit" disabled={status !== 'idle'} className="btn-primary mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60">
+                    {status === 'sending' ? 'Sending…' : 'Submit application'}
+                    {status === 'idle' && <Icon name="arrowRight" size={16} />}
+                  </button>
+                </fieldset>
+              </form>
+            </div>
+            <div className="join-paper-roll" aria-hidden="true"><span>AUCIS · APPLICATION</span></div>
           </div>
-          <div className="join-paper-roll" aria-hidden="true"><span>AUCIS · APPLICATION</span></div>
         </section>
       </div>
       {isFinishing && <p className="join-success-caption" role="status">Application received. Safely in hand.</p>}

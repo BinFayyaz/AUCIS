@@ -149,7 +149,13 @@ export default function FlyingRobot({ joinPhase }) {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
+    // Locking page scroll can remove the scrollbar and shift the lane. Keep
+    // the untransformed origin in sync, including Canvas size changes.
+    const observer = new ResizeObserver(measure)
+    if (laneRef.current?.firstElementChild) observer.observe(laneRef.current.firstElementChild)
+    if (robotRef.current) observer.observe(robotRef.current)
     return () => {
+      observer.disconnect()
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onResize)
       window.clearTimeout(settle.current)
