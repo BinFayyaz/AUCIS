@@ -47,3 +47,28 @@ Submissions are appended as JSON lines to the `api_data` volume (`/data`). Readi
 ```bash
 docker compose -f docker-compose.base44.yml exec web cat /data/applications.jsonl
 ```
+
+## Deploying to Vercel
+
+The site is a static Vite build plus serverless functions, so it deploys with no extra setup:
+
+1. Import this repository in Vercel (framework preset **Vite**, root directory: repo root).
+2. Build command `npm run build`, output directory `dist` — already set in `vercel.json`.
+3. No environment variables are required.
+
+`vercel.json` rewrites every non-`/api` path to `index.html`, so routes such as `/team` also
+work on a hard refresh.
+
+| Function              | Endpoint                 |
+| --------------------- | ------------------------ |
+| `api/health.js`       | `GET /api/health`        |
+| `api/applications.js` | `POST /api/applications` |
+| `api/messages.js`     | `POST /api/messages`     |
+
+Form validation and storage live in `server/core.js`, shared by the local Express server and
+the Vercel functions, so both behave identically.
+
+> **Storage note:** submissions are appended to `DATA_DIR` (default `/tmp/aucis-data`). Vercel's
+> filesystem is read-only apart from `/tmp`, which is per-instance and cleared between
+> invocations — so form submissions are **not** durable there. Point `DATA_DIR` at a mounted
+> store, or wire Vercel Blob / KV / a database, before relying on the forms in production.
