@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
-import EagleMark from '../components/EagleMark.jsx'
-import FlyingEagle from '../components/FlyingEagle.jsx'
+import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { pillars, site, upcomingEvents } from '../data/site.js'
@@ -112,7 +111,7 @@ export default function Home() {
 
   return (
     <div className="home-page relative">
-      <FlyingEagle />
+      <FlyingRobot />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -127,12 +126,9 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={90}>
-              <div className="mt-6 flex items-center gap-3 sm:gap-5">
-                <h1 className="text-[clamp(3.1rem,10vw,6.5rem)] leading-[0.92] tracking-[0.01em]">
-                  <span className="text-gradient">AUCIS</span>
-                </h1>
-                <EagleMark className="w-[28vw] min-w-[84px] max-w-[280px] shrink-0 animate-floaty md:hidden" />
-              </div>
+              <h1 className="mt-6 text-[clamp(3.1rem,10vw,6.5rem)] leading-[0.92] tracking-[0.01em]">
+                <span className="text-gradient">AUCIS</span>
+              </h1>
             </Reveal>
 
             <Reveal delay={160}>
