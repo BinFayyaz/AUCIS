@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import './RobotPhoto.css'
+import Robot3D from './Robot3D.jsx'
 import RobotSparks from './RobotSparks.jsx'
 
 const MAX_DRIFT = 240
@@ -123,12 +123,8 @@ export default function FlyingRobot() {
             style={{ transform: `rotate(${tilt + sway * 0.05}deg)` }}
             className="transition-transform duration-300 ease-out"
           >
-            <div className="relative">
-              <img
-                src="/aucis-android.png"
-                alt=""
-                className="robot-photo h-[clamp(130px,26vw,170px)] md:h-[clamp(240px,34vh,360px)]"
-              />
+            <div className="relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,42vh,400px)] md:w-[clamp(280px,26vw,350px)]">
+              <Robot3D />
               <RobotSparks mode={mode} />
             </div>
           </div>
