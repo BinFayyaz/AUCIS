@@ -9,6 +9,14 @@
       content="AUCIS — the computing and innovation society of Air University, Kamra Campus. Workshops, competitions, tech talks and showcases."
     />
     <title>AUCIS — Air University Kamra</title>
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('aucis-theme') === 'light' ? 'light' : 'dark'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'dark'
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

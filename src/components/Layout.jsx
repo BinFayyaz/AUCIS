@@ -1,15 +1,22 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import Icon from './Icon.jsx'
+import ThemeToggle from './ThemeToggle.jsx'
 import { nav, site } from '../data/site.js'
 
 function Logo() {
   return (
     <Link to="/" className="group flex items-center gap-3" aria-label="AUCIS home">
       <img
-        src="/au-logo.png"
+        src="/au-logo-dark.png"
         alt="Air University Kamra"
-        className="h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
+        className="logo-dark h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
+      />
+      <img
+        src="/au-logo-light.png"
+        alt=""
+        aria-hidden="true"
+        className="logo-light h-11 w-auto shrink-0 object-contain"
       />
       <span className="leading-none">
         <span className="block font-heavy text-lg tracking-[0.22em] text-cream">AUCIS</span>
@@ -79,6 +86,7 @@ export default function Layout() {
               Join AUCIS
               <Icon name="arrowRight" size={15} />
             </Link>
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}

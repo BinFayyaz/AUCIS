@@ -1,0 +1,148 @@
+.robot-mark {
+  display: block;
+  overflow: visible;
+  filter: drop-shadow(0 0 12px rgba(111, 240, 214, 0.32))
+    drop-shadow(0 0 38px rgba(56, 214, 190, 0.24))
+    drop-shadow(0 16px 26px rgba(2, 6, 23, 0.55));
+  animation: robot-hover 5s ease-in-out infinite;
+}
+
+.robot-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-glow-pulse 5s ease-in-out infinite;
+}
+
+@keyframes robot-glow-pulse {
+  0%, 100% { opacity: 0.65; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+.robot-body {
+  transform-box: view-box;
+  transform-origin: 500px 340px;
+  animation: robot-bob 3.4s ease-in-out infinite;
+}
+
+.robot-arm {
+  transform-box: view-box;
+  animation: robot-arm-sway 3.4s ease-in-out infinite;
+}
+
+.robot-arm-left {
+  transform-origin: 380px 340px;
+  --arm-angle: -3deg;
+}
+
+.robot-arm-right {
+  transform-origin: 620px 340px;
+  --arm-angle: 3deg;
+}
+
+.robot-jet {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: robot-thrust 0.36s ease-in-out infinite alternate;
+}
+
+.robot-jet-right {
+  animation-delay: -0.18s;
+}
+
+.robot-visor,
+.robot-beacon,
+.robot-ring {
+  animation: robot-pulse 2.8s ease-in-out infinite;
+}
+
+.robot-beacon {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.robot-scan {
+  animation: robot-scan 3.8s linear infinite;
+}
+
+.robot-core {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: robot-core-pulse 2.4s ease-in-out infinite;
+}
+
+/* Diving: thrusters fire hard. Climbing: a gentler burn. */
+.robot-flight.is-diving .robot-jet {
+  animation-duration: 0.2s;
+}
+
+.robot-flight.is-diving .robot-arm {
+  --arm-angle: -6deg;
+}
+
+.robot-flight.is-diving .robot-arm-right {
+  --arm-angle: 6deg;
+}
+
+.robot-flight.is-climbing .robot-jet {
+  animation-duration: 0.62s;
+}
+
+.robot-flight.is-climbing .robot-arm {
+  --arm-angle: -1.5deg;
+}
+
+.robot-flight.is-climbing .robot-arm-right {
+  --arm-angle: 1.5deg;
+}
+
+@keyframes robot-arm-sway {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(var(--arm-angle)); }
+}
+
+@keyframes robot-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes robot-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+
+@keyframes robot-thrust {
+  0% { opacity: 0.72; transform: scaleY(0.86); }
+  100% { opacity: 1; transform: scaleY(1.06); }
+}
+
+@keyframes robot-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+@keyframes robot-core-pulse {
+  0%, 100% { transform: scale(0.94); opacity: 0.85; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+@keyframes robot-scan {
+  0% { transform: translateY(0); opacity: 0; }
+  12% { opacity: 0.75; }
+  72% { opacity: 0.75; }
+  100% { transform: translateY(58px); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .robot-mark,
+  .robot-body,
+  .robot-arm,
+  .robot-jet,
+  .robot-glow,
+  .robot-visor,
+  .robot-beacon,
+  .robot-ring,
+  .robot-core,
+  .robot-scan {
+    animation: none;
+  }
+}
