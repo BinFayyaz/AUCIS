@@ -14,6 +14,7 @@ export default {
       },
       fontFamily: {
         display: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+        heavy: ['"Archivo Black"', '"Arial Black"', 'Gadget', 'Inter', 'sans-serif'],
         sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
       },
       boxShadow: {

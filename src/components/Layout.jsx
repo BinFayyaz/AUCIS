@@ -18,7 +18,7 @@ function Logo() {
         </svg>
       </span>
       <span className="leading-none">
-        <span className="block font-display text-xl tracking-[0.3em] text-cream">AUCIS</span>
+        <span className="block font-heavy text-lg tracking-[0.22em] text-cream">AUCIS</span>
         <span className="mt-1 block text-[9px] uppercase tracking-[0.28em] text-cream/40">
           Air University Kamra
         </span>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
 import EagleMark from '../components/EagleMark.jsx'
+import FlyingEagle from '../components/FlyingEagle.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { pillars, site, upcomingEvents } from '../data/site.js'
@@ -43,11 +44,13 @@ export default function Home() {
 
   return (
     <>
+      <FlyingEagle />
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Aurora />
-        <div className="container-page relative grid items-center gap-12 pb-24 pt-16 lg:grid-cols-[1.05fr_0.95fr] lg:pb-28 lg:pt-20">
-          <div>
+        <div className="container-page relative pb-24 pt-16 lg:pb-28 lg:pt-20">
+          <div className="md:max-w-[62%] lg:max-w-[58%]">
             <Reveal>
               <span className="eyebrow">
                 <span className="h-px w-8 bg-sand/50" />
@@ -56,9 +59,12 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={90}>
-              <h1 className="mt-6 font-display text-[clamp(3.4rem,10vw,6.5rem)] leading-[0.95] tracking-[0.06em]">
-                <span className="text-gradient">AUCIS</span>
-              </h1>
+              <div className="mt-6 flex items-center gap-3 sm:gap-5">
+                <h1 className="text-[clamp(3.1rem,10vw,6.5rem)] leading-[0.92] tracking-[0.01em]">
+                  <span className="text-gradient">AUCIS</span>
+                </h1>
+                <EagleMark className="w-[28vw] min-w-[84px] max-w-[280px] shrink-0 animate-floaty md:hidden" />
+              </div>
             </Reveal>
 
             <Reveal delay={160}>
@@ -94,12 +100,6 @@ export default function Home() {
               </div>
             </Reveal>
           </div>
-
-          <Reveal delay={200} className="relative">
-            <div className="relative mx-auto max-w-md">
-              <EagleMark className="w-full animate-floaty drop-shadow-[0_30px_80px_rgba(0,0,0,0.55)]" />
-            </div>
-          </Reveal>
         </div>
       </section>
 
