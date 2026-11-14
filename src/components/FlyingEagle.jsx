@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import EagleMark from './EagleMark.jsx'
+import EagleSparks from './EagleSparks.jsx'
 
 const MAX_DRIFT = 240
+const MAX_SWAY = 26
 const FOOTER_GAP = 28
 const TOP_SAFE = 88
 
@@ -9,13 +11,16 @@ const TOP_SAFE = 88
  * The home-page eagle. On wide screens it holds the reserved right-hand lane;
  * on phones and small tablets it sits centred in the band above the hero.
  *
- * Scrolling down carries it down and noses it into the dive; scrolling back up
- * lifts it again. As soon as the footer rises into view it climbs back towards
- * the top of the page, so it never lands on the footer.
+ * Scrolling carries it down and noses it into the dive, weaves it left and
+ * right across its lane, and shakes sparks loose behind it. As soon as the
+ * footer rises into view it climbs back towards the top of the page, so it
+ * never lands on the footer.
  */
 export default function FlyingEagle() {
   const [drift, setDrift] = useState(0)
+  const [sway, setSway] = useState(0)
   const [tilt, setTilt] = useState(0)
+  const [moving, setMoving] = useState(false)
   const lastY = useRef(0)
   const settle = useRef(null)
   const laneRef = useRef(null)
@@ -55,11 +60,16 @@ export default function FlyingEagle() {
       }
 
       setDrift(next)
+      setSway(Math.sin(y / 240) * MAX_SWAY)
 
       if (Math.abs(delta) > 1) {
         setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
+        setMoving(true)
         window.clearTimeout(settle.current)
-        settle.current = window.setTimeout(() => setTilt(0), 180)
+        settle.current = window.setTimeout(() => {
+          setTilt(0)
+          setMoving(false)
+        }, 220)
       }
     }
 
@@ -89,11 +99,17 @@ export default function FlyingEagle() {
       <div className="mx-auto flex w-full max-w-6xl justify-center px-6 sm:px-8 md:justify-end">
         <div
           ref={birdRef}
-          className="transition-transform duration-700 ease-out"
-          style={{ transform: `translate3d(0, ${drift}px, 0)` }}
+          className="transition-transform duration-500 ease-out"
+          style={{ transform: `translate3d(${sway}px, ${drift}px, 0)` }}
         >
-          <div style={{ transform: `rotate(${tilt}deg)` }} className="transition-transform duration-300 ease-out">
-            <EagleMark className="w-[clamp(170px,44vw,260px)] drop-shadow-[0_24px_60px_rgba(0,0,0,0.5)] md:w-[clamp(210px,26vw,440px)]" />
+          <div
+            style={{ transform: `rotate(${tilt + sway * 0.3}deg)` }}
+            className="transition-transform duration-300 ease-out"
+          >
+            <div className="relative">
+              <EagleSparks moving={moving} className="inset-x-[6%] bottom-0 top-1/3" />
+              <EagleMark className="w-[clamp(170px,44vw,260px)] drop-shadow-[0_24px_60px_rgba(0,0,0,0.5)] md:w-[clamp(210px,26vw,440px)]" />
+            </div>
           </div>
         </div>
       </div>
