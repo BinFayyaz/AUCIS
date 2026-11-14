@@ -3,7 +3,9 @@ import EagleMark from './EagleMark.jsx'
 import EagleSparks from './EagleSparks.jsx'
 
 const MAX_DRIFT = 240
-const MAX_SWAY = 26
+// Desktop bird glides left and right inside its reserved gutter.
+const MAX_SWAY = 110
+const MOBILE_MAX_SWAY = 12
 const MOBILE_MAX_DRIFT = 110
 // Leave room for the stars below the tail as well as the eagle itself.
 const FOOTER_GAP = 124
@@ -66,7 +68,9 @@ export default function FlyingEagle() {
       }
 
       setDrift(next)
-      setSway(Math.sin(y / 240) * (inLane() ? MAX_SWAY : 12))
+      // Slow sine sweep: the bird glides from one side of its gutter to the
+      // other and back, without ever reaching the content column.
+      setSway(Math.sin(y / 420) * (inLane() ? MAX_SWAY : MOBILE_MAX_SWAY))
       // On phones the bird has no side lane, so it turns into a faint companion
       // once the hero copy starts scrolling under it.
       setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
@@ -103,18 +107,20 @@ export default function FlyingEagle() {
     <div
       ref={laneRef}
       aria-hidden="true"
-      className="eagle-flight pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh]"
+      className={`eagle-flight pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
+        mode === 'down' ? 'is-diving' : mode === 'up' ? 'is-climbing' : 'is-gliding'
+      }`}
       style={{ opacity: fade }}
     >
       {/* aligned to the content container so the bird sits in its own lane */}
       <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
         <div
           ref={birdRef}
-          className="transition-transform duration-500 ease-out"
+          className="transition-transform duration-700 ease-in-out"
           style={{ transform: `translate3d(${sway}px, ${drift}px, 0)` }}
         >
           <div
-            style={{ transform: `rotate(${tilt + sway * 0.3}deg)` }}
+            style={{ transform: `rotate(${tilt + sway * 0.05}deg)` }}
             className="transition-transform duration-300 ease-out"
           >
             <div className="relative">

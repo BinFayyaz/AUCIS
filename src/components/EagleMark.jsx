@@ -39,6 +39,11 @@ export default function EagleMark({ className = '' }) {
           <stop offset="50%" stopColor="#e4ad17" />
           <stop offset="100%" stopColor="#b87500" />
         </linearGradient>
+        <radialGradient id={`${uid}-glow`}>
+          <stop offset="0%" stopColor="#ffe9b8" stopOpacity="0.28" />
+          <stop offset="55%" stopColor="#ffcf7a" stopOpacity="0.12" />
+          <stop offset="100%" stopColor="#ffcf7a" stopOpacity="0" />
+        </radialGradient>
         <filter id={`${uid}-shadow`} x="-30%" y="-30%" width="160%" height="160%">
           <feGaussianBlur in="SourceAlpha" stdDeviation="10" />
           <feOffset dy="10" />
@@ -51,6 +56,8 @@ export default function EagleMark({ className = '' }) {
           </feMerge>
         </filter>
       </defs>
+
+      <ellipse className="eagle-glow" cx="500" cy="340" rx="330" ry="270" fill={url('glow')} />
 
       {/* left wing */}
       <g className="eagle-wing eagle-wing-left">

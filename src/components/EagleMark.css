@@ -1,10 +1,39 @@
 .eagle-mark {
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 0 14px rgba(240, 232, 216, 0.14))
+  filter: drop-shadow(0 0 10px rgba(255, 226, 165, 0.4))
+    drop-shadow(0 0 34px rgba(255, 198, 112, 0.3))
     drop-shadow(0 16px 24px rgba(2, 6, 23, 0.55));
   animation: eagle-hover 5s ease-in-out infinite;
 }
+
+.eagle-glow {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: eagle-glow-pulse 5s ease-in-out infinite;
+}
+
+@keyframes eagle-glow-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+/* Diving: quick, wide beats. Climbing: slow, shallow beats. */
+.eagle-flight.is-diving .eagle-wing {
+  animation-duration: 1.5s;
+}
+
+.eagle-flight.is-diving .eagle-wing-left { --wing-angle: -9deg; }
+
+.eagle-flight.is-diving .eagle-wing-right { --wing-angle: 9deg; }
+
+.eagle-flight.is-climbing .eagle-wing {
+  animation-duration: 4.6s;
+}
+
+.eagle-flight.is-climbing .eagle-wing-left { --wing-angle: -2.5deg; }
+
+.eagle-flight.is-climbing .eagle-wing-right { --wing-angle: 2.5deg; }
 
 .eagle-wing {
   transform-box: view-box;

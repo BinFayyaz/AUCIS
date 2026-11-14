@@ -48,7 +48,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Aurora />
-        <div className="container-page relative pb-24 pt-60 sm:pt-72 md:pt-16 lg:pb-28 lg:pt-20">
+        <div className="container-page relative pb-24 pt-40 sm:pt-44 md:pt-16 lg:pb-28 lg:pt-20">
           <div>
             <Reveal>
               <span className="eyebrow">
