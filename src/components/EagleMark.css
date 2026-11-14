@@ -1,0 +1,36 @@
+.eagle-realistic {
+  display: block;
+  overflow: visible;
+  filter: brightness(1.12) drop-shadow(0 0 3px rgba(212, 196, 168, 0.24))
+    drop-shadow(0 14px 22px rgba(0, 0, 0, 0.45));
+  animation: eagle-hover 5s ease-in-out infinite;
+}
+
+.eagle-wing {
+  transform-box: view-box;
+  animation: eagle-wing-beat 4.6s ease-in-out infinite;
+}
+
+.eagle-wing-left {
+  transform-origin: 455px 244px;
+  --wing-angle: -2deg;
+}
+
+.eagle-wing-right {
+  transform-origin: 548px 244px;
+  --wing-angle: 2deg;
+}
+
+@keyframes eagle-wing-beat {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(var(--wing-angle)); }
+}
+
+@keyframes eagle-hover {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eagle-realistic, .eagle-wing { animation: none; }
+}

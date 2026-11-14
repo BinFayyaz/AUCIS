@@ -120,23 +120,6 @@
     transform: translateY(0);
   }
 
-  .eagle-spark {
-    opacity: 0;
-    animation-name: spark;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-duration: var(--spark-duration, 3.6s);
-    animation-delay: var(--spark-delay, 0s);
-    box-shadow: 0 0 6px rgba(244, 241, 222, 0.6);
-    will-change: transform, opacity;
-  }
-
-  /* While the page moves the sparks stream further out and faster. */
-  .eagle-sparks.is-moving .eagle-spark {
-    --spark-scale: 2.4;
-    animation-duration: calc(var(--spark-duration, 3.6s) * 0.6);
-  }
-
   .grain::after {
     content: '';
     position: absolute;
@@ -145,25 +128,6 @@
     opacity: 0.35;
     background-image: radial-gradient(rgba(244, 241, 222, 0.12) 0.5px, transparent 0.5px);
     background-size: 4px 4px;
-  }
-}
-
-@keyframes spark {
-  0% {
-    opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0.3);
-  }
-  20% {
-    opacity: var(--spark-peak, 0.7);
-  }
-  100% {
-    opacity: 0;
-    transform: translate3d(
-        calc(var(--spark-x, 0px) * var(--spark-scale, 1)),
-        calc(var(--spark-y, 14px) * var(--spark-scale, 1)),
-        0
-      )
-      scale(0.15);
   }
 }
 

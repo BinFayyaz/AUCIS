@@ -1,0 +1,54 @@
+.eagle-sparks {
+  position: absolute;
+  left: 50%;
+  top: 82%;
+  width: 0;
+  height: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.eagle-spark {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--spark-color);
+  box-shadow: 0 0 4px 1px var(--spark-color), 0 0 10px var(--spark-color);
+  opacity: 0;
+  animation: eagle-stardust var(--spark-duration) linear var(--spark-delay) infinite;
+}
+
+.eagle-spark-star {
+  border-radius: 0;
+  clip-path: polygon(50% 0, 62% 36%, 100% 50%, 62% 64%, 50% 100%, 38% 64%, 0 50%, 38% 36%);
+  filter: drop-shadow(0 0 3px var(--spark-color));
+}
+
+.eagle-sparks.is-moving .eagle-spark {
+  --spark-spread: 1.25;
+  animation-duration: calc(var(--spark-duration) * 0.75);
+}
+
+@keyframes eagle-stardust {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.8);
+  }
+  12% { opacity: 1; }
+  55% { opacity: 0.9; }
+  85% { opacity: 0.5; }
+  100% {
+    opacity: 0;
+    transform: translate3d(
+      calc(var(--spark-x) * var(--spark-spread, 1)),
+      calc(var(--spark-y) * var(--spark-spread, 1)), 0
+    ) scale(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eagle-spark { animation: none; }
+  .eagle-spark:nth-child(5n) {
+    opacity: 0.75;
+    transform: translate(var(--spark-x), var(--spark-y));
+  }
+}

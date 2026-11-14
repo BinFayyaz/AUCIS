@@ -1,38 +1,36 @@
-const SPARKS = Array.from({ length: 18 }, (_, i) => ({
-  left: `${6 + ((i * 31) % 88)}%`,
-  bottom: `${6 + ((i * 17) % 46)}%`,
-  size: `${1.4 + (i % 3) * 0.7}px`,
-  dx: -5 - ((i * 13) % 20),
-  dy: 9 + ((i * 7) % 24),
-  duration: `${3 + ((i * 11) % 24) / 10}s`,
-  delay: `-${((i * 37) % 45) / 10}s`,
-  peak: 0.3 + ((i * 29) % 45) / 100,
+import './EagleSparks.css'
+
+// Fixed seeds keep the continuous trail stable through scroll-driven renders.
+const SPARKS = Array.from({ length: 40 }, (_, i) => ({
+  x: ((i * 11) % 29) - 14,
+  y: ((i * 7) % 13) - 6,
+  size: i % 4 === 0 ? 5 + (i % 3) : 2.5 + (i % 3) * 0.5,
+  dx: ((i * 37) % 105) - 52,
+  dy: 40 + ((i * 19) % 45),
+  duration: 2.6 + ((i * 11) % 18) / 10,
+  delay: -((i * 23) % 42) / 10,
+  star: i % 4 === 0,
+  cool: i % 3 === 0,
 }))
 
-/**
- * Tiny star-like sparks shed from behind the eagle. They keep drifting while
- * the page is still, and stream out further while it is being scrolled.
- */
-export default function EagleSparks({ moving = false, className = '' }) {
+/** Bright, tiny stars and embers emitted from the tail, including while idle. */
+export default function EagleSparks({ moving = false }) {
   return (
-    <div
-      aria-hidden="true"
-      className={`eagle-sparks pointer-events-none absolute ${moving ? 'is-moving' : ''} ${className}`}
-    >
+    <div aria-hidden="true" className={`eagle-sparks ${moving ? 'is-moving' : ''}`}>
       {SPARKS.map((spark, i) => (
         <span
           key={i}
-          className="eagle-spark absolute rounded-full bg-cream"
+          className={`eagle-spark ${spark.star ? 'eagle-spark-star' : ''}`}
           style={{
-            left: spark.left,
-            bottom: spark.bottom,
+            left: spark.x,
+            top: spark.y,
             width: spark.size,
             height: spark.size,
             '--spark-x': `${spark.dx}px`,
             '--spark-y': `${spark.dy}px`,
-            '--spark-peak': spark.peak,
-            '--spark-duration': spark.duration,
-            '--spark-delay': spark.delay,
+            '--spark-color': spark.cool ? '#bfe8ff' : '#fff0c4',
+            '--spark-duration': `${spark.duration}s`,
+            '--spark-delay': `${spark.delay}s`,
           }}
         />
       ))}

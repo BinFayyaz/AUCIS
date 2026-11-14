@@ -4,7 +4,8 @@ import EagleSparks from './EagleSparks.jsx'
 
 const MAX_DRIFT = 240
 const MAX_SWAY = 26
-const FOOTER_GAP = 28
+// Leave room for the stars below the tail as well as the eagle itself.
+const FOOTER_GAP = 124
 const TOP_SAFE = 88
 
 /**
@@ -93,7 +94,7 @@ export default function FlyingEagle() {
     <div
       ref={laneRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-20 -z-10 md:fixed md:top-[13vh]"
+      className="eagle-flight pointer-events-none absolute inset-x-0 top-8 z-20 md:fixed md:top-[13vh]"
     >
       {/* aligned to the content container so the bird sits in its own lane */}
       <div className="mx-auto flex w-full max-w-6xl justify-center px-6 sm:px-8 md:justify-end">
@@ -107,8 +108,8 @@ export default function FlyingEagle() {
             className="transition-transform duration-300 ease-out"
           >
             <div className="relative">
-              <EagleSparks moving={moving} className="inset-x-[6%] bottom-0 top-1/3" />
-              <EagleMark className="w-[clamp(170px,44vw,260px)] drop-shadow-[0_24px_60px_rgba(0,0,0,0.5)] md:w-[clamp(210px,26vw,440px)]" />
+              <EagleMark className="w-[clamp(220px,58vw,300px)] md:w-[clamp(210px,26vw,440px)]" />
+              <EagleSparks moving={moving} />
             </div>
           </div>
         </div>
