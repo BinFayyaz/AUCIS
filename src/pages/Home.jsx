@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
-import FlyingRobot from '../components/FlyingRobot.jsx'
+import EagleMark from '../components/EagleMark.jsx'
+import FlyingEagle from '../components/FlyingEagle.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
 import { pillars, site, upcomingEvents } from '../data/site.js'
@@ -38,17 +40,84 @@ const quickLinks = [
   },
 ]
 
+function CountUp({ value }) {
+  const [count, setCount] = useState(0)
+  const countRef = useRef(null)
+
+  useEffect(() => {
+    const element = countRef.current
+    if (!element) return
+
+    let frameId
+    const duration = 1600
+    const startAnimation = () => {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        setCount(value)
+        return
+      }
+
+      const startTime = performance.now()
+      const animate = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1)
+        const easedProgress = 1 - (1 - progress) ** 3
+        setCount(Math.floor(value * easedProgress))
+
+        if (progress < 1) {
+          frameId = requestAnimationFrame(animate)
+        } else {
+          setCount(value)
+        }
+      }
+
+      frameId = requestAnimationFrame(animate)
+    }
+
+    if (!('IntersectionObserver' in window)) {
+      startAnimation()
+      return () => cancelAnimationFrame(frameId)
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          observer.disconnect()
+          startAnimation()
+        }
+      },
+      { threshold: 0.5 },
+    )
+
+    observer.observe(element)
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frameId)
+    }
+  }, [value])
+
+  return (
+    <span ref={countRef} aria-label={`${value}+`}>
+      {count}+
+    </span>
+  )
+}
+
 export default function Home() {
   const nextEvent = upcomingEvents[0]
+  const societyStats = [
+    { value: 150, label: 'Members' },
+    { value: 20, label: 'Events' },
+    { value: 12, label: 'Projects' },
+    { value: 8, label: 'Teams' },
+  ]
 
   return (
     <div className="home-page relative">
-      <FlyingRobot />
+      <FlyingEagle />
 
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Aurora />
-        <div className="container-page relative pb-24 pt-40 sm:pt-44 md:pt-16 lg:pb-28 lg:pt-20">
+        <div className="container-page relative pb-24 pt-16 lg:pb-28 lg:pt-20">
           <div>
             <Reveal>
               <span className="eyebrow">
@@ -62,6 +131,7 @@ export default function Home() {
                 <h1 className="text-[clamp(3.1rem,10vw,6.5rem)] leading-[0.92] tracking-[0.01em]">
                   <span className="text-gradient">AUCIS</span>
                 </h1>
+                <EagleMark className="w-[28vw] min-w-[84px] max-w-[280px] shrink-0 animate-floaty md:hidden" />
               </div>
             </Reveal>
 
@@ -126,6 +196,34 @@ export default function Home() {
               faculty supervisors.
             </p>
           </Reveal>
+        </div>
+      </section>
+
+      {/* Society stats */}
+      <section className="container-page py-20">
+        <Reveal>
+          <div className="mb-8 text-center">
+            <span className="eyebrow justify-center">
+              <span className="h-px w-8 bg-sand/50" />
+              By the numbers
+            </span>
+            <h2 className="mt-5 text-3xl sm:text-4xl">A growing community of builders</h2>
+          </div>
+        </Reveal>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {societyStats.map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 80}>
+              <div className="surface h-full p-6 text-center sm:p-8">
+                <p className="text-4xl font-semibold tracking-tight text-sand sm:text-5xl">
+                  <CountUp value={stat.value} />
+                </p>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-cream/55">
+                  {stat.label}
+                </p>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </section>
 
