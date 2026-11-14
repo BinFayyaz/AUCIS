@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
-import EagleMark from '../components/EagleMark.jsx'
 import FlyingEagle from '../components/FlyingEagle.jsx'
 import Icon from '../components/Icon.jsx'
 import Reveal from '../components/Reveal.jsx'
@@ -49,7 +48,7 @@ export default function Home() {
       {/* Hero */}
       <section className="relative overflow-hidden">
         <Aurora />
-        <div className="container-page relative pb-24 pt-16 lg:pb-28 lg:pt-20">
+        <div className="container-page relative pb-24 pt-48 sm:pt-52 md:pt-16 lg:pb-28 lg:pt-20">
           <div>
             <Reveal>
               <span className="eyebrow">
@@ -63,7 +62,6 @@ export default function Home() {
                 <h1 className="text-[clamp(3.1rem,10vw,6.5rem)] leading-[0.92] tracking-[0.01em]">
                   <span className="text-gradient">AUCIS</span>
                 </h1>
-                <EagleMark className="w-[28vw] min-w-[84px] max-w-[280px] shrink-0 animate-floaty md:hidden" />
               </div>
             </Reveal>
 
