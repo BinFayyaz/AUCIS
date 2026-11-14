@@ -1,107 +1,84 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* =========================================
-   AUCIS THEME VARIABLES
-========================================= */
-
-:root {
-  --navy: #0D1B2A;
-  --blue-dark: #1B263B;
-  --blue: #415A77;
-  --sage: #778D7A;
-  --sand: #D4C4A8;
-  --cream: #F4F1DE;
-
-  /* Dark theme defaults */
-  --page-bg: #0D1B2A;
-  --page-text: #F4F1DE;
-  --secondary-text: rgba(244, 241, 222, 0.65);
-  --surface-bg: rgba(255, 255, 255, 0.035);
-  --surface-border: rgba(244, 241, 222, 0.10);
-  --header-bg: rgba(13, 27, 42, 0.88);
-  --input-bg: rgba(13, 27, 42, 0.60);
-  --input-text: rgba(244, 241, 222, 0.90);
-  --footer-bg: rgba(13, 27, 42, 0.40);
-
-  color-scheme: dark;
-}
-
-/* Light theme */
-
-[data-theme="light"] {
-  --page-bg: #F4F1DE;
-  --page-text: #0D1B2A;
-  --secondary-text: #415A77;
-  --surface-bg: rgba(255, 255, 255, 0.58);
-  --surface-border: rgba(13, 27, 42, 0.12);
-  --header-bg: rgba(244, 241, 222, 0.90);
-  --input-bg: rgba(255, 255, 255, 0.80);
-  --input-text: #0D1B2A;
-  --footer-bg: rgba(212, 196, 168, 0.30);
-
-  color-scheme: light;
-}
-
-/* =========================================
-   BASE STYLES
-========================================= */
-
 @layer base {
+  :root {
+    color-scheme: dark;
+
+    /* dark palette (default) */
+    --c-ink: 7 14 23;
+    --c-navy: 13 27 42;
+    --c-depth: 27 38 59;
+    --c-steel: 65 90 119;
+    --c-sage: 119 141 122;
+    --c-sand: 212 196 168;
+    --c-cream: 244 241 222;
+    --c-title: 143 168 148;
+  }
+
+  /* light palette — same tokens, inverted roles */
+  [data-theme='light'] {
+    color-scheme: light;
+
+    --c-ink: 246 243 233;
+    --c-navy: 236 231 217;
+    --c-depth: 219 211 191;
+    --c-steel: 65 90 119;
+    --c-sage: 119 141 122;
+    --c-sand: 150 112 44;
+    --c-cream: 26 32 42;
+    --c-title: 107 85 61;
+  }
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply font-sans antialiased;
-
-    min-height: 100vh;
-    background-color: var(--page-bg);
-    color: var(--page-text);
-
+    @apply bg-ink font-sans text-cream/80 antialiased;
     background-image:
-      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.25), transparent 62%),
-      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.12), transparent 60%),
-      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.07), transparent 65%);
-
+      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.38), transparent 62%),
+      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.16), transparent 60%),
+      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.09), transparent 65%);
     background-attachment: fixed;
-
-    transition:
-      background-color 0.35s ease,
-      color 0.35s ease;
   }
 
-  #root {
-    min-height: 100vh;
+  [data-theme='light'] body {
+    background-image:
+      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.16), transparent 62%),
+      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.14), transparent 60%),
+      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.35), transparent 65%);
   }
 
   ::selection {
-    background: rgba(119, 141, 122, 0.35);
-    color: var(--page-text);
+    background: rgba(212, 196, 168, 0.28);
+    color: #f4f1de;
+  }
+
+  [data-theme='light'] ::selection {
+    background: rgba(150, 112, 44, 0.25);
+    color: #1a2029;
   }
 
   h1,
   h2,
   h3 {
+    @apply font-heavy text-cream;
     font-weight: 400;
     letter-spacing: -0.015em;
-    color: var(--page-text);
   }
 }
-
-/* =========================================
-   COMPONENTS
-========================================= */
 
 @layer components {
   .container-page {
     @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
   }
 
+  /* Home page reserves a right-hand lane so the flying eagle never sits on
+     top of text or cards. Below md the eagle sits inline instead. */
   @media (min-width: 768px) {
     .home-page .container-page {
       padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
@@ -109,23 +86,15 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em];
-    color: var(--secondary-text);
+    @apply inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-sand/70;
   }
 
   .surface {
-    @apply rounded-2xl backdrop-blur-sm;
-    border: 1px solid var(--surface-border);
-    background: var(--surface-bg);
+    @apply rounded-2xl border border-cream/10 bg-white/[0.035] backdrop-blur-sm;
   }
 
   .surface-hover {
-    @apply transition duration-500;
-  }
-
-  .surface-hover:hover {
-    border-color: rgba(119, 141, 122, 0.45);
-    background: var(--surface-bg);
+    @apply transition duration-500 hover:border-sand/30 hover:bg-white/[0.06];
   }
 
   .btn {
@@ -134,14 +103,7 @@
 
   .btn-primary {
     @apply btn text-navy;
-
-    background-image: linear-gradient(
-      115deg,
-      #f4f1de,
-      #d4c4a8 45%,
-      #b9c7b6 100%
-    );
-
+    background-image: linear-gradient(115deg, #f4f1de, #d4c4a8 45%, #b9c7b6 100%);
     box-shadow: 0 18px 40px -22px rgba(212, 196, 168, 0.9);
   }
 
@@ -150,201 +112,47 @@
     box-shadow: 0 26px 50px -22px rgba(212, 196, 168, 0.95);
   }
 
-  .btn-ghost {
-    @apply btn;
-
-    border: 1px solid var(--surface-border);
-    color: var(--page-text);
+  /* On paper, the primary button flips to a dark fill. */
+  [data-theme='light'] .btn-primary {
+    color: #f4f1de;
+    background-image: linear-gradient(115deg, #1b263b, #2c3a4e 45%, #3d4c60 100%);
+    box-shadow: 0 18px 34px -22px rgba(27, 38, 59, 0.8);
   }
 
-  .btn-ghost:hover {
-    border-color: rgba(119, 141, 122, 0.55);
+  .btn-ghost {
+    @apply btn border border-cream/15 text-cream/85 hover:border-sand/40 hover:text-cream;
   }
 
   .field {
-    @apply w-full rounded-xl px-4 py-3 text-sm outline-none transition;
-
-    border: 1px solid var(--surface-border);
-    background: var(--input-bg);
-    color: var(--input-text);
-  }
-
-  .field::placeholder {
-    color: var(--secondary-text);
-  }
-
-  .field:focus {
-    border-color: var(--sage);
+    @apply w-full rounded-xl border border-cream/[0.14] bg-navy/60 px-4 py-3 text-sm text-cream/90 outline-none transition placeholder:text-cream/30 focus:border-sand/50 focus:bg-navy/80;
   }
 
   .label {
-    @apply mb-2 block text-[11px] font-medium uppercase tracking-[0.2em];
-    color: var(--secondary-text);
+    @apply mb-2 block text-[11px] font-medium uppercase tracking-[0.2em] text-cream/45;
   }
 
   .rule {
-    @apply h-px w-full;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--surface-border),
-      transparent
-    );
+    @apply h-px w-full bg-gradient-to-r from-transparent via-cream/15 to-transparent;
+  }
+
+  /* Dark theme keeps the previous crest, light theme uses the AU logo. */
+  .logo-light {
+    display: none;
+  }
+
+  [data-theme='light'] .logo-dark {
+    display: none;
+  }
+
+  [data-theme='light'] .logo-light {
+    display: block;
   }
 }
-
-/* =========================================
-   MINIMAL THEME TOGGLE
-========================================= */
-
-.theme-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-
-  width: 44px;
-  height: 24px;
-
-  flex-shrink: 0;
-  border: 1px solid var(--surface-border);
-  border-radius: 50px;
-
-  background: var(--surface-bg);
-  cursor: pointer;
-
-  transition:
-    background 0.3s ease,
-    border-color 0.3s ease;
-}
-
-.theme-toggle-circle {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-
-  width: 16px;
-  height: 16px;
-
-  border-radius: 50%;
-  background: var(--sand);
-
-  transition:
-    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    background 0.3s ease;
-}
-
-[data-theme="light"] .theme-toggle-circle {
-  transform: translateX(20px);
-  background: var(--blue);
-}
-
-.theme-toggle:hover {
-  border-color: var(--sage);
-}
-
-.theme-toggle:focus-visible {
-  outline: 2px solid var(--sage);
-  outline-offset: 4px;
-}
-
-/* =========================================
-   LIGHT THEME FIXES
-========================================= */
-
-[data-theme="light"] .text-cream {
-  color: #0D1B2A;
-}
-
-[data-theme="light"] .text-cream\/80 {
-  color: rgba(13, 27, 42, 0.80);
-}
-
-[data-theme="light"] .text-cream\/60 {
-  color: rgba(13, 27, 42, 0.65);
-}
-
-[data-theme="light"] .text-cream\/55 {
-  color: rgba(13, 27, 42, 0.60);
-}
-
-[data-theme="light"] .text-cream\/50 {
-  color: rgba(13, 27, 42, 0.55);
-}
-
-[data-theme="light"] .text-cream\/45 {
-  color: rgba(13, 27, 42, 0.50);
-}
-
-[data-theme="light"] .text-cream\/40 {
-  color: rgba(13, 27, 42, 0.45);
-}
-
-[data-theme="light"] .text-cream\/35 {
-  color: rgba(13, 27, 42, 0.40);
-}
-
-[data-theme="light"] .text-cream\/30 {
-  color: rgba(13, 27, 42, 0.38);
-}
-
-[data-theme="light"] .bg-ink {
-  background-color: #F4F1DE;
-}
-
-[data-theme="light"] .bg-navy\/40 {
-  background-color: rgba(212, 196, 168, 0.30);
-}
-
-[data-theme="light"] .bg-ink\/80 {
-  background-color: rgba(244, 241, 222, 0.88);
-}
-
-[data-theme="light"] .bg-ink\/95 {
-  background-color: rgba(244, 241, 222, 0.97);
-}
-
-[data-theme="light"] .border-cream\/10 {
-  border-color: rgba(13, 27, 42, 0.12);
-}
-
-[data-theme="light"] .border-cream\/15 {
-  border-color: rgba(13, 27, 42, 0.16);
-}
-
-[data-theme="light"] .border-cream\/5 {
-  border-color: rgba(13, 27, 42, 0.07);
-}
-
-/* =========================================
-   UTILITIES
-========================================= */
 
 @layer utilities {
+  /* Solid accent title colour (eagle brown) — no gradient. */
   .text-gradient {
-    background-image: linear-gradient(
-      100deg,
-      #f4f1de 0%,
-      #d4c4a8 40%,
-      #a9bda9 72%,
-      #7f97b4 100%
-    );
-
-    background-size: 220% 220%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: shimmer 16s ease infinite;
-  }
-
-  [data-theme="light"] .text-gradient {
-    background-image: linear-gradient(
-      100deg,
-      #0D1B2A 0%,
-      #415A77 40%,
-      #778D7A 72%,
-      #D4C4A8 100%
-    );
-    background-size: 220% 220%;
+    color: rgb(var(--c-title));
   }
 
   .tracking-mega {
@@ -354,7 +162,6 @@
   .reveal {
     opacity: 0;
     transform: translateY(26px);
-
     transition:
       opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
       transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -371,38 +178,10 @@
     inset: 0;
     pointer-events: none;
     opacity: 0.35;
-
-    background-image: radial-gradient(
-      rgba(244, 241, 222, 0.12) 0.5px,
-      transparent 0.5px
-    );
-
+    background-image: radial-gradient(rgba(244, 241, 222, 0.12) 0.5px, transparent 0.5px);
     background-size: 4px 4px;
   }
 }
-
-/* =========================================
-   GLOBAL THEME TRANSITIONS
-========================================= */
-
-body,
-header,
-main,
-footer,
-section,
-article,
-nav,
-.surface,
-.field {
-  transition:
-    background-color 0.35s ease,
-    color 0.35s ease,
-    border-color 0.35s ease;
-}
-
-/* =========================================
-   ACCESSIBILITY
-========================================= */
 
 @media (prefers-reduced-motion: reduce) {
   *,
