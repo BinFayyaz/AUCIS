@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import RobotMark from './RobotMark.jsx'
+import './RobotPhoto.css'
 import RobotSparks from './RobotSparks.jsx'
 
 const MAX_DRIFT = 240
@@ -124,7 +124,11 @@ export default function FlyingRobot() {
             className="transition-transform duration-300 ease-out"
           >
             <div className="relative">
-              <RobotMark className="w-[clamp(120px,34vw,150px)] md:w-[clamp(200px,24vw,380px)]" />
+              <img
+                src="/aucis-android.png"
+                alt=""
+                className="robot-photo h-[clamp(130px,26vw,170px)] md:h-[clamp(240px,34vh,360px)]"
+              />
               <RobotSparks mode={mode} />
             </div>
           </div>
