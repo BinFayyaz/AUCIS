@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import Robot3D from './Robot3D.jsx'
 import RobotSparks from './RobotSparks.jsx'
+import { getJoinRobotTarget } from '../lib/joinSequence.js'
+import './JoinRegistration.css'
 
 const MAX_DRIFT = 240
 const MAX_SWAY = 110
@@ -39,7 +41,8 @@ export default function FlyingRobot({ joinPhase }) {
   const joinPhaseRef = useRef(null)
   joinPhaseRef.current = joinPhase
 
-  const isJoining = joinPhase && joinPhase !== 'form' && joinPhase !== 'error'
+  const [geometry, setGeometry] = useState(null)
+  const isJoining = Boolean(joinPhase)
 
   useEffect(() => {
     const inLane = () => window.matchMedia('(min-width: 768px)').matches
@@ -50,6 +53,13 @@ export default function FlyingRobot({ joinPhase }) {
       if (!lane || !robot) return
       const top = lane.getBoundingClientRect().top + robot.offsetTop
       base.current = { top, bottom: top + robot.offsetHeight }
+      setGeometry({
+        originX: robot.offsetLeft,
+        originY: top,
+        width: robot.offsetWidth,
+        height: robot.offsetHeight,
+        viewport: { width: window.innerWidth, height: window.innerHeight },
+      })
 
       const containerEl = lane.firstElementChild
       if (containerEl) {
@@ -154,44 +164,22 @@ export default function FlyingRobot({ joinPhase }) {
     }
   }, [joinPhase])
 
-  // Compute the scripted transform for the join sequence.
-  let transform
-  if (isJoining) {
-    const vh = window.innerHeight
-    const lane = laneRef.current
-    const robot = robotRef.current
-    if (lane && robot) {
-      const containerTop = lane.getBoundingClientRect().top
-      const robotH = robot.offsetHeight
-      const centerY = vh / 2 - containerTop - robotH / 2
-      const centerX = -maxOffset.current / 2
-
-      switch (joinPhase) {
-        case 'flying-center':
-          transform = `translate3d(${centerX}px, ${centerY}px, 0)`
-          break
-        case 'enlarging':
-        case 'hands-down':
-        case 'hands-up':
-          transform = `translate3d(${centerX}px, ${centerY}px, 0) scale(2)`
-          break
-        case 'flying-up':
-          transform = `translate3d(${centerX}px, ${centerY - 80}px, 0) scale(1.5)`
-          break
-        case 'returning':
-          transform = `translate3d(0px, ${centerY - 80}px, 0) scale(1)`
-          break
-        default:
-          transform = `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)`
-      }
-    } else {
-      transform = `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)`
-    }
-  } else {
-    transform = `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)`
+  // Targets use the viewport and the untransformed origin, not the robot's
+  // animated bounds. Resizing cannot accumulate translation or change lanes.
+  let transform = `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)`
+  if (isJoining && geometry) {
+    const target = getJoinRobotTarget(joinPhase, geometry.viewport, geometry)
+    transform = `translate3d(${target.x - geometry.originX - geometry.width / 2}px, ${target.y - geometry.originY - geometry.height / 2}px, 0) scale(${target.scale})`
   }
 
-  const externalPose = joinPhase === 'hands-down' ? 'hands-down' : null
+  const externalPose = {
+    'hands-down': 'hands-down',
+    error: 'dissatisfied',
+    collecting: 'pulling',
+    rolling: 'rolling',
+    shrinking: 'rolling',
+    holding: 'holding-scroll',
+  }[joinPhase] || (isJoining ? 'attentive' : null)
   const tiltRotation = isJoining ? 0 : tilt + sway * 0.05
   const opacity = isJoining ? 1 : fade
 
@@ -199,7 +187,9 @@ export default function FlyingRobot({ joinPhase }) {
     <div
       ref={laneRef}
       aria-hidden="true"
-      className={`robot-flight pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
+      data-join-phase={joinPhase || 'idle'}
+      data-pose={externalPose || 'idle'}
+      className={`robot-flight ${isJoining ? 'is-joining' : ''} pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
         mode === 'down' ? 'is-diving' : mode === 'up' ? 'is-climbing' : 'is-gliding'
       }`}
       style={{ opacity }}

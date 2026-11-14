@@ -6,7 +6,7 @@ import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
 import JoinFormOverlay from '../components/JoinFormOverlay.jsx'
 import Reveal from '../components/Reveal.jsx'
-import RobotSpeechBubble from '../components/RobotSpeechBubble.jsx'
+import { JOIN_SEQUENCE } from '../lib/joinSequence.js'
 import { pillars, site, upcomingEvents } from '../data/site.js'
 
 const quickLinks = [
@@ -52,64 +52,36 @@ const societyStats = [
 export default function Home() {
   const nextEvent = upcomingEvents[0]
   const [joinPhase, setJoinPhase] = useState(null)
-  const [formErrors, setFormErrors] = useState(null)
-  const sequenceTimeouts = useRef([])
+  const [applicationId, setApplicationId] = useState(0)
+  const joinPhaseRef = useRef(null)
+  joinPhaseRef.current = joinPhase
 
   const startJoinSequence = () => {
-    sequenceTimeouts.current.forEach(clearTimeout)
-    sequenceTimeouts.current = []
-    setFormErrors(null)
-
-    const phases = [
-      ['flying-center', 0],
-      ['enlarging', 800],
-      ['hands-down', 1600],
-      ['hands-up', 2500],
-      ['flying-up', 3300],
-      ['returning', 4000],
-      ['form', 4800],
-    ]
-    phases.forEach(([phase, delay]) => {
-      sequenceTimeouts.current.push(setTimeout(() => setJoinPhase(phase), delay))
-    })
+    // Repeated Join clicks must not restart a form that is already opening.
+    if (joinPhaseRef.current && joinPhaseRef.current !== 'holding') return
+    joinPhaseRef.current = 'flying-bottom'
+    setApplicationId((id) => id + 1)
+    setJoinPhase('flying-bottom')
   }
 
-  const closeJoin = () => {
-    sequenceTimeouts.current.forEach(clearTimeout)
-    sequenceTimeouts.current = []
-    setJoinPhase(null)
-    setFormErrors(null)
-  }
-
-  const handleFormError = (msg) => {
-    setFormErrors(msg)
-    setJoinPhase('error')
-  }
-
-  const clearFormError = () => {
-    if (formErrors) {
-      setFormErrors(null)
-      setJoinPhase('form')
-    }
-  }
+  const closeJoin = () => setJoinPhase(null)
+  const handleFormError = (hasErrors) => setJoinPhase(hasErrors ? 'error' : 'form')
+  const handleFormSuccess = () => setJoinPhase('collecting')
 
   useEffect(() => {
-    if (joinPhase) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
+    const step = JOIN_SEQUENCE[joinPhase]
+    if (!step?.next) return
+    const timer = window.setTimeout(() => setJoinPhase(step.next), step.duration)
+    return () => window.clearTimeout(timer)
   }, [joinPhase])
 
-  useEffect(
-    () => () => {
-      sequenceTimeouts.current.forEach(clearTimeout)
-    },
-    [],
-  )
+  const modalOpen = Boolean(joinPhase && joinPhase !== 'holding')
+  useEffect(() => {
+    if (!modalOpen) return
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = originalOverflow }
+  }, [modalOpen])
 
   // Allow any page (header, footer, mobile nav) to trigger the join popup
   // via a custom event — works on same page and after cross-page navigation.
@@ -125,13 +97,12 @@ export default function Home() {
     <div className="home-page relative">
       <FlyingRobot joinPhase={joinPhase} />
 
-      {joinPhase && <RobotSpeechBubble message={formErrors} />}
-
       {joinPhase && (
         <JoinFormOverlay
+          key={applicationId}
           joinPhase={joinPhase}
           onError={handleFormError}
-          onClearError={clearFormError}
+          onSuccess={handleFormSuccess}
           onClose={closeJoin}
         />
       )}

@@ -3,6 +3,8 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import './Robot3D.css'
+import RobotScroll from './RobotScroll.jsx'
+import { ARM_REACH } from '../lib/joinSequence.js'
 
 // ---------------------------------------------------------------------------
 // Palette — mirrors the site theme variables (navy / sand / teal).
@@ -55,7 +57,7 @@ function useReducedMotion() {
 }
 
 /** A single arm: ceramic upper, navy joint, ceramic forearm, glowing palm. */
-function Arm({ side = 1, armRef }) {
+function Arm({ side = 1, armRef, children }) {
   return (
     <group ref={armRef} position={[0.56 * side, 0.4, 0]} rotation={[0, 0, -0.26 * side]}>
       {/* shoulder cap */}
@@ -94,6 +96,7 @@ function Arm({ side = 1, armRef }) {
           clearcoatRoughness={0.26}
         />
       </mesh>
+      {children}
       {/* palm */}
       <mesh position={[0.1 * side, -0.83, 0.1]}>
         <sphereGeometry args={[0.095, 24, 24]} />
@@ -173,8 +176,8 @@ function Robot({ reduced, externalPose }) {
 
     if (body.current) {
       body.current.position.y = reduced ? 0 : Math.sin(t * 1.1) * 0.06
-      body.current.rotation.y = reduced ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
-      body.current.rotation.x = reduced ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
+      body.current.rotation.y = reduced || externalPose ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
+      body.current.rotation.x = reduced || externalPose ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
       if (eff === 'giggle') {
         body.current.rotation.z = Math.sin(t * 28) * 0.1
         body.current.position.x = Math.sin(t * 28) * 0.04
@@ -189,15 +192,19 @@ function Robot({ reduced, externalPose }) {
       // Arms point straight down and stretch downward.
       if (rightArmRef.current) {
         rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, 0, 8, ease)
-        rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, 1.8, 8, ease)
+        rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, ARM_REACH, 8, ease)
       }
       if (leftArmRef.current) {
         leftArmRef.current.rotation.z = THREE.MathUtils.damp(leftArmRef.current.rotation.z, 0, 8, ease)
-        leftArmRef.current.scale.y = THREE.MathUtils.damp(leftArmRef.current.scale.y, 1.8, 8, ease)
+        leftArmRef.current.scale.y = THREE.MathUtils.damp(leftArmRef.current.scale.y, ARM_REACH, 8, ease)
       }
     } else {
-      const rightArmTarget = eff === 'hands-to-head' ? 2.3 : -0.26
-      const leftArmTarget = eff === 'hands-to-head' ? -2.3 : 0.26
+      const isRolling = eff === 'rolling'
+      const isHolding = eff === 'holding-scroll'
+      const rightArmTarget = eff === 'hands-to-head' ? 2.3 : isHolding ? -1.05 : isRolling ? -0.65 : -0.26
+      const leftArmTarget = eff === 'hands-to-head' ? -2.3 : isRolling ? 0.65 : 0.26
+      if (rightArmRef.current) rightArmRef.current.rotation.x = isRolling && !reduced ? Math.sin(t * 10) * 0.22 : 0
+      if (leftArmRef.current) leftArmRef.current.rotation.x = isRolling && !reduced ? -Math.sin(t * 10) * 0.22 : 0
       if (rightArmRef.current) {
         rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, rightArmTarget, 8, ease)
         rightArmRef.current.scale.y = THREE.MathUtils.damp(rightArmRef.current.scale.y, 1, 8, ease)
@@ -209,9 +216,9 @@ function Robot({ reduced, externalPose }) {
     }
 
     if (head.current) {
-      head.current.rotation.y = pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
-      head.current.rotation.x = pointer.current.y * 0.16
-      head.current.rotation.z = reduced ? 0 : Math.sin(t * 0.9) * 0.02
+      head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+      head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
+      head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02
     }
 
     if (core.current) {
@@ -254,7 +261,16 @@ function Robot({ reduced, externalPose }) {
           <sphereGeometry args={[0.5, 48, 48]} />
           <meshPhysicalMaterial color={DEEP} roughness={0.1} metalness={0.6} clearcoat={1} clearcoatRoughness={0.08} />
         </mesh>
-        {[-1, 1].map((side) => (
+        {externalPose === 'dissatisfied' ? (
+          <group position={[0, 0.055, 0.49]}>
+            {[-1, 1].map((direction) => (
+              <mesh key={direction} rotation={[0, 0, direction * Math.PI / 4]}>
+                <boxGeometry args={[0.29, 0.046, 0.025]} />
+                <meshStandardMaterial color="#ff6262" emissive="#ff3030" emissiveIntensity={2} toneMapped={false} />
+              </mesh>
+            ))}
+          </group>
+        ) : [-1, 1].map((side) => (
           <mesh key={side} position={[0.145 * side, 0.055, 0.452]} scale={[0.078, 0.042, 0.03]} rotation={[0, 0, -0.08 * side]}>
             <sphereGeometry args={[1, 24, 24]} />
             <meshStandardMaterial color="#c9fff4" emissive={TEAL} emissiveIntensity={3} toneMapped={false} />
@@ -308,7 +324,9 @@ function Robot({ reduced, externalPose }) {
       </mesh>
 
       {/* shoulder arms */}
-      <Arm side={1} armRef={rightArmRef} />
+      <Arm side={1} armRef={rightArmRef}>
+        {externalPose === 'holding-scroll' && <RobotScroll />}
+      </Arm>
       <Arm side={-1} armRef={leftArmRef} />
 
       {/* ---- hover drive ---- */}
