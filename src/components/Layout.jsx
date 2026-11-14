@@ -82,11 +82,11 @@ export default function Layout() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <ThemeToggle />
             <Link to="/join" className="btn-primary hidden px-5 py-2.5 text-[13px] sm:inline-flex">
               Join AUCIS
               <Icon name="arrowRight" size={15} />
             </Link>
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
