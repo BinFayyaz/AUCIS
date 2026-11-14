@@ -1,7 +1,7 @@
 .eagle-sparks {
   position: absolute;
   left: 50%;
-  top: 82%;
+  top: 50%;
   width: 0;
   height: 0;
   z-index: 1;
@@ -10,11 +10,13 @@
 
 .eagle-spark {
   position: absolute;
+  left: 0;
+  top: 0;
   border-radius: 50%;
   background: var(--spark-color);
-  box-shadow: 0 0 4px 1px var(--spark-color), 0 0 10px var(--spark-color);
+  box-shadow: 0 0 6px 1px var(--spark-color), 0 0 14px var(--spark-color);
   opacity: 0;
-  animation: eagle-stardust var(--spark-duration) linear var(--spark-delay) infinite;
+  will-change: transform, opacity;
 }
 
 .eagle-spark-star {
@@ -23,32 +25,58 @@
   filter: drop-shadow(0 0 3px var(--spark-color));
 }
 
-.eagle-sparks.is-moving .eagle-spark {
-  --spark-spread: 1.25;
-  animation-duration: calc(var(--spark-duration) * 0.75);
+/* Idle: sparks wind around the eagle in random spiral directions. */
+.eagle-sparks.is-idle .eagle-spark {
+  animation: eagle-spiral var(--spark-duration) linear var(--spark-delay) infinite;
 }
 
-@keyframes eagle-stardust {
+@keyframes eagle-spiral {
   0% {
     opacity: 0;
-    transform: translate3d(0, 0, 0) scale(0.8);
+    transform: rotate(var(--spark-a)) translateY(calc(var(--spark-r) * 0.2)) scale(0.35);
   }
   12% { opacity: 1; }
-  55% { opacity: 0.9; }
-  85% { opacity: 0.5; }
+  65% { opacity: 0.9; }
   100% {
     opacity: 0;
-    transform: translate3d(
-      calc(var(--spark-x) * var(--spark-spread, 1)),
-      calc(var(--spark-y) * var(--spark-spread, 1)), 0
-    ) scale(0.85);
+    transform: rotate(calc(var(--spark-a) + var(--spark-turn))) translateY(var(--spark-r)) scale(1);
   }
+}
+
+/* Travelling: the dust is left behind, opposite to the bird's motion. */
+.eagle-sparks.is-up .eagle-spark,
+.eagle-sparks.is-down .eagle-spark {
+  animation: eagle-stream calc(var(--spark-duration) * 0.55) linear var(--spark-delay) infinite;
+}
+
+@keyframes eagle-stream {
+  0% {
+    opacity: 0;
+    transform: translate3d(var(--spark-x0), var(--spark-y0), 0) scale(0.5);
+  }
+  14% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--spark-x1), var(--spark-y1), 0) scale(0.9);
+  }
+}
+
+/* Bird climbing → dust falls downward (positive Y is down). */
+.eagle-sparks.is-up .eagle-spark {
+  --spark-y0: calc(var(--spark-r) * -0.4);
+  --spark-y1: calc(var(--spark-r) * 1.15);
+}
+
+/* Bird diving → dust rises upward. */
+.eagle-sparks.is-down .eagle-spark {
+  --spark-y0: calc(var(--spark-r) * 0.6);
+  --spark-y1: calc(var(--spark-r) * -1.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .eagle-spark { animation: none; }
-  .eagle-spark:nth-child(5n) {
-    opacity: 0.75;
-    transform: translate(var(--spark-x), var(--spark-y));
+  .eagle-spark:nth-child(4n) {
+    opacity: 0.6;
+    transform: rotate(var(--spark-a)) translateY(var(--spark-r));
   }
 }

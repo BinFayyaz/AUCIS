@@ -13,7 +13,7 @@ const TOP_SAFE = 88
  * on phones and small tablets it sits centred in the band above the hero.
  *
  * Scrolling carries it down and noses it into the dive, weaves it left and
- * right across its lane, and shakes sparks loose behind it. As soon as the
+ * right across its lane, and streams stardust the other way. As soon as the
  * footer rises into view it climbs back towards the top of the page, so it
  * never lands on the footer.
  */
@@ -21,7 +21,7 @@ export default function FlyingEagle() {
   const [drift, setDrift] = useState(0)
   const [sway, setSway] = useState(0)
   const [tilt, setTilt] = useState(0)
-  const [moving, setMoving] = useState(false)
+  const [mode, setMode] = useState('idle')
   const lastY = useRef(0)
   const settle = useRef(null)
   const laneRef = useRef(null)
@@ -65,12 +65,13 @@ export default function FlyingEagle() {
 
       if (Math.abs(delta) > 1) {
         setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
-        setMoving(true)
+        // Scrolling down carries the bird down the page, and vice versa.
+        setMode(delta > 0 ? 'down' : 'up')
         window.clearTimeout(settle.current)
         settle.current = window.setTimeout(() => {
           setTilt(0)
-          setMoving(false)
-        }, 220)
+          setMode('idle')
+        }, 260)
       }
     }
 
@@ -109,7 +110,7 @@ export default function FlyingEagle() {
           >
             <div className="relative">
               <EagleMark className="w-[clamp(220px,58vw,300px)] md:w-[clamp(210px,26vw,440px)]" />
-              <EagleSparks moving={moving} />
+              <EagleSparks mode={mode} />
             </div>
           </div>
         </div>
