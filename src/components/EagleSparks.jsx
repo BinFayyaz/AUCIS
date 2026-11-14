@@ -1,6 +1,6 @@
 import './EagleSparks.css'
 
-const COLORS = ['#c4b5fd', '#67e8f9', '#fde68a', '#f0abfc']
+const COLORS = ['#fff7e0', '#ffe08a', '#f5c518', '#e8edf5']
 
 // Fixed seeds keep the effect stable across scroll-driven renders.
 const SPARKS = Array.from({ length: 36 }, (_, i) => {
