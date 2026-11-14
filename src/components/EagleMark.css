@@ -1,34 +1,29 @@
 .eagle-mark {
   display: block;
   overflow: visible;
-  filter: drop-shadow(0 0 14px rgba(240, 232, 216, 0.18))
+  filter: drop-shadow(0 0 14px rgba(240, 232, 216, 0.14))
     drop-shadow(0 16px 24px rgba(2, 6, 23, 0.55));
   animation: eagle-hover 5s ease-in-out infinite;
 }
 
-.eagle-halo {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: eagle-halo-pulse 6s ease-in-out infinite;
-}
-
 .eagle-wing {
   transform-box: view-box;
-  transform-origin: 300px 208px;
   animation: eagle-wing-beat 3.4s ease-in-out infinite;
 }
 
 .eagle-wing-left {
-  --wing-angle: -4.5deg;
+  transform-origin: 455px 330px;
+  --wing-angle: -4deg;
 }
 
 .eagle-wing-right {
-  --wing-angle: 4.5deg;
+  transform-origin: 545px 330px;
+  --wing-angle: 4deg;
 }
 
 .eagle-body {
   transform-box: view-box;
-  transform-origin: 300px 208px;
+  transform-origin: 500px 330px;
   animation: eagle-body-bob 3.4s ease-in-out infinite;
 }
 
@@ -42,16 +37,11 @@
   50% { transform: translateY(-4px); }
 }
 
-@keyframes eagle-halo-pulse {
-  0%, 100% { opacity: 0.75; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.06); }
-}
-
 @keyframes eagle-hover {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eagle-mark, .eagle-wing, .eagle-body, .eagle-halo { animation: none; }
+  .eagle-mark, .eagle-wing, .eagle-body { animation: none; }
 }

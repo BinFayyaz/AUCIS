@@ -4,6 +4,7 @@ import EagleSparks from './EagleSparks.jsx'
 
 const MAX_DRIFT = 240
 const MAX_SWAY = 26
+const MOBILE_MAX_DRIFT = 110
 // Leave room for the stars below the tail as well as the eagle itself.
 const FOOTER_GAP = 124
 const TOP_SAFE = 88
@@ -22,6 +23,7 @@ export default function FlyingEagle() {
   const [sway, setSway] = useState(0)
   const [tilt, setTilt] = useState(0)
   const [mode, setMode] = useState('idle')
+  const [fade, setFade] = useState(1)
   const lastY = useRef(0)
   const settle = useRef(null)
   const laneRef = useRef(null)
@@ -58,10 +60,16 @@ export default function FlyingEagle() {
           next = Math.min(next, room)
         }
         next = Math.max(next, TOP_SAFE - base.current.top)
+      } else {
+        // Phone: the small bird glides down inside its hero band as the page scrolls.
+        next = Math.min(y * 0.35, MOBILE_MAX_DRIFT)
       }
 
       setDrift(next)
-      setSway(Math.sin(y / 240) * MAX_SWAY)
+      setSway(Math.sin(y / 240) * (inLane() ? MAX_SWAY : 12))
+      // On phones the bird has no side lane, so it turns into a faint companion
+      // once the hero copy starts scrolling under it.
+      setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
 
       if (Math.abs(delta) > 1) {
         setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
@@ -95,10 +103,11 @@ export default function FlyingEagle() {
     <div
       ref={laneRef}
       aria-hidden="true"
-      className="eagle-flight pointer-events-none absolute inset-x-0 top-8 z-20 md:fixed md:top-[13vh]"
+      className="eagle-flight pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh]"
+      style={{ opacity: fade }}
     >
       {/* aligned to the content container so the bird sits in its own lane */}
-      <div className="mx-auto flex w-full max-w-6xl justify-center px-6 sm:px-8 md:justify-end">
+      <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
         <div
           ref={birdRef}
           className="transition-transform duration-500 ease-out"
@@ -109,7 +118,7 @@ export default function FlyingEagle() {
             className="transition-transform duration-300 ease-out"
           >
             <div className="relative">
-              <EagleMark className="w-[clamp(220px,58vw,300px)] md:w-[clamp(210px,26vw,440px)]" />
+              <EagleMark className="w-[clamp(120px,34vw,150px)] md:w-[clamp(200px,24vw,380px)]" />
               <EagleSparks mode={mode} />
             </div>
           </div>

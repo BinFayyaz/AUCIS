@@ -1,198 +1,154 @@
 import { useId } from 'react'
 import './EagleMark.css'
 
-/** One feather blade pointing along +x from the origin, with a pointed tip. */
-const FEATHER = 'M0 -13 C 46 -25 106 -21 155 -6 L 162 0 L 155 6 C 106 21 46 25 0 13 Z'
-
-// Fan of wing feathers. Angles are degrees from +x; 180 points straight left,
-// so smaller angles lift the feather up the wing. Later entries sit on top.
-// A bald eagle's wing: brown coverts at the shoulder, near-black primaries.
-const WING_FEATHERS = [
-  { angle: 139, scale: 1.46, tone: 'primary' },
-  { angle: 150, scale: 1.52, tone: 'primary' },
-  { angle: 161, scale: 1.52, tone: 'brown' },
-  { angle: 172, scale: 1.44, tone: 'brown' },
-  { angle: 183, scale: 1.32, tone: 'brown' },
-  { angle: 194, scale: 1.16, tone: 'brownDark' },
-  { angle: 205, scale: 0.98, tone: 'brownDark' },
-]
-
-// The white tail fan.
-const TAIL_FEATHERS = [
-  { angle: 62, scale: 0.42, tone: 'white' },
-  { angle: 76, scale: 0.5, tone: 'white' },
-  { angle: 90, scale: 0.54, tone: 'whiteSoft' },
-  { angle: 104, scale: 0.5, tone: 'white' },
-  { angle: 118, scale: 0.42, tone: 'white' },
-]
-
 /**
- * Hand-drawn adult bald eagle: dark chocolate-brown body and wings, stark white
- * head and tail, bright yellow hooked beak, irises and talons.
+ * Front-facing adult bald eagle: chocolate-brown wings and body, stark white
+ * head, chest and tail, bright yellow beak and talons. Vector only, with the
+ * wings split out so they can beat independently.
  */
 export default function EagleMark({ className = '' }) {
   const uid = useId().replace(/:/g, '')
-  const fill = (tone) => `url(#${uid}-${tone})`
-
-  const feather = (f, key) => (
-    <path
-      key={key}
-      d={FEATHER}
-      fill={fill(f.tone)}
-      transform={`rotate(${f.angle}) scale(${f.scale})`}
-      stroke="#150c06"
-      strokeOpacity="0.45"
-      strokeWidth="1.3"
-      vectorEffect="non-scaling-stroke"
-    />
-  )
+  const url = (name) => `url(#${uid}-${name})`
+  const shadow = url('shadow')
 
   return (
     <svg
-      viewBox="0 0 600 440"
+      viewBox="0 0 1000 750"
       className={`eagle-mark ${className}`}
       role="img"
-      aria-label="Adult bald eagle with outstretched wings"
+      aria-label="Front-facing bald eagle with outstretched wings"
     >
       <defs>
-        <linearGradient id={`${uid}-brown`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#a9713f" />
-          <stop offset="55%" stopColor="#6b4426" />
-          <stop offset="100%" stopColor="#3d2716" />
+        <linearGradient id={`${uid}-body`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#513221" />
+          <stop offset="45%" stopColor="#362116" />
+          <stop offset="100%" stopColor="#170d09" />
         </linearGradient>
-        <linearGradient id={`${uid}-brownDark`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#7d5130" />
-          <stop offset="50%" stopColor="#4a2c18" />
-          <stop offset="100%" stopColor="#2a1a10" />
+        <linearGradient id={`${uid}-wing`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#5a3825" />
+          <stop offset="45%" stopColor="#3a2318" />
+          <stop offset="100%" stopColor="#160c08" />
         </linearGradient>
-        <linearGradient id={`${uid}-primary`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#5c3a22" />
-          <stop offset="45%" stopColor="#33200f" />
-          <stop offset="100%" stopColor="#150c06" />
-        </linearGradient>
-        <linearGradient id={`${uid}-body`} x1="0.2" y1="0" x2="0.8" y2="1">
-          <stop offset="0%" stopColor="#8a5a34" />
-          <stop offset="45%" stopColor="#54341d" />
-          <stop offset="100%" stopColor="#241408" />
-        </linearGradient>
-        <linearGradient id={`${uid}-white`} x1="0" y1="0" x2="0.4" y2="1">
+        <linearGradient id={`${uid}-head`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#ffffff" />
-          <stop offset="60%" stopColor="#f2f4f7" />
-          <stop offset="100%" stopColor="#c3cbd4" />
+          <stop offset="70%" stopColor="#f2f2f2" />
+          <stop offset="100%" stopColor="#d5d5d5" />
         </linearGradient>
-        <linearGradient id={`${uid}-whiteSoft`} x1="0" y1="0" x2="0.4" y2="1">
-          <stop offset="0%" stopColor="#f7f9fb" />
-          <stop offset="100%" stopColor="#b6c0cb" />
+        <linearGradient id={`${uid}-yellow`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#ffe45c" />
+          <stop offset="50%" stopColor="#e4ad17" />
+          <stop offset="100%" stopColor="#b87500" />
         </linearGradient>
-        <linearGradient id={`${uid}-yellow`} x1="0" y1="0" x2="0.3" y2="1">
-          <stop offset="0%" stopColor="#ffe680" />
-          <stop offset="55%" stopColor="#f5c518" />
-          <stop offset="100%" stopColor="#c08a06" />
-        </linearGradient>
-        <radialGradient id={`${uid}-halo`}>
-          <stop offset="0%" stopColor="#f3ede2" stopOpacity="0.16" />
-          <stop offset="60%" stopColor="#d9c9a8" stopOpacity="0.06" />
-          <stop offset="100%" stopColor="#d9c9a8" stopOpacity="0" />
-        </radialGradient>
+        <filter id={`${uid}-shadow`} x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="10" />
+          <feOffset dy="10" />
+          <feComponentTransfer>
+            <feFuncA type="linear" slope="0.3" />
+          </feComponentTransfer>
+          <feMerge>
+            <feMergeNode />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
       </defs>
 
-      <ellipse
-        className="eagle-halo"
-        cx="300"
-        cy="210"
-        rx="252"
-        ry="136"
-        fill={`url(#${uid}-halo)`}
-      />
-
-      {/* wings — mirrored fans, each on its own pivot so they can beat */}
+      {/* left wing */}
       <g className="eagle-wing eagle-wing-left">
-        <g transform="translate(300 208)">
-          {WING_FEATHERS.map((f, i) => feather(f, `l${i}`))}
-          <circle cx="6" cy="0" r="30" fill={fill('brownDark')} opacity="0.9" />
+        <path
+          d="M455 330 C390 285 315 235 225 215 C155 200 95 215 55 245 C115 250 165 270 215 300 C150 290 95 305 55 335 C135 375 220 405 310 415 C370 420 425 395 465 355 Z"
+          fill={url('wing')}
+          filter={shadow}
+        />
+        <g fill="none" stroke="#765039" strokeWidth="9" opacity="0.38">
+          <path d="M80 250 C175 260 290 310 420 360" />
+          <path d="M70 295 C175 305 290 345 410 375" />
+          <path d="M70 335 C175 350 285 380 390 395" />
         </g>
+        <path d="M55 245 Q25 220 20 245 Q35 270 75 270 Z" fill="#24150e" />
       </g>
+
+      {/* right wing */}
       <g className="eagle-wing eagle-wing-right">
-        <g transform="translate(300 208) scale(-1 1)">
-          {WING_FEATHERS.map((f, i) => feather(f, `r${i}`))}
-          <circle cx="6" cy="0" r="30" fill={fill('brownDark')} opacity="0.9" />
+        <path
+          d="M545 330 C610 285 685 235 775 215 C845 200 905 215 945 245 C885 250 835 270 785 300 C850 290 905 305 945 335 C865 375 780 405 690 415 C630 420 575 395 535 355 Z"
+          fill={url('wing')}
+          filter={shadow}
+        />
+        <g fill="none" stroke="#765039" strokeWidth="9" opacity="0.38">
+          <path d="M920 250 C825 260 710 310 580 360" />
+          <path d="M930 295 C825 305 710 345 590 375" />
+          <path d="M930 335 C825 350 715 380 610 395" />
         </g>
+        <path d="M945 245 Q975 220 980 245 Q965 270 925 270 Z" fill="#24150e" />
       </g>
 
       <g className="eagle-body">
+        {/* torso */}
+        <path
+          d="M410 300 C425 250 455 220 500 215 C545 220 575 250 590 300 C610 390 585 485 500 550 C415 485 390 390 410 300 Z"
+          fill={url('body')}
+          filter={shadow}
+        />
+        <g fill="none" stroke="#704832" strokeWidth="8" opacity="0.38">
+          <path d="M425 350 Q500 385 575 350" />
+          <path d="M420 385 Q500 420 580 385" />
+          <path d="M425 420 Q500 455 575 420" />
+          <path d="M445 455 Q500 485 555 455" />
+        </g>
+
         {/* white tail */}
-        <g transform="translate(300 296)">
-          {TAIL_FEATHERS.map((f, i) => feather(f, `t${i}`))}
+        <g fill={url('head')}>
+          <path d="M430 490 L370 615 Q425 595 475 520 Z" />
+          <path d="M465 500 L440 650 Q500 625 500 515 Z" />
+          <path d="M535 500 L560 650 Q500 625 500 515 Z" />
+          <path d="M570 490 L630 615 Q575 595 525 520 Z" />
         </g>
 
-        {/* yellow legs and talons */}
-        <g stroke="#f5c518" strokeWidth="5" strokeLinecap="round" fill="none">
-          <path d="M300 342 L282 370 M282 370 L276 380 M282 370 L287 381 M282 370 L293 376" />
-          <path d="M300 342 L318 370 M318 370 L324 380 M318 370 L313 381 M318 370 L307 376" />
+        {/* white chest */}
+        <path
+          d="M420 285 Q430 225 500 215 Q570 225 580 285 L565 345 Q500 380 435 345 Z"
+          fill={url('head')}
+        />
+
+        {/* head */}
+        <path
+          d="M405 155 C405 100 445 65 500 60 C555 65 595 100 595 155 C595 205 560 245 500 255 C440 245 405 205 405 155 Z"
+          fill={url('head')}
+          filter={shadow}
+        />
+        <g fill="none" stroke="#c7c7c7" strokeWidth="5" opacity="0.65">
+          <path d="M425 175 Q445 210 470 225" />
+          <path d="M435 190 Q455 220 480 235" />
+          <path d="M575 175 Q555 210 530 225" />
+          <path d="M565 190 Q545 220 520 235" />
         </g>
-        <g stroke="#a97e06" strokeWidth="1.2" strokeLinecap="round" fill="none" opacity="0.7">
-          <path d="M286 374 L282 382 M288 374 L291 383" />
-          <path d="M314 374 L318 382 M312 374 L309 383" />
+
+        {/* eyes */}
+        <ellipse cx="455" cy="140" rx="15" ry="17" fill="#e4ae18" />
+        <ellipse cx="455" cy="141" rx="8" ry="11" fill="#111" />
+        <circle cx="458" cy="137" r="3" fill="#fff" />
+        <ellipse cx="545" cy="140" rx="15" ry="17" fill="#e4ae18" />
+        <ellipse cx="545" cy="141" rx="8" ry="11" fill="#111" />
+        <circle cx="548" cy="137" r="3" fill="#fff" />
+
+        {/* beak */}
+        <path d="M500 145 L475 160 L500 195 L525 160 Z" fill={url('yellow')} />
+        <path d="M475 160 Q500 170 525 160 L510 205 Q500 220 490 205 Z" fill="#c28400" />
+        <path d="M500 158 L500 202" stroke="#a56d00" strokeWidth="4" />
+
+        {/* legs */}
+        <path d="M455 485 L455 555" stroke={url('yellow')} strokeWidth="14" strokeLinecap="round" />
+        <path d="M545 485 L545 555" stroke={url('yellow')} strokeWidth="14" strokeLinecap="round" />
+
+        {/* talons */}
+        <g fill="none" stroke="#e1aa16" strokeWidth="9" strokeLinecap="round">
+          <path d="M455 550 Q425 570 405 550" />
+          <path d="M455 552 Q440 580 420 570" />
+          <path d="M455 552 Q455 580 440 580" />
+          <path d="M545 550 Q575 570 595 550" />
+          <path d="M545 552 Q560 580 580 570" />
+          <path d="M545 552 Q545 580 560 580" />
         </g>
-
-        {/* chocolate-brown torso */}
-        <path
-          d="M300 150 C 338 156 354 200 350 252 C 346 302 326 344 300 360 C 274 344 254 302 250 252 C 246 200 262 156 300 150 Z"
-          fill={fill('body')}
-          stroke="#150c06"
-          strokeOpacity="0.5"
-          strokeWidth="2"
-        />
-        <path
-          d="M262 246 Q 300 268 338 246"
-          fill="none"
-          stroke="#a9713f"
-          strokeOpacity="0.45"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-        <path
-          d="M270 284 Q 300 302 330 284"
-          fill="none"
-          stroke="#a9713f"
-          strokeOpacity="0.3"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-        />
-
-        {/* white head */}
-        <circle cx="300" cy="148" r="31" fill={fill('white')} stroke="#9aa4b0" strokeOpacity="0.5" strokeWidth="1.6" />
-        {/* feathery texture on the crown */}
-        <path d="M282 128 Q 300 118 318 128" fill="none" stroke="#c3cbd4" strokeOpacity="0.8" strokeWidth="2" strokeLinecap="round" />
-        {/* brow ridges */}
-        <path d="M274 138 Q 286 128 298 140" fill="none" stroke="#7a6a55" strokeOpacity="0.55" strokeWidth="3.5" strokeLinecap="round" />
-        <path d="M326 138 Q 314 128 302 140" fill="none" stroke="#7a6a55" strokeOpacity="0.55" strokeWidth="3.5" strokeLinecap="round" />
-
-        {/* bright yellow irises with black pupils */}
-        <circle cx="288" cy="150" r="7" fill={fill('yellow')} />
-        <circle cx="312" cy="150" r="7" fill={fill('yellow')} />
-        <circle cx="288" cy="150" r="3.2" fill="#0b0a08" />
-        <circle cx="312" cy="150" r="3.2" fill="#0b0a08" />
-        <circle cx="289.8" cy="147.8" r="1.2" fill="#ffffff" />
-        <circle cx="313.8" cy="147.8" r="1.2" fill="#ffffff" />
-
-        {/* hooked yellow beak */}
-        <path
-          d="M286 158 C 286 176 292 191 300 198 C 308 191 314 176 314 158 Z"
-          fill={fill('yellow')}
-          stroke="#8a5f05"
-          strokeOpacity="0.6"
-          strokeWidth="1.4"
-        />
-        <path
-          d="M300 198 C 304 200 305 205 300 207"
-          fill="none"
-          stroke="#8a5f05"
-          strokeOpacity="0.75"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <path d="M292 170 H 308" stroke="#8a5f05" strokeOpacity="0.45" strokeWidth="1.6" strokeLinecap="round" />
       </g>
     </svg>
   )
