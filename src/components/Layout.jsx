@@ -10,7 +10,7 @@ function Logo() {
       <img
         src="/au-logo.png"
         alt="Air University Kamra"
-        className="h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
+        className="h-11 w-auto shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
       />
       <span className="leading-none">
         <span className="block font-heavy text-lg tracking-[0.22em] text-cream">AUCIS</span>
