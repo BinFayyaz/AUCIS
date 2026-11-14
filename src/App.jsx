@@ -4,7 +4,6 @@ import Home from './pages/Home.jsx'
 import About from './pages/About.jsx'
 import Team from './pages/Team.jsx'
 import Events from './pages/Events.jsx'
-import Join from './pages/Join.jsx'
 import Contact from './pages/Contact.jsx'
 import NotFound from './pages/NotFound.jsx'
 
@@ -16,7 +15,6 @@ export default function App() {
         <Route path="/about" element={<About />} />
         <Route path="/team" element={<Team />} />
         <Route path="/events" element={<Events />} />
-        <Route path="/join" element={<Join />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<NotFound />} />
       </Route>

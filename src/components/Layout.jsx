@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import Icon from './Icon.jsx'
 import ThemeToggle from './ThemeToggle.jsx'
 import { nav, site } from '../data/site.js'
@@ -30,8 +30,19 @@ function Logo() {
 
 export default function Layout() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+
+  const handleJoinClick = () => {
+    setOpen(false)
+    if (pathname === '/') {
+      window.dispatchEvent(new CustomEvent('aucis:join'))
+    } else {
+      navigate('/')
+      setTimeout(() => window.dispatchEvent(new CustomEvent('aucis:join')), 300)
+    }
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24)
@@ -82,10 +93,14 @@ export default function Layout() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link to="/join" className="btn-primary hidden px-5 py-2.5 text-[13px] sm:inline-flex">
+            <button
+              type="button"
+              onClick={handleJoinClick}
+              className="btn-primary hidden px-5 py-2.5 text-[13px] sm:inline-flex"
+            >
               Join AUCIS
               <Icon name="arrowRight" size={15} />
-            </Link>
+            </button>
             <ThemeToggle />
             <button
               type="button"
@@ -105,7 +120,7 @@ export default function Layout() {
           }`}
         >
           <nav className="container-page flex flex-col py-4">
-            {[...nav, { label: 'Join Us', to: '/join' }].map((item) => (
+            {nav.map((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -119,6 +134,13 @@ export default function Layout() {
                 {item.label}
               </NavLink>
             ))}
+            <button
+              type="button"
+              onClick={handleJoinClick}
+              className="border-b border-cream/5 py-3 text-left text-sm tracking-wide text-cream/60"
+            >
+              Join Us
+            </button>
           </nav>
         </div>
       </header>
@@ -159,13 +181,22 @@ export default function Layout() {
           <div>
             <h3 className="text-[11px] uppercase tracking-[0.28em] text-cream/40">Explore</h3>
             <ul className="mt-5 space-y-3 text-sm">
-              {[...nav, { label: 'Join Us', to: '/join' }].map((item) => (
+              {nav.map((item) => (
                 <li key={item.to}>
                   <Link to={item.to} className="text-cream/60 transition hover:text-cream">
                     {item.label}
                   </Link>
                 </li>
               ))}
+              <li key="join">
+                <button
+                  type="button"
+                  onClick={handleJoinClick}
+                  className="text-cream/60 transition hover:text-cream"
+                >
+                  Join Us
+                </button>
+              </li>
             </ul>
           </div>
 

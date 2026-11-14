@@ -75,7 +75,7 @@ export default function JoinFormOverlay({ joinPhase, onError, onClearError, onCl
   }
 
   const panelTransform = {
-    'hands-down': 'translateY(95%)',
+    'hands-down': 'translateY(100%)',
     'hands-up': 'translateY(50%)',
     'flying-up': 'translateY(8%)',
     form: 'translateY(0)',
@@ -147,7 +147,7 @@ export default function JoinFormOverlay({ joinPhase, onError, onClearError, onCl
             </button>
           </div>
 
-          <form onSubmit={onSubmit} className="mt-6">
+          <form onSubmit={onSubmit} noValidate className="mt-6">
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label className="label" htmlFor="overlay-name">

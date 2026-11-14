@@ -29,7 +29,7 @@ const quickLinks = [
     icon: 'calendar',
   },
   {
-    to: '/join',
+    to: '/#join',
     title: 'Join Us',
     text: 'Who can join, member benefits and the application form.',
     icon: 'plus',
@@ -110,6 +110,16 @@ export default function Home() {
     },
     [],
   )
+
+  // Allow any page (header, footer, mobile nav) to trigger the join popup
+  // via a custom event — works on same page and after cross-page navigation.
+  const startJoinRef = useRef(null)
+  startJoinRef.current = startJoinSequence
+  useEffect(() => {
+    const handler = () => startJoinRef.current()
+    window.addEventListener('aucis:join', handler)
+    return () => window.removeEventListener('aucis:join', handler)
+  }, [])
 
   return (
     <div className="home-page relative">
@@ -342,6 +352,7 @@ export default function Home() {
             <Reveal key={link.to} delay={i * 70}>
               <Link
                 to={link.to}
+                onClick={link.to === '/#join' ? (e) => { e.preventDefault(); startJoinSequence() } : undefined}
                 className="surface surface-hover group flex h-full flex-col justify-between p-6"
               >
                 <div>
