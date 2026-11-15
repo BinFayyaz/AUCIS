@@ -34,7 +34,8 @@ export async function saveApplication(body = {}) {
     email,
     rollNumber: clean(body.rollNumber),
     department: clean(body.department),
-    year: clean(body.year),
+    semester: clean(body.semester),
+    group: clean(body.group),
     interests: Array.isArray(body.interests) ? body.interests.map(String) : [],
     motivation: clean(body.motivation),
   })

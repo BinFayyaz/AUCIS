@@ -43,6 +43,7 @@ export default function FlyingRobot({ joinPhase }) {
 
   const [geometry, setGeometry] = useState(null)
   const isJoining = Boolean(joinPhase)
+  const behindOverlay = ['flying-bottom', 'enlarging', 'hands-down', 'hands-up'].includes(joinPhase)
 
   useEffect(() => {
     const inLane = () => window.matchMedia('(min-width: 768px)').matches
@@ -195,7 +196,7 @@ export default function FlyingRobot({ joinPhase }) {
       aria-hidden="true"
       data-join-phase={joinPhase || 'idle'}
       data-pose={externalPose || 'idle'}
-      className={`robot-flight ${isJoining ? 'is-joining' : ''} pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
+      className={`robot-flight ${isJoining ? 'is-joining' : ''} ${behindOverlay ? 'is-behind-overlay' : ''} pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
         mode === 'down' ? 'is-diving' : mode === 'up' ? 'is-climbing' : 'is-gliding'
       }`}
       style={{ opacity }}

@@ -5,6 +5,7 @@
 }
 
 .robot-flight.is-joining { z-index: 70; }
+.robot-flight.is-joining.is-behind-overlay { z-index: 55; }
 .robot-flight.is-joining * { pointer-events: none !important; }
 
 .join-overlay {
@@ -18,6 +19,15 @@
   inset: 0;
   background: rgb(var(--c-ink) / 0.78);
   backdrop-filter: blur(5px);
+  transition: opacity 500ms ease;
+}
+/* Robot is behind the overlay during the pulling animation — keep the
+   backdrop transparent so the robot is visible behind the rising panel. */
+.join-overlay[data-phase='flying-bottom'] .join-backdrop,
+.join-overlay[data-phase='enlarging'] .join-backdrop,
+.join-overlay[data-phase='hands-down'] .join-backdrop,
+.join-overlay[data-phase='hands-up'] .join-backdrop {
+  opacity: 0;
 }
 .join-layout {
   position: absolute;
@@ -146,5 +156,89 @@
   .join-success-caption { top: 40px; right: auto; left: 24px; width: calc(100% - 150px); text-align: left; font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .join-panel, .join-panel-content, .join-paper-roll { transition-duration: 1ms; }
+  .join-panel, .join-panel-content, .join-paper-roll, .join-backdrop { transition-duration: 1ms; }
+}
+
+/* ---- Already-applied state ---- */
+.already-applied-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 8vh;
+}
+
+/* ---- Code of conduct link ---- */
+.conduct-link {
+  display: inline;
+  color: rgb(var(--c-sand) / 0.9);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+}
+.conduct-link:hover { color: rgb(var(--c-sand)); }
+
+/* ---- Code of conduct modal ---- */
+.conduct-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(4px);
+  animation: conduct-fade 200ms ease;
+}
+.conduct-modal-content {
+  width: min(520px, 100%);
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: 28px;
+  border: 1px solid rgb(var(--c-sand) / 0.24);
+  border-radius: 20px;
+  background: rgb(var(--c-navy));
+  box-shadow: 0 24px 80px rgb(0 0 0 / 0.4);
+  animation: conduct-pop 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.conduct-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.conduct-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.conduct-number {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgb(var(--c-sand) / 0.3);
+  background: rgb(var(--c-sand) / 0.08);
+  color: rgb(var(--c-sand) / 0.9);
+  font-size: 12px;
+  font-weight: 600;
+}
+.conduct-text {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgb(var(--c-cream) / 0.7);
+  padding-top: 3px;
+}
+@keyframes conduct-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes conduct-pop { from { opacity: 0; transform: translateY(12px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .conduct-modal, .conduct-modal-content { animation: none; }
 }

@@ -5,7 +5,8 @@ export function validateRegistration(form) {
   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
     errors.email = 'That email address looks invalid.'
   }
-  if (!form.year) errors.year = 'Please select your year of study.'
+  if (!form.semester) errors.semester = 'Please select your semester.'
+  if (!form.group) errors.group = 'Please select a group you want to join.'
   if (!form.agreed) errors.agreed = 'Please agree to the code of conduct first.'
   return errors
 }
