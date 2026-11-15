@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Robot3D from './Robot3D.jsx'
 import RobotSparks from './RobotSparks.jsx'
 import { getJoinRobotTarget } from '../lib/joinSequence.js'
+import { dampTowards, travelSpeed } from '../lib/robotFlight.js'
 import './JoinRegistration.css'
 
 const MAX_DRIFT = 240
@@ -187,10 +188,9 @@ export default function FlyingRobot({ joinPhase }) {
 
       const fromX = pos.x
       const fromY = pos.y
-      const ease = 1 - Math.exp(-11 * dt)
-      pos.x += (goal.x - pos.x) * ease
-      pos.y += (goal.y - pos.y) * ease
-      motion.current.speed = dt > 0 ? Math.hypot(pos.x - fromX, pos.y - fromY) / dt : 0
+      pos.x = dampTowards(pos.x, goal.x, dt)
+      pos.y = dampTowards(pos.y, goal.y, dt)
+      motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
 
       // While the join flight is scripted, React owns the transform.
       if (!joinPhaseRef.current && robotRef.current) {
