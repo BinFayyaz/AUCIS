@@ -51,7 +51,6 @@ export default function Contact() {
           <div className="space-y-5">
             <Reveal>
               <article className="contact-feature relative overflow-hidden rounded-2xl p-7 sm:p-8">
-                <div className="contact-feature-glow pointer-events-none absolute -right-14 -top-16 h-48 w-48 rounded-full blur-3xl" />
                 <div className="relative">
                   <span className="eyebrow text-sand/90">
                     <span className="h-px w-8 bg-sand/70" />
@@ -106,7 +105,7 @@ export default function Contact() {
 
               <Reveal delay={130}>
                 <article className="surface surface-hover flex h-full gap-4 p-5">
-                  <span className="contact-icon grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cream/10 text-sage">
+                  <span className="contact-icon grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cream/10 text-sand">
                     <Icon name="pin" size={18} />
                   </span>
                   <div>
@@ -123,7 +122,7 @@ export default function Contact() {
 
             <Reveal delay={190}>
               <article className="surface surface-hover flex gap-4 p-5">
-                <span className="contact-icon grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cream/10 text-steel">
+                <span className="contact-icon grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-cream/10 text-sand">
                   <Icon name="users" size={18} />
                 </span>
                 <div>
