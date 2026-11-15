@@ -1,6 +1,7 @@
 import PageHeader from '../components/PageHeader.jsx'
 import Reveal from '../components/Reveal.jsx'
 import TeamCard from '../components/TeamCard.jsx'
+import HierarchyChart from '../components/HierarchyChart.jsx'
 import Icon from '../components/Icon.jsx'
 import { coreRoles, executiveBody, supervisors } from '../data/site.js'
 
@@ -51,6 +52,8 @@ export default function Team() {
       />
 
       <div className="pb-14">
+        <HierarchyChart />
+
         <Group
           label="Supervisors"
           description="Faculty supervisors guiding the society."

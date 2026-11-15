@@ -1,0 +1,104 @@
+.hierarchy-chart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 16px 32px;
+  overflow-x: auto;
+}
+
+.hierarchy-level {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.hierarchy-split {
+  flex-direction: row;
+  justify-content: center;
+  gap: clamp(40px, 10vw, 120px);
+  width: 100%;
+}
+
+.hierarchy-branch {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+/* Vertical connector line between levels */
+.hierarchy-connector.vertical {
+  width: 2px;
+  height: 28px;
+  background: rgb(var(--c-sand) / 0.3);
+  flex-shrink: 0;
+}
+
+/* Horizontal bar that spans between the two branch tops */
+.hierarchy-bar {
+  width: clamp(80px, 20vw, 240px);
+  height: 2px;
+  background: rgb(var(--c-sand) / 0.3);
+  margin-top: -1px;
+}
+
+/* Nodes */
+.hierarchy-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 22px;
+  min-width: 140px;
+  border: 1px solid rgb(var(--c-cream) / 0.12);
+  border-radius: 14px;
+  background: rgb(var(--c-navy));
+  box-shadow: 0 6px 20px rgb(0 0 0 / 0.2);
+  text-align: center;
+  transition: border-color 300ms, box-shadow 300ms;
+}
+
+.hierarchy-node:hover {
+  border-color: rgb(var(--c-sand) / 0.4);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.25);
+}
+
+.hierarchy-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(var(--c-cream));
+}
+
+.hierarchy-sub {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgb(var(--c-cream) / 0.4);
+}
+
+/* Light theme: lighten the node background */
+[data-theme='light'] .hierarchy-node {
+  background: rgb(var(--c-navy));
+}
+
+/* Mobile: stack vertically with side connectors */
+@media (max-width: 640px) {
+  .hierarchy-chart {
+    align-items: stretch;
+  }
+
+  .hierarchy-split {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .hierarchy-bar {
+    display: none;
+  }
+
+  /* On mobile, branches stack vertically; connectors stay vertical */
+  .hierarchy-branch {
+    width: 100%;
+  }
+}
