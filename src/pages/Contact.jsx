@@ -1,351 +1,260 @@
-@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Inter:wght@300;400;500;600&display=swap');
+import { useState } from 'react'
+import PageHeader from '../components/PageHeader.jsx'
+import Reveal from '../components/Reveal.jsx'
+import Icon from '../components/Icon.jsx'
+import { postJson } from '../lib/api.js'
+import { site } from '../data/site.js'
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+const initialForm = { name: '', email: '', subject: '', message: '' }
 
-@layer base {
-  :root {
-    color-scheme: dark;
+const CONTACT_EMAIL = site.email || 'aucisauk@gmail.com'
+const CONTACT_SOCIALS =
+  site.socials && site.socials.length > 0
+    ? site.socials
+    : [
+        {
+          label: 'Instagram',
+          href: 'https://www.instagram.com/aucis.au?xtok=MWtsMGdrbTNqdnVhaA==',
+        },
+      ]
 
-    /* dark palette (default) */
-    --c-ink: 7 14 23;
-    --c-navy: 13 27 42;
-    --c-depth: 27 38 59;
-    --c-steel: 65 90 119;
-    --c-sage: 119 141 122;
-    --c-sand: 212 196 168;
-    --c-cream: 244 241 222;
-    --c-title: 143 168 148;
-  }
+export default function Contact() {
+  const [form, setForm] = useState(initialForm)
+  const [status, setStatus] = useState('idle')
+  const [error, setError] = useState('')
 
-  /* light palette — crisp light surfaces everywhere */
-  [data-theme='light'] {
-    color-scheme: light;
+  const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
 
-    --c-ink: 250 249 245;
-    --c-navy: 255 255 255;
-    --c-depth: 235 231 220;
-    --c-steel: 65 90 119;
-    --c-sage: 119 141 122;
-    --c-sand: 150 112 44;
-    --c-cream: 13 27 42;
-    --c-title: 107 85 61;
-  }
+  const onSubmit = async (event) => {
+    event.preventDefault()
+    setError('')
+    setStatus('sending')
 
-  html {
-    scroll-behavior: smooth;
-  }
-
-  body {
-    @apply bg-ink font-sans text-cream/80 antialiased;
-    background-image:
-      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.38), transparent 62%),
-      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.16), transparent 60%),
-      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.09), transparent 65%);
-    background-attachment: fixed;
-  }
-
-  [data-theme='light'] body {
-    background-image:
-      radial-gradient(1200px 620px at 82% -8%, rgba(65, 90, 119, 0.08), transparent 62%),
-      radial-gradient(900px 520px at 6% 4%, rgba(119, 141, 122, 0.08), transparent 60%),
-      radial-gradient(900px 700px at 50% 110%, rgba(212, 196, 168, 0.15), transparent 65%);
-  }
-
-  ::selection {
-    background: rgba(212, 196, 168, 0.28);
-    color: #f4f1de;
-  }
-
-  [data-theme='light'] ::selection {
-    background: rgba(150, 112, 44, 0.2);
-    color: #0d1b2a;
-  }
-
-  h1,
-  h2,
-  h3 {
-    @apply font-heavy text-cream;
-    font-weight: 400;
-    letter-spacing: -0.015em;
-  }
-}
-
-@layer components {
-  .container-page {
-    @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
-  }
-
-  @media (min-width: 768px) {
-    .home-page .container-page {
-      padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
-    }
-    .home-page .container-page.robot-left {
-      padding-right: 2rem;
-      padding-left: calc(clamp(210px, 26vw, 440px) + 3.5rem);
+    try {
+      await postJson('/api/messages', form)
+      setStatus('sent')
+      setForm(initialForm)
+    } catch (err) {
+      setError(err.message)
+      setStatus('idle')
     }
   }
 
-  .eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.32em] text-sand/70;
-  }
+  return (
+    <div className="contact-page min-h-screen">
+      <div className="contact-divider border-b border-cream/10">
+        <PageHeader
+          eyebrow="AUCIS — Executive Secretariat"
+          title="Connect with"
+          accent="AUCIS."
+          intro="The Air University Computing & Innovation Society (AUCIS) fosters technical excellence, research collaboration, and industry engagement across the campus community."
+        />
+      </div>
 
-  .surface {
-    @apply rounded-2xl border border-cream/10 bg-white/[0.035] backdrop-blur-sm;
-  }
+      <section className="container-page py-16">
+        <div className="grid gap-10 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+          {/* Left Column: Society Overview & Official Channels */}
+          <div className="space-y-5">
+            <Reveal>
+              <div className="contact-card p-6">
+                <span className="contact-pill inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider">
+                  About the Society
+                </span>
+                <h2 className="contact-heading mt-4 text-xl font-semibold tracking-tight">
+                  Advancing Computing &amp; Innovation
+                </h2>
+                <p className="contact-body mt-2.5 text-sm leading-relaxed">
+                  AUCIS serves as the premier student-led computing body dedicated to software engineering, competitive programming, and emerging technologies. Reach out to our executive council regarding society membership, technical workshops, hackathons, or academic partnerships.
+                </p>
+              </div>
+            </Reveal>
 
-  [data-theme='light'] .surface {
-    @apply border-[#E2DDD0] bg-white shadow-sm;
-  }
+            <Reveal delay={60}>
+              <div className="contact-card contact-card-hover p-6">
+                <div className="flex items-start gap-4">
+                  <span className="contact-icon-badge grid h-11 w-11 shrink-0 place-items-center rounded-xl">
+                    <Icon name="mail" size={18} />
+                  </span>
+                  <div>
+                    <h3 className="contact-heading text-base font-semibold">
+                      Official Correspondence
+                    </h3>
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className="contact-meta mt-1 inline-block text-sm font-medium underline underline-offset-4 transition"
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
 
-  .surface-hover {
-    @apply transition duration-500 hover:border-sand/30 hover:bg-white/[0.06];
-  }
+            <Reveal delay={120}>
+              <div className="contact-card contact-card-hover p-6">
+                <div className="flex items-start gap-4">
+                  <span className="contact-icon-badge grid h-11 w-11 shrink-0 place-items-center rounded-xl">
+                    <Icon name="pin" size={18} />
+                  </span>
+                  <div>
+                    <h3 className="contact-heading text-base font-semibold">
+                      Campus Headquarters
+                    </h3>
+                    <p className="contact-body mt-1 text-sm leading-relaxed">
+                      {site.location.line1}
+                      <br />
+                      {site.location.line2}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
 
-  [data-theme='light'] .surface-hover {
-    @apply hover:border-[#415A77] hover:bg-[#FAF9F5];
-  }
+            <Reveal delay={180}>
+              <div className="contact-card contact-card-hover p-6">
+                <div className="flex items-start gap-4">
+                  <span className="contact-icon-badge grid h-11 w-11 shrink-0 place-items-center rounded-xl">
+                    <Icon name="instagram" size={18} />
+                  </span>
+                  <div>
+                    <h3 className="contact-heading text-base font-semibold">
+                      Digital Channels
+                    </h3>
+                    <ul className="mt-2.5 flex flex-wrap gap-2">
+                      {CONTACT_SOCIALS.map((social) => (
+                        <li key={social.label}>
+                          <a
+                            href={social.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="contact-social-link"
+                          >
+                            {social.label}
+                            <Icon name="arrowUpRight" size={13} />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
 
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium tracking-wide transition duration-300;
-  }
+          {/* Right Column: Formal Inquiry Form */}
+          <Reveal delay={100}>
+            {status === 'sent' ? (
+              <div className="contact-card p-8 sm:p-10">
+                <span className="contact-icon-badge grid h-12 w-12 place-items-center rounded-full">
+                  <Icon name="check" size={20} />
+                </span>
+                <p className="contact-meta mt-5 text-xs font-semibold uppercase tracking-widest">
+                  Dispatch Confirmed
+                </p>
+                <h3 className="contact-heading mt-1 text-2xl font-semibold">
+                  Your inquiry has been logged.
+                </h3>
+                <p className="contact-body mt-3 text-sm leading-relaxed">
+                  Thank you for contacting the Air University Computing &amp; Innovation Society. A representative from our executive body will review your message and respond to your provided email address.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setStatus('idle')}
+                  className="btn-ghost mt-7"
+                >
+                  Submit another inquiry
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={onSubmit} className="contact-card p-7 sm:p-9">
+                <div className="contact-divider border-b border-cream/10 pb-5">
+                  <span className="contact-meta text-xs font-semibold uppercase tracking-widest">
+                    Direct Desk
+                  </span>
+                  <h2 className="contact-heading mt-1 text-2xl font-semibold">
+                    Send an Official Message
+                  </h2>
+                  <p className="contact-body mt-1.5 text-sm">
+                    Complete the form below to route your inquiry directly to the AUCIS Executive Committee.
+                  </p>
+                </div>
 
-  .btn-primary {
-    @apply btn text-navy;
-    background-image: linear-gradient(115deg, #f4f1de, #d4c4a8 45%, #b9c7b6 100%);
-    box-shadow: 0 18px 40px -22px rgba(212, 196, 168, 0.9);
-  }
+                <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label className="contact-label label" htmlFor="c-name">
+                      Full Name
+                    </label>
+                    <input
+                      id="c-name"
+                      className="contact-field"
+                      placeholder="e.g. Ayesha Khan"
+                      value={form.name}
+                      onChange={(e) => update('name', e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="contact-label label" htmlFor="c-email">
+                      Email Address
+                    </label>
+                    <input
+                      id="c-email"
+                      type="email"
+                      className="contact-field"
+                      placeholder="name@students.au.edu.pk"
+                      value={form.email}
+                      onChange={(e) => update('email', e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
 
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 26px 50px -22px rgba(212, 196, 168, 0.95);
-  }
+                <div className="mt-5">
+                  <label className="contact-label label" htmlFor="c-subject">
+                    Subject / Department
+                  </label>
+                  <input
+                    id="c-subject"
+                    className="contact-field"
+                    value={form.subject}
+                    onChange={(e) => update('subject', e.target.value)}
+                    placeholder="Membership, Event Collaboration, Technical Query..."
+                  />
+                </div>
 
-  [data-theme='light'] .btn-primary {
-    color: #ffffff;
-    background-image: linear-gradient(115deg, #0d1b2a, #1b263b 55%, #2c3a4e 100%);
-    box-shadow: 0 18px 34px -22px rgba(13, 27, 42, 0.65);
-  }
+                <div className="mt-5">
+                  <label className="contact-label label" htmlFor="c-message">
+                    Detailed Message
+                  </label>
+                  <textarea
+                    id="c-message"
+                    className="contact-field min-h-[155px] resize-y"
+                    placeholder="Provide context regarding your inquiry or proposal..."
+                    value={form.message}
+                    onChange={(e) => update('message', e.target.value)}
+                    required
+                  />
+                </div>
 
-  .btn-ghost {
-    @apply btn border border-cream/15 text-cream/85 hover:border-sand/40 hover:text-cream;
-  }
+                {error && (
+                  <div className="contact-card mt-4 px-4 py-3 text-sm font-medium text-sand">
+                    {error}
+                  </div>
+                )}
 
-  [data-theme='light'] .btn-ghost {
-    @apply border-[#E2DDD0] bg-white text-[#0D1B2A] hover:border-[#415A77] hover:bg-[#FAF9F5];
-  }
-
-  .field {
-    @apply w-full rounded-xl border border-cream/[0.14] bg-navy/60 px-4 py-3 text-sm text-cream/90 outline-none transition placeholder:text-cream/30 focus:border-sand/50 focus:bg-navy/80;
-  }
-
-  [data-theme='light'] .field {
-    @apply border-[#E2DDD0] bg-[#FAF9F5] text-[#0D1B2A] placeholder:text-[#415A77]/60 focus:border-[#415A77] focus:bg-white;
-  }
-
-  .label {
-    @apply mb-2 block text-[11px] font-medium uppercase tracking-[0.2em] text-cream/45;
-  }
-
-  [data-theme='light'] .label {
-    @apply text-[#1B263B];
-  }
-
-  .rule {
-    @apply h-px w-full bg-gradient-to-r from-transparent via-cream/15 to-transparent;
-  }
-
-  .logo-light {
-    display: none;
-  }
-
-  [data-theme='light'] .logo-dark {
-    display: none;
-  }
-
-  [data-theme='light'] .logo-light {
-    display: block;
-  }
-
-  /* =========================================================
-     CONTACT PAGE — DUAL-THEME STYLING
-     ========================================================= */
-
-  /* Dark Mode (Default) Contact Page Styles */
-  .contact-page .contact-card {
-    @apply rounded-2xl border border-cream/10 bg-white/[0.035] backdrop-blur-sm transition duration-300;
-  }
-
-  .contact-page .contact-card-hover:hover {
-    border-color: rgba(212, 196, 168, 0.35);
-    background-color: rgba(255, 255, 255, 0.055);
-  }
-
-  .contact-page .contact-icon-badge {
-    border: 1px solid rgba(212, 196, 168, 0.25);
-    background-color: rgba(65, 90, 119, 0.2);
-    color: #d4c4a8;
-  }
-
-  .contact-page .contact-pill {
-    border: 1px solid rgba(119, 141, 122, 0.4);
-    background-color: rgba(119, 141, 122, 0.15);
-    color: #d4c4a8;
-  }
-
-  .contact-page .contact-field {
-    @apply w-full rounded-xl border border-cream/[0.14] bg-navy/60 px-4 py-3 text-sm text-cream/90 outline-none transition placeholder:text-cream/35;
-  }
-
-  .contact-page .contact-field:focus {
-    border-color: #778d7a;
-    box-shadow: 0 0 0 3px rgba(119, 141, 122, 0.18);
-  }
-
-  .contact-page .contact-submit {
-    @apply btn-primary w-full;
-  }
-
-  .contact-page .contact-social-link {
-    @apply inline-flex items-center gap-1.5 rounded-lg border border-cream/15 bg-white/[0.04] px-3 py-1.5 text-xs font-medium text-cream transition hover:border-sand/40 hover:bg-sand/15;
-  }
-
-  /* Light Mode Overrides for Contact Page (Strictly scoped under [data-theme='light']) */
-  [data-theme='light'] .contact-page {
-    background-color: #faf9f5;
-    color: #0d1b2a;
-  }
-
-  [data-theme='light'] .contact-page .contact-card {
-    background-color: #ffffff;
-    border-color: #e2ddd0;
-    box-shadow: 0 10px 28px -18px rgba(13, 27, 42, 0.12);
-  }
-
-  [data-theme='light'] .contact-page .contact-card-hover:hover {
-    border-color: #415a77;
-    background-color: #ffffff;
-    box-shadow: 0 16px 34px -18px rgba(13, 27, 42, 0.18);
-  }
-
-  [data-theme='light'] .contact-page .contact-icon-badge {
-    background-color: #faf9f5;
-    border-color: #e2ddd0;
-    color: #415a77;
-  }
-
-  [data-theme='light'] .contact-page .contact-pill {
-    background-color: rgba(119, 141, 122, 0.14);
-    border-color: rgba(119, 141, 122, 0.4);
-    color: #0d1b2a;
-  }
-
-  [data-theme='light'] .contact-page .contact-divider {
-    border-color: #e2ddd0;
-  }
-
-  [data-theme='light'] .contact-page .contact-heading {
-    color: #0d1b2a;
-  }
-
-  [data-theme='light'] .contact-page .contact-body {
-    color: #1b263b;
-  }
-
-  [data-theme='light'] .contact-page .contact-meta {
-    color: #415a77;
-  }
-
-  [data-theme='light'] .contact-page .contact-label {
-    color: #1b263b;
-    font-weight: 600;
-  }
-
-  [data-theme='light'] .contact-page .contact-field {
-    background-color: #faf9f5;
-    border-color: #e2ddd0;
-    color: #0d1b2a;
-  }
-
-  [data-theme='light'] .contact-page .contact-field::placeholder {
-    color: rgba(65, 90, 119, 0.6);
-  }
-
-  [data-theme='light'] .contact-page .contact-field:focus {
-    border-color: #415a77;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(65, 90, 119, 0.14);
-  }
-
-  [data-theme='light'] .contact-page .contact-submit {
-    background-image: none;
-    background-color: #0d1b2a;
-    color: #ffffff;
-    box-shadow: 0 14px 28px -16px rgba(13, 27, 42, 0.55);
-  }
-
-  [data-theme='light'] .contact-page .contact-submit:hover {
-    background-color: #1b263b;
-  }
-
-  [data-theme='light'] .contact-page .contact-social-link {
-    border-color: #e2ddd0;
-    background-color: #faf9f5;
-    color: #0d1b2a;
-  }
-
-  [data-theme='light'] .contact-page .contact-social-link:hover {
-    border-color: #415a77;
-    background-color: #415a77;
-    color: #ffffff;
-  }
-}
-
-@layer utilities {
-  .text-gradient {
-    color: rgb(var(--c-title));
-  }
-
-  .tracking-mega {
-    letter-spacing: 0.42em;
-  }
-
-  .reveal {
-    opacity: 0;
-    transform: translateY(26px);
-    transition:
-      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  .grain::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.35;
-    background-image: radial-gradient(rgba(244, 241, 222, 0.12) 0.5px, transparent 0.5px);
-    background-size: 4px 4px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-  }
-
-  .reveal {
-    opacity: 1;
-    transform: none;
-  }
+                <button
+                  type="submit"
+                  disabled={status === 'sending'}
+                  className="contact-submit mt-7 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {status === 'sending' ? 'Transmitting Message…' : 'Transmit Message to AUCIS'}
+                  {status !== 'sending' && <Icon name="arrowRight" size={16} />}
+                </button>
+              </form>
+            )}
+          </Reveal>
+        </div>
+      </section>
+    </div>
+  )
 }
