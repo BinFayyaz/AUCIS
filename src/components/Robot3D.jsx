@@ -176,7 +176,8 @@ function Leg({ side = 1, hipRef, kneeRef, footRef }) {
   )
 }
 
-function Robot({ reduced, externalPose, motionRef }) {
+function Robot({ reduced, externalPose, motionRef, pose: stance }) {
+  const recumbent = stance === 'recumbent'
   const body = useRef(null)
   const head = useRef(null)
   const core = useRef(null)
@@ -247,7 +248,15 @@ function Robot({ reduced, externalPose, motionRef }) {
       pointer.current.y = THREE.MathUtils.damp(pointer.current.y, aim.current.y, 2.6, ease)
     }
 
-    if (body.current) {
+    if (recumbent && body.current) {
+      // Right lateral recumbent: the robot lies on its right side, settling
+      // with a slow breath instead of the upright hover.
+      body.current.rotation.z = THREE.MathUtils.damp(body.current.rotation.z, -Math.PI / 2, 3, ease)
+      body.current.rotation.x = THREE.MathUtils.damp(body.current.rotation.x, 0, 4, ease)
+      body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 4, ease)
+      body.current.position.x = THREE.MathUtils.damp(body.current.position.x, -0.25, 4, ease)
+      body.current.position.y = reduced ? 0 : Math.sin(t * 0.9) * 0.02
+    } else if (body.current) {
       body.current.position.y = reduced ? 0 : Math.sin(t * 1.1) * 0.06
       body.current.rotation.y = reduced || externalPose ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
       body.current.rotation.x = reduced || externalPose ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
@@ -261,7 +270,17 @@ function Robot({ reduced, externalPose, motionRef }) {
     }
 
     // Arm animation driven by the effective pose.
-    if (eff === 'hands-down') {
+    if (recumbent) {
+      // Lying down: arms fall relaxed along the body.
+      const restArm = (arm) => {
+        if (!arm) return
+        arm.rotation.z = THREE.MathUtils.damp(arm.rotation.z, 0, 6, ease)
+        arm.rotation.x = THREE.MathUtils.damp(arm.rotation.x, 0, 6, ease)
+        arm.scale.y = THREE.MathUtils.damp(arm.scale.y, 1, 6, ease)
+      }
+      restArm(rightArmRef.current)
+      restArm(leftArmRef.current)
+    } else if (eff === 'hands-down') {
       // Arms point straight down and stretch downward.
       if (rightArmRef.current) {
         rightArmRef.current.rotation.z = THREE.MathUtils.damp(rightArmRef.current.rotation.z, 0, 8, ease)
@@ -297,8 +316,8 @@ function Robot({ reduced, externalPose, motionRef }) {
     // Legs: the gait speed and stride follow how fast the body is actually
     // travelling, so the steps stay in step with the glide instead of
     // looping at a fixed rate.
-    const travel = motionRef?.current?.speed || 0
-    const gaitTarget = reduced ? 0 : Math.min(1, travel / 260)
+    const travel = recumbent ? 0 : motionRef?.current?.speed || 0
+    const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 260)
     gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 5, ease)
     if (!reduced) gait.current.phase += ease * (2.6 + Math.min(travel, 1600) * 0.05)
     const stride = gait.current.amplitude
@@ -313,23 +332,30 @@ function Robot({ reduced, externalPose, motionRef }) {
       if (foot) foot.rotation.x = -(hipAngle + bend) * 0.6
     }
 
+    // Lying on its right side the legs relax into a loose, drawn-up rest.
     poseLeg(
       rightHip.current,
       rightKnee.current,
       rightFoot.current,
-      swing * 0.6 * stride + Math.sin(t * 1.2) * idleSway,
+      recumbent ? 0.34 : swing * 0.6 * stride + Math.sin(t * 1.2) * idleSway,
     )
     poseLeg(
       leftHip.current,
       leftKnee.current,
       leftFoot.current,
-      -swing * 0.6 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
+      recumbent ? 0.16 : -swing * 0.6 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
     )
 
     if (head.current) {
-      head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
-      head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
-      head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02
+      if (recumbent) {
+        head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 4, ease)
+        head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0.1, 4, ease)
+        head.current.rotation.z = reduced ? 0 : Math.sin(t * 0.9) * 0.03
+      } else {
+        head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+        head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
+        head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02
+      }
     }
 
     if (core.current) {
@@ -457,10 +483,12 @@ function Robot({ reduced, externalPose, motionRef }) {
         <ringGeometry args={[0.1, 0.24, 48]} />
         <meshBasicMaterial color={TEAL_LIGHT} transparent opacity={0.85} side={THREE.DoubleSide} toneMapped={false} />
       </mesh>
-      <mesh position={[0, -0.98, 0]}>
-        <coneGeometry args={[0.3, 0.6, 32, 1, true]} />
-        <meshBasicMaterial color={TEAL} transparent opacity={0.16} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
-      </mesh>
+      {!recumbent && (
+        <mesh position={[0, -0.98, 0]}>
+          <coneGeometry args={[0.3, 0.6, 32, 1, true]} />
+          <meshBasicMaterial color={TEAL} transparent opacity={0.16} side={THREE.DoubleSide} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
+        </mesh>
+      )}
 
       {/* ---- orbit accents ---- */}
       <mesh ref={orbA} position={[1.12, 0.5, 0]}>
@@ -475,7 +503,7 @@ function Robot({ reduced, externalPose, motionRef }) {
   )
 }
 
-function Scene({ externalPose, motionRef }) {
+function Scene({ externalPose, motionRef, pose }) {
   const reduced = useReducedMotion()
   return (
     <>
@@ -485,12 +513,12 @@ function Scene({ externalPose, motionRef }) {
       <directionalLight position={[-5, 2, -4]} intensity={1.1} color="#8fd8ff" />
       <pointLight position={[-2.6, -1.4, 2.6]} intensity={9} distance={9} color={TEAL} />
       <pointLight position={[2.4, 2.2, -3]} intensity={6} distance={9} color={SAND} />
-      <Robot reduced={reduced} externalPose={externalPose} motionRef={motionRef} />
+      <Robot reduced={reduced} externalPose={externalPose} motionRef={motionRef} pose={pose} />
     </>
   )
 }
 
-export default function Robot3D({ className = '', externalPose, motionRef }) {
+export default function Robot3D({ className = '', externalPose, motionRef, pose }) {
   return (
     <div className={`robot-3d ${className}`}>
       <div className="robot-3d-glow" aria-hidden="true" />
@@ -501,7 +529,7 @@ export default function Robot3D({ className = '', externalPose, motionRef }) {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
-          <Scene externalPose={externalPose} motionRef={motionRef} />
+          <Scene externalPose={externalPose} motionRef={motionRef} pose={pose} />
         </Suspense>
       </Canvas>
     </div>

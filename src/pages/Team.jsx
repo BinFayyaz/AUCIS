@@ -49,6 +49,7 @@ export default function Team() {
         title="A team of"
         accent="students."
         intro="The society is run by students, guided by faculty. Photos and short bios are on the way."
+        robot="resting"
       />
 
       <div className="pb-14">
