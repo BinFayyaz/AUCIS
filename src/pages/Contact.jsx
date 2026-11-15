@@ -41,8 +41,8 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F4F1DE] text-[#0D1B2A] selection:bg-[#415A77] selection:text-[#F4F1DE] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:selection:bg-[#415A77]">
-      <div className="border-b border-[#D4C4A8] bg-[#F4F1DE] dark:border-[#1C2541] dark:bg-[#0B132B]">
+    <div className="min-h-screen bg-[#FAF9F5] text-[#0D1B2A] selection:bg-[#415A77] selection:text-[#F4F1DE] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:selection:bg-[#415A77]">
+      <div className="border-b border-[#E2DDD0] bg-white dark:border-[#1C2541] dark:bg-[#0B132B]">
         <PageHeader
           eyebrow="AUCIS — Executive Secretariat"
           title="Connect with"
@@ -56,7 +56,7 @@ export default function Contact() {
           {/* Left Column: Society Overview & Official Channels */}
           <div className="space-y-5">
             <Reveal>
-              <div className="rounded-2xl border border-[#D4C4A8] bg-[#F4F1DE] p-6 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40">
                 <span className="inline-block rounded-full border border-[#778D7A]/40 bg-[#778D7A]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#0D1B2A] dark:text-[#E0E1DD]">
                   About the Society
                 </span>
@@ -70,9 +70,9 @@ export default function Contact() {
             </Reveal>
 
             <Reveal delay={60}>
-              <div className="rounded-2xl border border-[#D4C4A8] bg-[#F4F1DE] p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#D4C4A8] bg-[#D4C4A8]/25 text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
                     <Icon name="mail" size={18} />
                   </span>
                   <div>
@@ -89,9 +89,9 @@ export default function Contact() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="rounded-2xl border border-[#D4C4A8] bg-[#F4F1DE] p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#D4C4A8] bg-[#D4C4A8]/25 text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
                     <Icon name="pin" size={18} />
                   </span>
                   <div>
@@ -107,9 +107,9 @@ export default function Contact() {
             </Reveal>
 
             <Reveal delay={180}>
-              <div className="rounded-2xl border border-[#D4C4A8] bg-[#F4F1DE] p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#D4C4A8] bg-[#D4C4A8]/25 text-[#778D7A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#778D7A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
                     <Icon name="instagram" size={18} />
                   </span>
                   <div>
@@ -121,7 +121,7 @@ export default function Contact() {
                             href={social.href}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4C4A8] bg-[#D4C4A8]/20 px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-[#F4F1DE] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD] dark:hover:border-[#415A77] dark:hover:bg-[#415A77]"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2DDD0] bg-[#FAF9F5] px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-white dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD] dark:hover:border-[#415A77] dark:hover:bg-[#415A77]"
                           >
                             {social.label}
                             <Icon name="arrowUpRight" size={13} />
@@ -138,8 +138,8 @@ export default function Contact() {
           {/* Right Column: Formal Inquiry Form */}
           <Reveal delay={100}>
             {status === 'sent' ? (
-              <div className="rounded-2xl border border-[#778D7A] bg-[#F4F1DE] p-8 sm:p-10 shadow-sm dark:border-[#778D7A]/50 dark:bg-[#1C2541]/40">
-                <span className="grid h-12 w-12 place-items-center rounded-full border border-[#778D7A] bg-[#778D7A]/20 text-[#0D1B2A] dark:text-[#E0E1DD]">
+              <div className="rounded-2xl border border-[#778D7A] bg-white p-8 sm:p-10 shadow-sm dark:border-[#778D7A]/50 dark:bg-[#1C2541]/40">
+                <span className="grid h-12 w-12 place-items-center rounded-full border border-[#778D7A] bg-[#778D7A]/15 text-[#0D1B2A] dark:text-[#E0E1DD]">
                   <Icon name="check" size={20} />
                 </span>
                 <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-[#778D7A]">
@@ -154,7 +154,7 @@ export default function Contact() {
                 <button
                   type="button"
                   onClick={() => setStatus('idle')}
-                  className="mt-7 inline-flex items-center gap-2 rounded-xl border border-[#415A77] bg-transparent px-5 py-2.5 text-sm font-medium text-[#0D1B2A] transition hover:bg-[#415A77] hover:text-[#F4F1DE] dark:border-[#415A77] dark:text-[#E0E1DD] dark:hover:bg-[#415A77]"
+                  className="mt-7 inline-flex items-center gap-2 rounded-xl border border-[#415A77] bg-white px-5 py-2.5 text-sm font-medium text-[#0D1B2A] transition hover:bg-[#415A77] hover:text-white dark:border-[#415A77] dark:bg-transparent dark:text-[#E0E1DD] dark:hover:bg-[#415A77]"
                 >
                   Submit another inquiry
                 </button>
@@ -162,9 +162,9 @@ export default function Contact() {
             ) : (
               <form
                 onSubmit={onSubmit}
-                className="rounded-2xl border border-[#D4C4A8] bg-[#F4F1DE] p-7 sm:p-9 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40"
+                className="rounded-2xl border border-[#E2DDD0] bg-white p-7 sm:p-9 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40"
               >
-                <div className="border-b border-[#D4C4A8] pb-5 dark:border-[#1C2541]">
+                <div className="border-b border-[#E2DDD0] pb-5 dark:border-[#1C2541]">
                   <span className="text-xs font-semibold uppercase tracking-widest text-[#415A77] dark:text-[#8D99AE]">
                     Direct Desk
                   </span>
@@ -186,7 +186,7 @@ export default function Contact() {
                     </label>
                     <input
                       id="c-name"
-                      className="w-full rounded-xl border border-[#D4C4A8] bg-[#F4F1DE] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
                       placeholder="e.g. Ayesha Khan"
                       value={form.name}
                       onChange={(e) => update('name', e.target.value)}
@@ -203,7 +203,7 @@ export default function Contact() {
                     <input
                       id="c-email"
                       type="email"
-                      className="w-full rounded-xl border border-[#D4C4A8] bg-[#F4F1DE] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
                       placeholder="name@students.au.edu.pk"
                       value={form.email}
                       onChange={(e) => update('email', e.target.value)}
@@ -221,7 +221,7 @@ export default function Contact() {
                   </label>
                   <input
                     id="c-subject"
-                    className="w-full rounded-xl border border-[#D4C4A8] bg-[#F4F1DE] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                    className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
                     value={form.subject}
                     onChange={(e) => update('subject', e.target.value)}
                     placeholder="Membership, Event Collaboration, Technical Query..."
@@ -237,7 +237,7 @@ export default function Contact() {
                   </label>
                   <textarea
                     id="c-message"
-                    className="min-h-[155px] w-full resize-y rounded-xl border border-[#D4C4A8] bg-[#F4F1DE] px-4 py-3 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                    className="min-h-[155px] w-full resize-y rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-3 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
                     placeholder="Provide context regarding your inquiry or proposal..."
                     value={form.message}
                     onChange={(e) => update('message', e.target.value)}
@@ -246,7 +246,7 @@ export default function Contact() {
                 </div>
 
                 {error && (
-                  <div className="mt-4 rounded-xl border border-[#0D1B2A] bg-[#D4C4A8]/35 px-4 py-3 text-sm font-medium text-[#0D1B2A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#F4F1DE]">
+                  <div className="mt-4 rounded-xl border border-[#0D1B2A] bg-[#FAF9F5] px-4 py-3 text-sm font-medium text-[#0D1B2A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#F4F1DE]">
                     {error}
                   </div>
                 )}
@@ -254,7 +254,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D1B2A] px-6 py-3.5 text-sm font-semibold tracking-wide text-[#F4F1DE] transition hover:bg-[#1B263B] focus:outline-none focus:ring-2 focus:ring-[#415A77] focus:ring-offset-2 focus:ring-offset-[#F4F1DE] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#E0E1DD] dark:text-[#0B132B] dark:hover:bg-[#F4F1DE] dark:focus:ring-offset-[#0B132B]"
+                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D1B2A] px-6 py-3.5 text-sm font-semibold tracking-wide text-white transition hover:bg-[#1B263B] focus:outline-none focus:ring-2 focus:ring-[#415A77] focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#E0E1DD] dark:text-[#0B132B] dark:hover:bg-[#F4F1DE] dark:focus:ring-offset-[#0B132B]"
                 >
                   {status === 'sending' ? 'Transmitting Message…' : 'Transmit Message to AUCIS'}
                   {status !== 'sending' && <Icon name="arrowRight" size={16} />}
