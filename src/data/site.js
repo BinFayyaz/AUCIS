@@ -122,6 +122,24 @@ export const codeOfConduct = [
   'Report concerns to the executive body — every report is handled privately.',
 ]
 
+export const groups = [
+  'Technical',
+  'Design',
+  'Research and Innovation',
+  'PR',
+  'Event Management',
+  'General',
+  'Support and Discipline',
+  'Team Leads and Co-Leads',
+  'Media',
+  'Finance',
+  'Operations',
+  'Decor',
+  'Dept. Ambassadors',
+  'Digital Marketing Liaison',
+  'Marketing',
+]
+
 export const interests = [
   'Programming & software',
   'Artificial intelligence',

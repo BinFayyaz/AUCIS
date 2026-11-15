@@ -1,8 +1,12 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Aurora from '../components/Aurora.jsx'
+import CountUp from '../components/CountUp.jsx'
 import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
+import JoinFormOverlay from '../components/JoinFormOverlay.jsx'
 import Reveal from '../components/Reveal.jsx'
+import { JOIN_SEQUENCE } from '../lib/joinSequence.js'
 import { pillars, site, upcomingEvents } from '../data/site.js'
 
 const quickLinks = [
@@ -25,7 +29,7 @@ const quickLinks = [
     icon: 'calendar',
   },
   {
-    to: '/join',
+    to: '/#join',
     title: 'Join Us',
     text: 'Who can join, member benefits and the application form.',
     icon: 'plus',
@@ -38,12 +42,70 @@ const quickLinks = [
   },
 ]
 
+const societyStats = [
+  { value: 150, label: 'Members' },
+  { value: 20, label: 'Events' },
+  { value: 12, label: 'Projects' },
+  { value: 8, label: 'Teams' },
+]
+
 export default function Home() {
   const nextEvent = upcomingEvents[0]
+  const [joinPhase, setJoinPhase] = useState(null)
+  const [applicationId, setApplicationId] = useState(0)
+  const joinPhaseRef = useRef(null)
+  joinPhaseRef.current = joinPhase
+
+  const startJoinSequence = () => {
+    // Repeated Join clicks must not restart a form that is already opening.
+    if (joinPhaseRef.current && joinPhaseRef.current !== 'holding') return
+    joinPhaseRef.current = 'flying-bottom'
+    setApplicationId((id) => id + 1)
+    setJoinPhase('flying-bottom')
+  }
+
+  const closeJoin = () => setJoinPhase(null)
+  const handleFormError = (hasErrors) => setJoinPhase(hasErrors ? 'error' : 'form')
+  const handleFormSuccess = () => setJoinPhase('collecting')
+
+  useEffect(() => {
+    const step = JOIN_SEQUENCE[joinPhase]
+    if (!step?.next) return
+    const timer = window.setTimeout(() => setJoinPhase(step.next), step.duration)
+    return () => window.clearTimeout(timer)
+  }, [joinPhase])
+
+  const modalOpen = Boolean(joinPhase && joinPhase !== 'holding')
+  useEffect(() => {
+    if (!modalOpen) return
+    const originalOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = originalOverflow }
+  }, [modalOpen])
+
+  // Allow any page (header, footer, mobile nav) to trigger the join popup
+  // via a custom event — works on same page and after cross-page navigation.
+  const startJoinRef = useRef(null)
+  startJoinRef.current = startJoinSequence
+  useEffect(() => {
+    const handler = () => startJoinRef.current()
+    window.addEventListener('aucis:join', handler)
+    return () => window.removeEventListener('aucis:join', handler)
+  }, [])
 
   return (
     <div className="home-page relative">
-      <FlyingRobot />
+      <FlyingRobot joinPhase={joinPhase} />
+
+      {joinPhase && (
+        <JoinFormOverlay
+          key={applicationId}
+          joinPhase={joinPhase}
+          onError={handleFormError}
+          onSuccess={handleFormSuccess}
+          onClose={closeJoin}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative overflow-hidden">
@@ -77,10 +139,10 @@ export default function Home() {
 
             <Reveal delay={300}>
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link to="/join" className="btn-primary">
+                <button type="button" onClick={startJoinSequence} className="btn-primary">
                   Join AUCIS
                   <Icon name="arrowRight" size={16} />
-                </Link>
+                </button>
                 <Link to="/events" className="btn-ghost">
                   Explore events
                 </Link>
@@ -103,7 +165,7 @@ export default function Home() {
 
       {/* Intro */}
       <section className="relative border-y border-cream/5 bg-navy/25">
-        <div className="container-page grid gap-10 py-20 md:grid-cols-[0.8fr_1.2fr] md:items-start">
+        <div className="container-page robot-left grid gap-10 py-20 md:grid-cols-[0.8fr_1.2fr] md:items-start">
           <Reveal>
             <span className="eyebrow">
               <span className="h-px w-8 bg-sand/50" />
@@ -129,8 +191,36 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Upcoming event highlight */}
+      {/* Society stats */}
       <section className="container-page py-20">
+        <Reveal>
+          <div className="mb-8 text-center">
+            <span className="eyebrow justify-center">
+              <span className="h-px w-8 bg-sand/50" />
+              By the numbers
+            </span>
+            <h2 className="mt-5 text-3xl sm:text-4xl">A growing community of builders</h2>
+          </div>
+        </Reveal>
+
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {societyStats.map((stat, i) => (
+            <Reveal key={stat.label} delay={i * 80}>
+              <div className="surface h-full p-6 text-center sm:p-8">
+                <p className="text-4xl font-semibold tracking-tight text-sand sm:text-5xl">
+                  <CountUp value={stat.value} />
+                </p>
+                <p className="mt-3 text-[11px] uppercase tracking-[0.24em] text-cream/55">
+                  {stat.label}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+      {/* Upcoming event highlight */}
+      <section className="container-page robot-left py-20">
         <Reveal>
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -233,6 +323,7 @@ export default function Home() {
             <Reveal key={link.to} delay={i * 70}>
               <Link
                 to={link.to}
+                onClick={link.to === '/#join' ? (e) => { e.preventDefault(); startJoinSequence() } : undefined}
                 className="surface surface-hover group flex h-full flex-col justify-between p-6"
               >
                 <div>
