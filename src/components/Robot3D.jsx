@@ -110,7 +110,73 @@ function Arm({ side = 1, armRef, children }) {
   )
 }
 
-function Robot({ reduced, externalPose }) {
+/**
+ * A single leg: ceramic thigh, navy knee joint and a flat ceramic foot. The
+ * hip and knee groups are exposed as refs so the gait can drive them.
+ */
+function Leg({ side = 1, hipRef, kneeRef, footRef }) {
+  return (
+    <group ref={hipRef} position={[0.215 * side, -0.5, 0]} rotation={[0, 0, 0.1 * side]}>
+      {/* hip cap */}
+      <mesh>
+        <sphereGeometry args={[0.125, 28, 28]} />
+        <meshPhysicalMaterial color={NAVY} roughness={0.32} metalness={0.7} clearcoat={0.8} />
+      </mesh>
+      {/* thigh */}
+      <mesh position={[0, -0.145, 0]}>
+        <capsuleGeometry args={[0.082, 0.17, 8, 24]} />
+        <meshPhysicalMaterial
+          color={CERAMIC}
+          roughness={0.3}
+          metalness={0.06}
+          clearcoat={1}
+          clearcoatRoughness={0.22}
+        />
+      </mesh>
+      {/* knee — the shin pivots here */}
+      <group ref={kneeRef} position={[0, -0.29, 0]}>
+        <mesh>
+          <sphereGeometry args={[0.092, 26, 26]} />
+          <meshPhysicalMaterial color={NAVY} roughness={0.34} metalness={0.65} />
+        </mesh>
+        <mesh rotation={[0, 0, Math.PI / 2]}>
+          <torusGeometry args={[0.1, 0.011, 10, 32]} />
+          <meshStandardMaterial color={TEAL} emissive={TEAL} emissiveIntensity={1.2} toneMapped={false} />
+        </mesh>
+        {/* shin */}
+        <mesh position={[0, -0.135, 0]}>
+          <capsuleGeometry args={[0.07, 0.15, 8, 24]} />
+          <meshPhysicalMaterial
+            color={CERAMIC_WARM}
+            roughness={0.32}
+            metalness={0.08}
+            clearcoat={1}
+            clearcoatRoughness={0.26}
+          />
+        </mesh>
+        {/* ankle joint + foot */}
+        <group ref={footRef} position={[0, -0.27, 0]}>
+          <mesh>
+            <sphereGeometry args={[0.072, 22, 22]} />
+            <meshPhysicalMaterial color={NAVY} roughness={0.36} metalness={0.6} />
+          </mesh>
+          <mesh position={[0, -0.05, 0.055]} scale={[0.11, 0.055, 0.16]}>
+            <sphereGeometry args={[1, 24, 20]} />
+            <meshPhysicalMaterial
+              color={CERAMIC}
+              roughness={0.3}
+              metalness={0.06}
+              clearcoat={1}
+              clearcoatRoughness={0.22}
+            />
+          </mesh>
+        </group>
+      </group>
+    </group>
+  )
+}
+
+function Robot({ reduced, externalPose, motionRef }) {
   const body = useRef(null)
   const head = useRef(null)
   const core = useRef(null)
@@ -121,6 +187,13 @@ function Robot({ reduced, externalPose }) {
   const poseTimer = useRef(null)
   const leftArmRef = useRef(null)
   const rightArmRef = useRef(null)
+  const rightHip = useRef(null)
+  const rightKnee = useRef(null)
+  const rightFoot = useRef(null)
+  const leftHip = useRef(null)
+  const leftKnee = useRef(null)
+  const leftFoot = useRef(null)
+  const gait = useRef({ phase: 0, amplitude: 0 })
 
   const pointer = useRef({ x: 0, y: 0 })
   const aim = useRef({ x: 0, y: 0 })
@@ -220,6 +293,38 @@ function Robot({ reduced, externalPose }) {
         leftArmRef.current.scale.y = THREE.MathUtils.damp(leftArmRef.current.scale.y, 1, 8, ease)
       }
     }
+
+    // Legs: the gait speed and stride follow how fast the body is actually
+    // travelling, so the steps stay in step with the glide instead of
+    // looping at a fixed rate.
+    const travel = motionRef?.current?.speed || 0
+    const gaitTarget = reduced ? 0 : Math.min(1, travel / 260)
+    gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 5, ease)
+    if (!reduced) gait.current.phase += ease * (2.6 + Math.min(travel, 1600) * 0.05)
+    const stride = gait.current.amplitude
+    const swing = Math.sin(gait.current.phase)
+    const idleSway = 0.06 * (1 - stride)
+
+    const poseLeg = (hip, knee, foot, hipAngle) => {
+      if (!hip || !knee) return
+      const bend = 0.14 + Math.max(0, -hipAngle) * 0.9
+      hip.rotation.x = hipAngle
+      knee.rotation.x = bend
+      if (foot) foot.rotation.x = -(hipAngle + bend) * 0.6
+    }
+
+    poseLeg(
+      rightHip.current,
+      rightKnee.current,
+      rightFoot.current,
+      swing * 0.6 * stride + Math.sin(t * 1.2) * idleSway,
+    )
+    poseLeg(
+      leftHip.current,
+      leftKnee.current,
+      leftFoot.current,
+      -swing * 0.6 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
+    )
 
     if (head.current) {
       head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
@@ -335,6 +440,10 @@ function Robot({ reduced, externalPose }) {
       </Arm>
       <Arm side={-1} armRef={leftArmRef} />
 
+      {/* ---- legs ---- */}
+      <Leg side={1} hipRef={rightHip} kneeRef={rightKnee} footRef={rightFoot} />
+      <Leg side={-1} hipRef={leftHip} kneeRef={leftKnee} footRef={leftFoot} />
+
       {/* ---- hover drive ---- */}
       <mesh position={[0, -0.47, 0]}>
         <cylinderGeometry args={[0.3, 0.17, 0.24, 32]} />
@@ -366,7 +475,7 @@ function Robot({ reduced, externalPose }) {
   )
 }
 
-function Scene({ externalPose }) {
+function Scene({ externalPose, motionRef }) {
   const reduced = useReducedMotion()
   return (
     <>
@@ -376,12 +485,12 @@ function Scene({ externalPose }) {
       <directionalLight position={[-5, 2, -4]} intensity={1.1} color="#8fd8ff" />
       <pointLight position={[-2.6, -1.4, 2.6]} intensity={9} distance={9} color={TEAL} />
       <pointLight position={[2.4, 2.2, -3]} intensity={6} distance={9} color={SAND} />
-      <Robot reduced={reduced} externalPose={externalPose} />
+      <Robot reduced={reduced} externalPose={externalPose} motionRef={motionRef} />
     </>
   )
 }
 
-export default function Robot3D({ className = '', externalPose }) {
+export default function Robot3D({ className = '', externalPose, motionRef }) {
   return (
     <div className={`robot-3d ${className}`}>
       <div className="robot-3d-glow" aria-hidden="true" />
@@ -392,7 +501,7 @@ export default function Robot3D({ className = '', externalPose }) {
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
-          <Scene externalPose={externalPose} />
+          <Scene externalPose={externalPose} motionRef={motionRef} />
         </Suspense>
       </Canvas>
     </div>
