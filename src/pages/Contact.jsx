@@ -30,7 +30,7 @@ export default function Contact() {
   }
 
   return (
-    <>
+    <div className="contact-page">
       <PageHeader
         eyebrow="Contact"
         title="Say"
@@ -43,7 +43,7 @@ export default function Contact() {
           <div className="space-y-4">
             <Reveal>
               <div className="surface p-6">
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/80">
+                <span className="contact-icon grid h-11 w-11 place-items-center rounded-full border border-cream/10 text-sand/80">
                   <Icon name="mail" size={18} />
                 </span>
                 <h2 className="mt-5 text-xl">Email</h2>
@@ -64,7 +64,7 @@ export default function Contact() {
 
             <Reveal delay={80}>
               <div className="surface p-6">
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/80">
+                <span className="contact-icon grid h-11 w-11 place-items-center rounded-full border border-cream/10 text-sand/80">
                   <Icon name="pin" size={18} />
                 </span>
                 <h2 className="mt-5 text-xl">Campus</h2>
@@ -78,7 +78,7 @@ export default function Contact() {
 
             <Reveal delay={160}>
               <div className="surface p-6">
-                <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/80">
+                <span className="contact-icon grid h-11 w-11 place-items-center rounded-full border border-cream/10 text-sand/80">
                   <Icon name="instagram" size={18} />
                 </span>
                 <h2 className="mt-5 text-xl">Social</h2>
@@ -186,7 +186,7 @@ export default function Contact() {
                   />
                 </div>
 
-                {error && <p className="mt-4 text-sm text-red-300/90">{error}</p>}
+                {error && <p className="contact-error mt-4 text-sm text-red-300/90">{error}</p>}
 
                 <button
                   type="submit"
@@ -201,6 +201,6 @@ export default function Contact() {
           </Reveal>
         </div>
       </section>
-    </>
+    </div>
   )
 }
