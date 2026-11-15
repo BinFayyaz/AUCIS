@@ -14,6 +14,7 @@ const CONTACT_SOCIALS =
     : [
         {
           label: 'Instagram',
+          handle: '@aucis.au',
           href: 'https://www.instagram.com/aucis.au?xtok=MWtsMGdrbTNqdnVhaA==',
         },
       ]
@@ -122,14 +123,17 @@ export default function Contact() {
                     </h3>
                     <ul className="mt-2.5 flex flex-wrap gap-2">
                       {CONTACT_SOCIALS.map((social) => (
-                        <li key={social.label}>
+                        <li key={social.label} className="flex flex-wrap items-center gap-2.5">
+                          <span className="contact-meta text-sm font-medium">
+                            {social.handle || '@aucis.au'}
+                          </span>
                           <a
                             href={social.href}
                             target="_blank"
                             rel="noreferrer"
                             className="contact-social-link"
                           >
-                            {social.label}
+                            Open {social.label}
                             <Icon name="arrowUpRight" size={13} />
                           </a>
                         </li>
