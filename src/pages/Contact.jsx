@@ -7,6 +7,17 @@ import { site } from '../data/site.js'
 
 const initialForm = { name: '', email: '', subject: '', message: '' }
 
+const CONTACT_EMAIL = site.email || 'aucisauk@gmail.com'
+const CONTACT_SOCIALS =
+  site.socials && site.socials.length > 0
+    ? site.socials
+    : [
+        {
+          label: 'Instagram',
+          href: 'https://www.instagram.com/aucis.au?xtok=MWtsMGdrbTNqdnVhaA==',
+        },
+      ]
+
 export default function Contact() {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState('idle')
@@ -66,18 +77,12 @@ export default function Contact() {
                   </span>
                   <div>
                     <h3 className="text-base font-semibold text-[#0D1B2A]">Official Correspondence</h3>
-                    {site.email ? (
-                      <a
-                        href={`mailto:${site.email}`}
-                        className="mt-1 inline-block text-sm font-medium text-[#415A77] underline decoration-[#D4C4A8] underline-offset-4 transition hover:text-[#0D1B2A]"
-                      >
-                        {site.email}
-                      </a>
-                    ) : (
-                      <p className="mt-1 text-sm leading-relaxed text-[#1B263B]">
-                        Our institutional mailing desk is being finalized. Please submit your inquiry via the official form for a prompt response.
-                      </p>
-                    )}
+                    <a
+                      href={`mailto:${CONTACT_EMAIL}`}
+                      className="mt-1 inline-block text-sm font-medium text-[#415A77] underline decoration-[#D4C4A8] underline-offset-4 transition hover:text-[#0D1B2A]"
+                    >
+                      {CONTACT_EMAIL}
+                    </a>
                   </div>
                 </div>
               </div>
@@ -109,27 +114,21 @@ export default function Contact() {
                   </span>
                   <div>
                     <h3 className="text-base font-semibold text-[#0D1B2A]">Digital Channels</h3>
-                    {site.socials.length === 0 ? (
-                      <p className="mt-1 text-sm leading-relaxed text-[#1B263B]">
-                        Official AUCIS community portals and announcement channels are currently being indexed and will be published shortly.
-                      </p>
-                    ) : (
-                      <ul className="mt-2.5 flex flex-wrap gap-2">
-                        {site.socials.map((social) => (
-                          <li key={social.label}>
-                            <a
-                              href={social.href}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4C4A8] bg-[#D4C4A8]/20 px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-[#F4F1DE]"
-                            >
-                              {social.label}
-                              <Icon name="arrowUpRight" size={13} />
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
+                    <ul className="mt-2.5 flex flex-wrap gap-2">
+                      {CONTACT_SOCIALS.map((social) => (
+                        <li key={social.label}>
+                          <a
+                            href={social.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#D4C4A8] bg-[#D4C4A8]/20 px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-[#F4F1DE]"
+                          >
+                            {social.label}
+                            <Icon name="arrowUpRight" size={13} />
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               </div>
