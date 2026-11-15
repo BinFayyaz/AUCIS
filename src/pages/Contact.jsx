@@ -41,8 +41,8 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF9F5] text-[#0D1B2A] selection:bg-[#415A77] selection:text-[#F4F1DE] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:selection:bg-[#415A77]">
-      <div className="border-b border-[#E2DDD0] bg-white dark:border-[#1C2541] dark:bg-[#0B132B]">
+    <div className="min-h-screen bg-[#FAF9F5] text-[#0D1B2A] selection:bg-[#415A77] selection:text-white">
+      <div className="border-b border-[#E2DDD0] bg-white">
         <PageHeader
           eyebrow="AUCIS — Executive Secretariat"
           title="Connect with"
@@ -56,30 +56,30 @@ export default function Contact() {
           {/* Left Column: Society Overview & Official Channels */}
           <div className="space-y-5">
             <Reveal>
-              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40">
-                <span className="inline-block rounded-full border border-[#778D7A]/40 bg-[#778D7A]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#0D1B2A] dark:text-[#E0E1DD]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm">
+                <span className="inline-block rounded-full border border-[#778D7A]/40 bg-[#778D7A]/15 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[#0D1B2A]">
                   About the Society
                 </span>
-                <h2 className="mt-4 text-xl font-semibold tracking-tight text-[#0D1B2A] dark:text-[#F4F1DE]">
+                <h2 className="mt-4 text-xl font-semibold tracking-tight text-[#0D1B2A]">
                   Advancing Computing &amp; Innovation
                 </h2>
-                <p className="mt-2.5 text-sm leading-relaxed text-[#1B263B] dark:text-[#8D99AE]">
+                <p className="mt-2.5 text-sm leading-relaxed text-[#1B263B]">
                   AUCIS serves as the premier student-led computing body dedicated to software engineering, competitive programming, and emerging technologies. Reach out to our executive council regarding society membership, technical workshops, hackathons, or academic partnerships.
                 </p>
               </div>
             </Reveal>
 
             <Reveal delay={60}>
-              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77]">
                     <Icon name="mail" size={18} />
                   </span>
                   <div>
-                    <h3 className="text-base font-semibold text-[#0D1B2A] dark:text-[#F4F1DE]">Official Correspondence</h3>
+                    <h3 className="text-base font-semibold text-[#0D1B2A]">Official Correspondence</h3>
                     <a
                       href={`mailto:${CONTACT_EMAIL}`}
-                      className="mt-1 inline-block text-sm font-medium text-[#415A77] underline decoration-[#D4C4A8] underline-offset-4 transition hover:text-[#0D1B2A] dark:text-[#E0E1DD] dark:decoration-[#3A506B] dark:hover:text-[#F4F1DE]"
+                      className="mt-1 inline-block text-sm font-medium text-[#415A77] underline decoration-[#D4C4A8] underline-offset-4 transition hover:text-[#0D1B2A]"
                     >
                       {CONTACT_EMAIL}
                     </a>
@@ -89,14 +89,14 @@ export default function Contact() {
             </Reveal>
 
             <Reveal delay={120}>
-              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#415A77]">
                     <Icon name="pin" size={18} />
                   </span>
                   <div>
-                    <h3 className="text-base font-semibold text-[#0D1B2A] dark:text-[#F4F1DE]">Campus Headquarters</h3>
-                    <p className="mt-1 text-sm leading-relaxed text-[#1B263B] dark:text-[#8D99AE]">
+                    <h3 className="text-base font-semibold text-[#0D1B2A]">Campus Headquarters</h3>
+                    <p className="mt-1 text-sm leading-relaxed text-[#1B263B]">
                       {site.location.line1}
                       <br />
                       {site.location.line2}
@@ -107,13 +107,13 @@ export default function Contact() {
             </Reveal>
 
             <Reveal delay={180}>
-              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77] dark:border-[#1C2541] dark:bg-[#1C2541]/40 dark:hover:border-[#415A77]">
+              <div className="rounded-2xl border border-[#E2DDD0] bg-white p-6 shadow-sm transition-colors hover:border-[#415A77]">
                 <div className="flex items-start gap-4">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#778D7A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD]">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] text-[#778D7A]">
                     <Icon name="instagram" size={18} />
                   </span>
                   <div>
-                    <h3 className="text-base font-semibold text-[#0D1B2A] dark:text-[#F4F1DE]">Digital Channels</h3>
+                    <h3 className="text-base font-semibold text-[#0D1B2A]">Digital Channels</h3>
                     <ul className="mt-2.5 flex flex-wrap gap-2">
                       {CONTACT_SOCIALS.map((social) => (
                         <li key={social.label}>
@@ -121,7 +121,7 @@ export default function Contact() {
                             href={social.href}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2DDD0] bg-[#FAF9F5] px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-white dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#E0E1DD] dark:hover:border-[#415A77] dark:hover:bg-[#415A77]"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2DDD0] bg-[#FAF9F5] px-3 py-1.5 text-xs font-medium text-[#0D1B2A] transition hover:border-[#415A77] hover:bg-[#415A77] hover:text-white"
                           >
                             {social.label}
                             <Icon name="arrowUpRight" size={13} />
@@ -138,23 +138,23 @@ export default function Contact() {
           {/* Right Column: Formal Inquiry Form */}
           <Reveal delay={100}>
             {status === 'sent' ? (
-              <div className="rounded-2xl border border-[#778D7A] bg-white p-8 sm:p-10 shadow-sm dark:border-[#778D7A]/50 dark:bg-[#1C2541]/40">
-                <span className="grid h-12 w-12 place-items-center rounded-full border border-[#778D7A] bg-[#778D7A]/15 text-[#0D1B2A] dark:text-[#E0E1DD]">
+              <div className="rounded-2xl border border-[#778D7A] bg-white p-8 sm:p-10 shadow-sm">
+                <span className="grid h-12 w-12 place-items-center rounded-full border border-[#778D7A] bg-[#778D7A]/15 text-[#0D1B2A]">
                   <Icon name="check" size={20} />
                 </span>
                 <p className="mt-5 text-xs font-semibold uppercase tracking-widest text-[#778D7A]">
                   Dispatch Confirmed
                 </p>
-                <h3 className="mt-1 text-2xl font-semibold text-[#0D1B2A] dark:text-[#F4F1DE]">
+                <h3 className="mt-1 text-2xl font-semibold text-[#0D1B2A]">
                   Your inquiry has been logged.
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#1B263B] dark:text-[#8D99AE]">
+                <p className="mt-3 text-sm leading-relaxed text-[#1B263B]">
                   Thank you for contacting the Air University Computing &amp; Innovation Society. A representative from our executive body will review your message and respond to your provided email address.
                 </p>
                 <button
                   type="button"
                   onClick={() => setStatus('idle')}
-                  className="mt-7 inline-flex items-center gap-2 rounded-xl border border-[#415A77] bg-white px-5 py-2.5 text-sm font-medium text-[#0D1B2A] transition hover:bg-[#415A77] hover:text-white dark:border-[#415A77] dark:bg-transparent dark:text-[#E0E1DD] dark:hover:bg-[#415A77]"
+                  className="mt-7 inline-flex items-center gap-2 rounded-xl border border-[#415A77] bg-white px-5 py-2.5 text-sm font-medium text-[#0D1B2A] transition hover:bg-[#415A77] hover:text-white"
                 >
                   Submit another inquiry
                 </button>
@@ -162,16 +162,16 @@ export default function Contact() {
             ) : (
               <form
                 onSubmit={onSubmit}
-                className="rounded-2xl border border-[#E2DDD0] bg-white p-7 sm:p-9 shadow-sm dark:border-[#1C2541] dark:bg-[#1C2541]/40"
+                className="rounded-2xl border border-[#E2DDD0] bg-white p-7 sm:p-9 shadow-sm"
               >
-                <div className="border-b border-[#E2DDD0] pb-5 dark:border-[#1C2541]">
-                  <span className="text-xs font-semibold uppercase tracking-widest text-[#415A77] dark:text-[#8D99AE]">
+                <div className="border-b border-[#E2DDD0] pb-5">
+                  <span className="text-xs font-semibold uppercase tracking-widest text-[#415A77]">
                     Direct Desk
                   </span>
-                  <h2 className="mt-1 text-2xl font-semibold text-[#0D1B2A] dark:text-[#F4F1DE]">
+                  <h2 className="mt-1 text-2xl font-semibold text-[#0D1B2A]">
                     Send an Official Message
                   </h2>
-                  <p className="mt-1.5 text-sm text-[#1B263B] dark:text-[#8D99AE]">
+                  <p className="mt-1.5 text-sm text-[#1B263B]">
                     Complete the form below to route your inquiry directly to the AUCIS Executive Committee.
                   </p>
                 </div>
@@ -179,14 +179,14 @@ export default function Contact() {
                 <div className="mt-6 grid gap-5 sm:grid-cols-2">
                   <div>
                     <label
-                      className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B] dark:text-[#8D99AE]"
+                      className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B]"
                       htmlFor="c-name"
                     >
                       Full Name
                     </label>
                     <input
                       id="c-name"
-                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20"
                       placeholder="e.g. Ayesha Khan"
                       value={form.name}
                       onChange={(e) => update('name', e.target.value)}
@@ -195,7 +195,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <label
-                      className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B] dark:text-[#8D99AE]"
+                      className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B]"
                       htmlFor="c-email"
                     >
                       Email Address
@@ -203,7 +203,7 @@ export default function Contact() {
                     <input
                       id="c-email"
                       type="email"
-                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                      className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20"
                       placeholder="name@students.au.edu.pk"
                       value={form.email}
                       onChange={(e) => update('email', e.target.value)}
@@ -214,14 +214,14 @@ export default function Contact() {
 
                 <div className="mt-5">
                   <label
-                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B] dark:text-[#8D99AE]"
+                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B]"
                     htmlFor="c-subject"
                   >
                     Subject / Department
                   </label>
                   <input
                     id="c-subject"
-                    className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                    className="w-full rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-2.5 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20"
                     value={form.subject}
                     onChange={(e) => update('subject', e.target.value)}
                     placeholder="Membership, Event Collaboration, Technical Query..."
@@ -230,14 +230,14 @@ export default function Contact() {
 
                 <div className="mt-5">
                   <label
-                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B] dark:text-[#8D99AE]"
+                    className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-[#1B263B]"
                     htmlFor="c-message"
                   >
                     Detailed Message
                   </label>
                   <textarea
                     id="c-message"
-                    className="min-h-[155px] w-full resize-y rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-3 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20 dark:border-[#1C2541] dark:bg-[#0B132B] dark:text-[#F4F1DE] dark:placeholder-[#8D99AE]/50"
+                    className="min-h-[155px] w-full resize-y rounded-xl border border-[#E2DDD0] bg-[#FAF9F5] px-4 py-3 text-sm text-[#0D1B2A] placeholder-[#415A77]/65 outline-none transition focus:border-[#415A77] focus:bg-white focus:ring-2 focus:ring-[#415A77]/20"
                     placeholder="Provide context regarding your inquiry or proposal..."
                     value={form.message}
                     onChange={(e) => update('message', e.target.value)}
@@ -246,7 +246,7 @@ export default function Contact() {
                 </div>
 
                 {error && (
-                  <div className="mt-4 rounded-xl border border-[#0D1B2A] bg-[#FAF9F5] px-4 py-3 text-sm font-medium text-[#0D1B2A] dark:border-[#3A506B] dark:bg-[#3A506B]/20 dark:text-[#F4F1DE]">
+                  <div className="mt-4 rounded-xl border border-[#0D1B2A] bg-[#FAF9F5] px-4 py-3 text-sm font-medium text-[#0D1B2A]">
                     {error}
                   </div>
                 )}
@@ -254,7 +254,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={status === 'sending'}
-                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D1B2A] px-6 py-3.5 text-sm font-semibold tracking-wide text-white transition hover:bg-[#1B263B] focus:outline-none focus:ring-2 focus:ring-[#415A77] focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#E0E1DD] dark:text-[#0B132B] dark:hover:bg-[#F4F1DE] dark:focus:ring-offset-[#0B132B]"
+                  className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0D1B2A] px-6 py-3.5 text-sm font-semibold tracking-wide text-white transition hover:bg-[#1B263B] focus:outline-none focus:ring-2 focus:ring-[#415A77] focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   {status === 'sending' ? 'Transmitting Message…' : 'Transmit Message to AUCIS'}
                   {status !== 'sending' && <Icon name="arrowRight" size={16} />}
