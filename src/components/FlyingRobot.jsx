@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import Robot3D from './Robot3D.jsx'
 import RobotSparks from './RobotSparks.jsx'
 import { getJoinRobotTarget } from '../lib/joinSequence.js'
+import { dampTowards, travelSpeed } from '../lib/robotFlight.js'
 import './JoinRegistration.css'
 
 const MAX_DRIFT = 240
@@ -25,13 +26,18 @@ const TOP_SAFE = 88
  * pull the registration form up, then returning to the right side.
  */
 export default function FlyingRobot({ joinPhase }) {
-  const [drift, setDrift] = useState(0)
-  const [sway, setSway] = useState(0)
   const [tilt, setTilt] = useState(0)
   const [mode, setMode] = useState('idle')
   const [fade, setFade] = useState(1)
-  const [onLeft, setOnLeft] = useState(false)
   const lastY = useRef(0)
+  // Scroll only sets a target; a requestAnimationFrame loop damps the robot
+  // towards it. That keeps the flight smooth and frame-accurate instead of
+  // lagging behind a long CSS transition on every scroll event.
+  const targetPos = useRef({ x: 0, y: 0 })
+  const currentPos = useRef({ x: 0, y: 0 })
+  const motion = useRef({ speed: 0 })
+  const onLeft = useRef(false)
+  const settled = useRef(false)
   const settle = useRef(null)
   const laneRef = useRef(null)
   const robotRef = useRef(null)
@@ -105,28 +111,27 @@ export default function FlyingRobot({ joinPhase }) {
         next = Math.min(y * 0.35, MOBILE_MAX_DRIFT)
       }
 
-      setDrift(next)
-      const dynamicMaxSway = swaySpace.current
-      setSway(Math.sin(y / 420) * (inLane() ? dynamicMaxSway : MOBILE_MAX_SWAY))
-      setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
-
       const sections = document.querySelectorAll('.home-page > section')
       let activeIndex = 0
-      let changed = false
       for (let i = 0; i < sections.length; i++) {
         const rect = sections[i].getBoundingClientRect()
         if (rect.top <= window.innerHeight * 0.5) {
           activeIndex = i
         }
       }
-      setOnLeft((prev) => {
-        if (prev !== (activeIndex % 2 === 1)) {
-          changed = true
-        }
-        return activeIndex % 2 === 1
-      })
+      const nextLeft = activeIndex % 2 === 1
+      if (onLeft.current !== nextLeft) {
+        onLeft.current = nextLeft
+        measureSwaySpace()
+      }
 
-      if (changed) measureSwaySpace()
+      setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
+
+      const swayAmount = Math.sin(y / 420) * (inLane() ? swaySpace.current : MOBILE_MAX_SWAY)
+      targetPos.current = {
+        x: swayAmount + (nextLeft ? -maxOffset.current : 0),
+        y: next,
+      }
 
       if (Math.abs(delta) > 1) {
         setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
@@ -163,6 +168,41 @@ export default function FlyingRobot({ joinPhase }) {
     }
   }, [])
 
+  // Frame-rate independent damping: the robot eases onto its scroll target,
+  // and its real travel speed is published for the 3D gait.
+  useEffect(() => {
+    let frame = 0
+    let prev = performance.now()
+
+    const tick = (now) => {
+      const dt = Math.min(0.05, Math.max(0, (now - prev) / 1000))
+      prev = now
+      const pos = currentPos.current
+      const goal = targetPos.current
+
+      if (!settled.current) {
+        pos.x = goal.x
+        pos.y = goal.y
+        settled.current = true
+      }
+
+      const fromX = pos.x
+      const fromY = pos.y
+      pos.x = dampTowards(pos.x, goal.x, dt)
+      pos.y = dampTowards(pos.y, goal.y, dt)
+      motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
+
+      // While the join flight is scripted, React owns the transform.
+      if (!joinPhaseRef.current && robotRef.current) {
+        robotRef.current.style.transform = `translate3d(${pos.x.toFixed(2)}px, ${pos.y.toFixed(2)}px, 0)`
+      }
+      frame = requestAnimationFrame(tick)
+    }
+
+    frame = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(frame)
+  }, [])
+
   // Refresh scroll state when the join sequence ends.
   useEffect(() => {
     if (!joinPhase) {
@@ -173,10 +213,10 @@ export default function FlyingRobot({ joinPhase }) {
 
   // Targets use the viewport and the untransformed origin, not the robot's
   // animated bounds. Resizing cannot accumulate translation or change lanes.
-  let transform = `translate3d(${sway + (onLeft ? -maxOffset.current : 0)}px, ${drift}px, 0)`
+  let joinTransform = null
   if (isJoining && geometry) {
     const target = getJoinRobotTarget(joinPhase, geometry.viewport, geometry)
-    transform = `translate3d(${target.x - geometry.originX - geometry.width / 2}px, ${target.y - geometry.originY - geometry.height / 2}px, 0) scale(${target.scale})`
+    joinTransform = `translate3d(${target.x - geometry.originX - geometry.width / 2}px, ${target.y - geometry.originY - geometry.height / 2}px, 0) scale(${target.scale})`
   }
 
   const externalPose = {
@@ -187,7 +227,7 @@ export default function FlyingRobot({ joinPhase }) {
     shrinking: 'rolling',
     holding: 'holding-scroll',
   }[joinPhase] || (isJoining ? 'attentive' : null)
-  const tiltRotation = isJoining ? 0 : tilt + sway * 0.05
+  const tiltRotation = isJoining ? 0 : tilt + targetPos.current.x * 0.05
   const opacity = isJoining ? 1 : fade
 
   return (
@@ -204,15 +244,17 @@ export default function FlyingRobot({ joinPhase }) {
       <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
         <div
           ref={robotRef}
-          className="md:pointer-events-auto md:cursor-pointer transition-transform duration-700 ease-in-out"
-          style={{ transform }}
+          className={`md:pointer-events-auto md:cursor-pointer ${
+            isJoining ? 'transition-transform duration-700 ease-in-out' : ''
+          }`}
+          style={joinTransform ? { transform: joinTransform } : undefined}
         >
           <div
             style={{ transform: `rotate(${tiltRotation}deg)` }}
             className="transition-transform duration-300 ease-out"
           >
             <div className="relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,42vh,400px)] md:w-[clamp(280px,26vw,350px)]">
-              <Robot3D externalPose={externalPose} />
+              <Robot3D externalPose={externalPose} motionRef={motion} />
               <RobotSparks mode={mode} />
             </div>
           </div>

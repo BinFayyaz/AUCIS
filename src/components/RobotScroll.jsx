@@ -2,7 +2,7 @@
 // the actual hand rather than floating independently of the 3D robot.
 export default function RobotScroll() {
   return (
-    <group position={[0.1, -0.83, 0.15]} rotation={[0, 0, Math.PI / 2]}>
+    <group position={[0.08, -0.39, 0.15]} rotation={[0, 0, Math.PI / 2]}>
       <mesh>
         <cylinderGeometry args={[0.085, 0.085, 0.65, 32]} />
         <meshPhysicalMaterial color="#f4f1de" roughness={0.6} clearcoat={0.2} />

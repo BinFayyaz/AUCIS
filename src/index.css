@@ -154,6 +154,131 @@
   [data-theme='light'] .logo-light {
     display: block;
   }
+
+  /* =========================================================
+     CONTACT PAGE — FORMAL PALETTE & LIGHT-MODE REFINEMENTS
+     Uses strictly: #0D1B2A · #1B263B · #415A77 · #778D7A · #D4C4A8 · #F4F1DE
+     ========================================================= */
+
+  .contact-page .contact-card {
+    @apply rounded-2xl border border-cream/10 bg-white/[0.035] backdrop-blur-sm transition duration-300;
+  }
+
+  .contact-page .contact-card-hover:hover {
+    border-color: rgba(212, 196, 168, 0.35);
+    background-color: rgba(255, 255, 255, 0.055);
+  }
+
+  .contact-page .contact-icon-badge {
+    border: 1px solid rgba(212, 196, 168, 0.25);
+    background-color: rgba(65, 90, 119, 0.2);
+    color: #d4c4a8;
+  }
+
+  .contact-page .contact-pill {
+    border: 1px solid rgba(119, 141, 122, 0.4);
+    background-color: rgba(119, 141, 122, 0.15);
+    color: #d4c4a8;
+  }
+
+  .contact-page .contact-field {
+    @apply w-full rounded-xl border border-cream/[0.14] bg-navy/60 px-4 py-3 text-sm text-cream/90 outline-none transition placeholder:text-cream/35;
+  }
+
+  .contact-page .contact-field:focus {
+    border-color: #778d7a;
+    box-shadow: 0 0 0 3px rgba(119, 141, 122, 0.18);
+  }
+
+  /* Light Mode Overrides for Contact Page (Strict 6-Color Palette) */
+  [data-theme='light'] .contact-page {
+    background-color: #f4f1de;
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-card {
+    background-color: #f4f1de;
+    border-color: #d4c4a8;
+    box-shadow: 0 12px 32px -18px rgba(13, 27, 42, 0.18);
+  }
+
+  [data-theme='light'] .contact-page .contact-card-hover:hover {
+    border-color: #415a77;
+    background-color: rgba(212, 196, 168, 0.16);
+    box-shadow: 0 18px 36px -18px rgba(13, 27, 42, 0.26);
+  }
+
+  [data-theme='light'] .contact-page .contact-icon-badge {
+    background-color: rgba(212, 196, 168, 0.35);
+    border-color: #d4c4a8;
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-pill {
+    background-color: rgba(119, 141, 122, 0.18);
+    border-color: #778d7a;
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-divider {
+    border-color: #d4c4a8;
+  }
+
+  [data-theme='light'] .contact-page .contact-heading {
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-body {
+    color: #1b263b;
+  }
+
+  [data-theme='light'] .contact-page .contact-meta {
+    color: #415a77;
+  }
+
+  [data-theme='light'] .contact-page .contact-label {
+    color: #1b263b;
+    font-weight: 600;
+  }
+
+  [data-theme='light'] .contact-page .contact-field {
+    background-color: #f4f1de;
+    border-color: #d4c4a8;
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-field::placeholder {
+    color: rgba(65, 90, 119, 0.65);
+  }
+
+  [data-theme='light'] .contact-page .contact-field:focus {
+    border-color: #415a77;
+    background-color: #f4f1de;
+    box-shadow: 0 0 0 3px rgba(65, 90, 119, 0.16);
+  }
+
+  [data-theme='light'] .contact-page .contact-submit {
+    background-image: none;
+    background-color: #0d1b2a;
+    color: #f4f1de;
+    box-shadow: 0 16px 32px -18px rgba(13, 27, 42, 0.75);
+  }
+
+  [data-theme='light'] .contact-page .contact-submit:hover {
+    background-color: #1b263b;
+  }
+
+  [data-theme='light'] .contact-page .contact-social-link {
+    border-color: #d4c4a8;
+    background-color: rgba(212, 196, 168, 0.25);
+    color: #0d1b2a;
+  }
+
+  [data-theme='light'] .contact-page .contact-social-link:hover {
+    border-color: #415a77;
+    background-color: #415a77;
+    color: #f4f1de;
+  }
 }
 
 @layer utilities {
