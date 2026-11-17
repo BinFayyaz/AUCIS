@@ -39,6 +39,7 @@ export default function FlyingRobot({ joinPhase }) {
   const currentPos = useRef({ x: 0, y: 0 })
   const motion = useRef({ speed: 0 })
   const onLeft = useRef(false)
+  const [onLeftSide, setOnLeftSide] = useState(false)
   const settled = useRef(false)
   const settle = useRef(null)
   const laneRef = useRef(null)
@@ -51,7 +52,7 @@ export default function FlyingRobot({ joinPhase }) {
 
   const [geometry, setGeometry] = useState(null)
   const isJoining = Boolean(joinPhase)
-  const behindOverlay = ['flying-bottom', 'enlarging', 'hands-down', 'hands-up'].includes(joinPhase)
+  const behindOverlay = ['flying-bottom', 'enlarging', 'hands-down', 'hands-up', 'flying-up', 'returning'].includes(joinPhase)
 
   // --- Idle + welcome animations ---
   const { shouldGreet, onGreetingComplete } = useWelcomeAnimation()
@@ -139,14 +140,16 @@ export default function FlyingRobot({ joinPhase }) {
       const nextLeft = activeIndex % 2 === 1
       if (onLeft.current !== nextLeft) {
         onLeft.current = nextLeft
+        setOnLeftSide(nextLeft)
         measureSwaySpace()
       }
 
       setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
 
-      const swayAmount = Math.sin(y / 420) * (inLane() ? swaySpace.current : MOBILE_MAX_SWAY)
+      // Fixed points: robot snaps to left or right based on active section —
+      // no continuous sine-wave sway between sections.
       targetPos.current = {
-        x: swayAmount + (nextLeft ? -maxOffset.current : 0),
+        x: nextLeft ? -maxOffset.current : 0,
         y: next,
       }
 
@@ -205,7 +208,7 @@ export default function FlyingRobot({ joinPhase }) {
 
       const fromX = pos.x
       const fromY = pos.y
-      pos.x = dampTowards(pos.x, goal.x, dt)
+      pos.x = dampTowards(pos.x, goal.x, dt, 6)
       pos.y = dampTowards(pos.y, goal.y, dt)
       motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
 
@@ -270,7 +273,7 @@ export default function FlyingRobot({ joinPhase }) {
             style={{ transform: `rotate(${tiltRotation}deg)` }}
             className="transition-transform duration-300 ease-out"
           >
-            <div className="relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,30vw,400px)] md:w-[clamp(280px,26vw,350px)]">
+            <div className={`relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,30vw,400px)] md:w-[clamp(280px,26vw,350px)] transition-transform duration-500 ease-out ${onLeftSide ? 'scale-110' : 'scale-100'}`}>
               <Robot3D externalPose={externalPose} motionRef={motion} idleAnimation={!isJoining ? activeAnimation : null} />
               <RobotSparks mode={mode} />
               {shouldGreet && <RobotThoughtBubble />}

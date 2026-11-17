@@ -26,7 +26,8 @@
 .join-overlay[data-phase='flying-bottom'] .join-backdrop,
 .join-overlay[data-phase='enlarging'] .join-backdrop,
 .join-overlay[data-phase='hands-down'] .join-backdrop,
-.join-overlay[data-phase='hands-up'] .join-backdrop {
+.join-overlay[data-phase='hands-up'] .join-backdrop,
+.join-overlay[data-phase='flying-up'] .join-backdrop {
   opacity: 0;
 }
 .join-layout {

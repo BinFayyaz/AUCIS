@@ -4,13 +4,17 @@ const DEFAULT_IDLE_TIMEOUT = 10 // seconds
 const WELCOME_THRESHOLD = 30 * 60 * 1000 // 30 minutes in ms
 const STORAGE_KEY = 'aucis_last_visit'
 
-const IDLE_ANIMATIONS = ['apple-juggle', 'twirl']
+const IDLE_ANIMATIONS = ['apple-juggle', 'twirl', 'stretch', 'look-around', 'bounce', 'clap']
 
 /** Duration of each idle / greeting animation, in seconds. */
 export const IDLE_DURATIONS = {
   'apple-juggle': 10,
   twirl: 4.5,
   greeting: 3.5,
+  stretch: 4,
+  'look-around': 4,
+  bounce: 4,
+  clap: 4,
 }
 
 /** Read the configurable idle timeout (env var IDLE_TIMEOUT, in seconds). */

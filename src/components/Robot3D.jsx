@@ -194,60 +194,140 @@ function smooth(t) {
  * same shape as the normal `armTargets` function so `poseArm` can apply them.
  */
 function idleArmTargets(anim, elapsed, t, side) {
+  const rest = { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
+
   if (anim === 'apple-juggle') {
-    if (elapsed < 1.5) {
-      return { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
-    }
+    if (elapsed < 1.5) return rest
     if (elapsed < 7) {
-      // Juggle — both arms reach forward, oscillating with each bounce
+      // Both arms reach forward to juggle — arms tilt forward (rx) so elbows
+      // and hands stay in front of the torso, not clipping into it.
       const frac = (elapsed - 1.5) % 1
       const armUp = 4 * frac * (1 - frac) // 0 → 1 → 0 per bounce
       return {
-        rz: -0.95 * side,
-        rx: -0.25 - armUp * 0.35,
-        ez: -0.3,
-        ex: -0.15,
+        rz: 0.1 * side,
+        rx: -0.45 - armUp * 0.25,
+        ez: 0,
+        ex: -0.2 - armUp * 0.15,
       }
     }
     if (elapsed < 8) {
       // Throw — arms reach up
       return { rz: 2.3 * side, rx: -0.15, ez: -0.25, ex: -0.1 }
     }
-    return { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
+    return rest
   }
+
   if (anim === 'twirl') {
+    // Arms raised up-and-out in a "Y" pose so they clear the body silhouette
+    // and stay visible as the torso spins 720°.
     if (elapsed < 0.5) {
-      // Arms spreading to the sides
       const p = smooth(elapsed / 0.5)
-      const rz = -0.26 * side + (-1.4 + 0.26) * side * p
-      return { rz, rx: 0, ez: 0, ex: 0 }
+      return {
+        rz: (-0.26 + (-2.0 + 0.26) * p) * side,
+        rx: -0.2 * p,
+        ez: 0,
+        ex: 0,
+      }
     }
     if (elapsed < 4.0) {
-      return { rz: -1.4 * side, rx: 0, ez: 0, ex: 0 }
+      return { rz: -2.0 * side, rx: -0.2, ez: 0, ex: 0 }
     }
-    // Arms returning
     const p = smooth((elapsed - 4.0) / 0.5)
-    const rz = -1.4 * side + (1.4 - 0.26) * side * p
-    return { rz, rx: 0, ez: 0, ex: 0 }
+    return {
+      rz: (-2.0 + (2.0 - 0.26) * p) * side,
+      rx: -0.2 * (1 - p),
+      ez: 0,
+      ex: 0,
+    }
   }
+
   if (anim === 'greeting') {
     if (side > 0) {
-      // Right arm raises and waves
+      // Right arm raises to the side of the head and waves — kept at z≈0
+      // so the hand is always beside the head, never behind it.
       if (elapsed < 0.3) {
         const p = smooth(elapsed / 0.3)
-        return { rz: 2.5 * p, rx: -0.1 * p, ez: -0.2 * p, ex: -0.1 * p }
+        return { rz: 2.5 * p, rx: 0, ez: -0.15 * p, ex: -0.1 * p }
       }
       if (elapsed < 2.8) {
         const wave = Math.sin((elapsed - 0.3) * 8) * 0.35
-        return { rz: 2.5 + wave, rx: -0.1, ez: -0.2, ex: -0.1 }
+        return { rz: 2.5 + wave, rx: 0, ez: -0.15, ex: -0.1 }
       }
       const p = smooth((elapsed - 2.8) / 0.7)
-      return { rz: 2.5 * (1 - p), rx: -0.1 * (1 - p), ez: -0.2 * (1 - p), ex: -0.1 * (1 - p) }
+      return { rz: 2.5 * (1 - p), rx: 0, ez: -0.15 * (1 - p), ex: -0.1 * (1 - p) }
     }
-    // Left arm stays at rest
-    return { rz: 0.26, rx: 0, ez: 0, ex: 0 }
+    return rest
   }
-  return { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
+
+  if (anim === 'stretch') {
+    // Both arms reach straight up for a morning stretch.
+    if (elapsed < 0.8) {
+      const p = smooth(elapsed / 0.8)
+      return {
+        rz: (-0.26 + (2.6 + 0.26) * p) * side,
+        rx: -0.05 * p,
+        ez: -0.1 * p,
+        ex: 0,
+      }
+    }
+    if (elapsed < 3.0) {
+      return { rz: 2.6 * side, rx: -0.05, ez: -0.1, ex: 0 }
+    }
+    const p = smooth((elapsed - 3.0) / 0.8)
+    return {
+      rz: (2.6 - (2.6 + 0.26) * p) * side,
+      rx: -0.05 * (1 - p),
+      ez: -0.1 * (1 - p),
+      ex: 0,
+    }
+  }
+
+  if (anim === 'look-around') {
+    // Arms stay at rest; the head turns left-right (handled in useFrame).
+    return rest
+  }
+
+  if (anim === 'bounce') {
+    // Arms swing slightly outward with each hop.
+    const bouncePhase = Math.sin(elapsed * 4)
+    return {
+      rz: (-0.26 + bouncePhase * 0.15) * side,
+      rx: 0,
+      ez: 0,
+      ex: 0,
+    }
+  }
+
+  if (anim === 'clap') {
+    // Both arms come forward; hands meet at centre then part, repeatedly.
+    if (elapsed < 0.5) {
+      const p = smooth(elapsed / 0.5)
+      return {
+        rz: 0.1 * side * (1 - p) + 0 * p,
+        rx: -0.5 * p,
+        ez: -0.6 * side * p,
+        ex: -0.3 * p,
+      }
+    }
+    if (elapsed < 3.5) {
+      const clapOpen = Math.abs(Math.sin(elapsed * Math.PI / 0.5))
+      return {
+        rz: 0,
+        rx: -0.5,
+        ez: (-0.6 + clapOpen * 0.3) * side,
+        ex: -0.3,
+      }
+    }
+    const p = smooth((elapsed - 3.5) / 0.5)
+    return {
+      rz: 0.1 * side * p,
+      rx: -0.5 * (1 - p),
+      ez: -0.6 * side * (1 - p),
+      ex: -0.3 * (1 - p),
+    }
+  }
+
+  return rest
 }
 
 function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }) {
@@ -332,8 +412,8 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
     // --- Gait (computed early so the walking bob can use it) ---
     const travel = recumbent ? 0 : motionRef?.current?.speed || 0
     const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 260)
-    gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 5, ease)
-    if (!reduced) gait.current.phase += ease * (2.6 + Math.min(travel, 1600) * 0.05)
+    gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 4, ease)
+    if (!reduced) gait.current.phase += ease * (1.8 + Math.min(travel, 1600) * 0.03)
     const stride = gait.current.amplitude
 
     // --- Idle animation tracking ---
@@ -353,10 +433,10 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
     } else if (body.current) {
       if (idleActive) {
         // Robot stands still for idle animations — no hover, no walk bob
-        body.current.position.y = THREE.MathUtils.damp(body.current.position.y, 0, 8, ease)
         body.current.position.x = THREE.MathUtils.damp(body.current.position.x, 0, 8, ease)
         body.current.rotation.x = THREE.MathUtils.damp(body.current.rotation.x, 0, 8, ease)
         body.current.rotation.z = THREE.MathUtils.damp(body.current.rotation.z, 0, 8, ease)
+        body.current.position.y = THREE.MathUtils.damp(body.current.position.y, 0, 8, ease)
 
         if (idleAnimation === 'twirl') {
           if (idleElapsed < 0.5) {
@@ -366,6 +446,14 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
           } else {
             body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 6, ease)
           }
+        } else if (idleAnimation === 'bounce') {
+          body.current.position.y = Math.abs(Math.sin(idleElapsed * 4)) * 0.12
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
+        } else if (idleAnimation === 'stretch') {
+          if (idleElapsed > 0.8 && idleElapsed < 3.0) {
+            body.current.position.y = 0.06
+          }
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
         } else {
           body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
         }
@@ -520,14 +608,14 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
       rightHip.current,
       rightKnee.current,
       rightFoot.current,
-      recumbent ? 0.3 + restBreath : swing * 0.6 * stride + Math.sin(t * 1.2) * idleSway,
+      recumbent ? 0.3 + restBreath : swing * 0.8 * stride + Math.sin(t * 1.2) * idleSway,
       recumbent ? 0.58 : undefined,
     )
     poseLeg(
       leftHip.current,
       leftKnee.current,
       leftFoot.current,
-      recumbent ? 0.1 + restBreath : -swing * 0.6 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
+      recumbent ? 0.1 + restBreath : -swing * 0.8 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
       recumbent ? 0.24 : undefined,
     )
 
@@ -538,9 +626,15 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
         head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0.1, 4, ease)
         head.current.rotation.z = reduced ? 0 : Math.sin(t * 0.9) * 0.03
       } else if (idleActive) {
-        head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
-        head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
-        head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
+        if (idleAnimation === 'look-around') {
+          head.current.rotation.y = Math.sin(idleElapsed * 1.5) * 0.6
+          head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
+          head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
+        } else {
+          head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
+          head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
+          head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
+        }
       } else {
         head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
         head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
