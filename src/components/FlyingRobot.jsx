@@ -16,9 +16,18 @@ const MOBILE_STATIONS = [0.02, 0.08, 0.04, 0.1]
 const ROBOT_BOX =
   'relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,30vw,400px)] md:w-[clamp(280px,26vw,350px)]'
 
+// The mascot never walks onto the footer: its top edge caps how low a station
+// may sit, so the robot steps up out of the way as the page ends.
+const FOOTER_GAP = 28
+// How far above its top station it may tuck up when the footer is coming.
+const FOOTER_LIFT = 56
+
 // Phases where the form has swallowed the robot: it sits completely behind the
 // overlay, so nothing of it may show while the reader fills the form in.
 const BEHIND_FORM = ['returning', 'form', 'error']
+// ...on phones, where the panel fills the width. On wider screens the robot
+// steps aside into the right-hand gutter and stays visible beside the form.
+const BEHIND_FORM_NARROW = ['flying-up', ...BEHIND_FORM]
 // Phases where the panel is rising in front of the robot. Only the arms are
 // drawn above the overlay, so the hands stay on the form while the rest of the
 // body stays behind it.
@@ -27,13 +36,7 @@ const ARMS_OVER_FORM = ['hands-down', 'hands-up']
 // while the robot is still at 1:1 scale, otherwise the canvas measures itself
 // against the enlarged box and comes out twice too big.
 const ARMS_LAYER_MOUNTED = ['flying-bottom', 'enlarging', ...ARMS_OVER_FORM]
-const BEHIND_OVERLAY = [
-  ...ARMS_OVER_FORM,
-  ...BEHIND_FORM,
-  'flying-bottom',
-  'enlarging',
-  'flying-up',
-]
+const BEHIND_OVERLAY = [...ARMS_OVER_FORM, 'flying-bottom', 'enlarging']
 
 /**
  * The home-page robot. On wide screens it holds the reserved right-hand lane;
@@ -70,7 +73,8 @@ export default function FlyingRobot({ joinPhase }) {
   const behindOverlay = BEHIND_OVERLAY.includes(joinPhase)
   const armsOverForm = ARMS_OVER_FORM.includes(joinPhase)
   const armsLayerMounted = ARMS_LAYER_MOUNTED.includes(joinPhase)
-  const hiddenByForm = BEHIND_FORM.includes(joinPhase)
+  const wide = (geometry?.viewport.width ?? 0) >= 640
+  const hiddenByForm = !wide && BEHIND_FORM_NARROW.includes(joinPhase)
 
   // --- Idle + welcome animations ---
   const { shouldGreet, onGreetingComplete } = useWelcomeAnimation()
@@ -134,9 +138,20 @@ export default function FlyingRobot({ joinPhase }) {
 
       const nextLeft = activeIndex % 2 === 1
       const ladder = wide ? DESKTOP_STATIONS : MOBILE_STATIONS
+      let stationY = Math.round(ladder[activeIndex % ladder.length] * window.innerHeight)
+
+      // Toward the end of the page the footer rises into the mascot's lane.
+      // Cap the station against the footer's top edge so the robot walks up
+      // out of its way instead of standing on top of it.
+      const footer = document.querySelector('footer')
+      if (footer) {
+        const ceiling = footer.getBoundingClientRect().top - FOOTER_GAP - base.current.bottom
+        stationY = Math.min(stationY, Math.max(-FOOTER_LIFT, ceiling))
+      }
+
       targetPos.current = {
         x: wide && nextLeft ? -maxOffset.current : 0,
-        y: Math.round(ladder[activeIndex % ladder.length] * window.innerHeight),
+        y: stationY,
       }
 
       setFade(wide ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))

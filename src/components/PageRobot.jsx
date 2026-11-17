@@ -78,7 +78,7 @@ export default function PageRobot({ pose = 'upright', className = '' }) {
       let nextY = past > 0 ? stationY : box.y - y
       const footer = document.querySelector('footer')
       if (footer) {
-        nextY = Math.min(nextY, footer.getBoundingClientRect().top - box.height - FOOTER_GAP)
+        nextY = Math.max(0, Math.min(nextY, footer.getBoundingClientRect().top - box.height - FOOTER_GAP))
       }
 
       target.current = {

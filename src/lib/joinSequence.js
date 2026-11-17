@@ -20,13 +20,17 @@ export function getJoinRobotTarget(phase, viewport, robot) {
   const { width: vw, height: vh } = viewport
   const { width, height } = robot
   const mobile = vw < 640
-  const parked = { x: vw - (mobile ? 59 : 108), y: mobile ? 70 : 230, scale: mobile ? 0.48 : 0.68 }
+  // Parked/stepped-aside spot: the right-hand gutter beside the open form, so
+  // the robot stays in view instead of disappearing behind the panel.
+  const gutterX = mobile ? vw - 59 : vw - 129
+  const parked = { x: gutterX, y: mobile ? 70 : 230, scale: mobile ? 0.48 : 0.6 }
   const bottom = { x: vw / 2, y: vh - height * 0.4, scale: 1 }
   // Pulling the form up: the robot stands high enough that its fully stretched
   // arms reach just past the panel's top edge, so the hands land on the form
   // while the torso stays above it and the legs disappear behind it.
   const pull = { x: vw / 2, y: vh * 0.44, scale: mobile ? 1.5 : 1.8 }
-  const lifted = { x: vw / 2, y: Math.max(150, height * 0.55), scale: 1 }
+  // Released from the pull: it rises up into the gutter and settles aside.
+  const lifted = { x: gutterX, y: mobile ? 60 : 150, scale: mobile ? 0.48 : 0.6 }
 
   switch (phase) {
     case 'flying-bottom': return bottom
