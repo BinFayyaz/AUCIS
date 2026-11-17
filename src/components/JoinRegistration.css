@@ -8,6 +8,24 @@
 .robot-flight.is-joining.is-behind-overlay { z-index: 55; }
 .robot-flight.is-joining * { pointer-events: none !important; }
 
+/* While the robot pulls the form up, a second transparent layer draws only its
+   arms above the overlay: the hands stay on the form while the rest of the
+   body sits behind the panel. It sits in the same place as the full robot, so
+   the two line up exactly. */
+.robot-arms-overlay {
+  position: fixed;
+  inset-inline: 0;
+  top: 5.5rem;
+  z-index: 66;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms linear;
+}
+.robot-arms-overlay.is-visible { opacity: 1; }
+@media (min-width: 768px) {
+  .robot-arms-overlay { top: 13vh; }
+}
+
 .join-overlay {
   position: fixed;
   inset: 0;

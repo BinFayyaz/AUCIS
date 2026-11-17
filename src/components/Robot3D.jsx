@@ -192,92 +192,90 @@ function smooth(t) {
 /**
  * Arm targets for each idle animation, keyed by elapsed seconds.  Returns the
  * same shape as the normal `armTargets` function so `poseArm` can apply them.
+ *
+ * Geometry rule for every pose: a POSITIVE `rz` lifts an arm up and outward on
+ * its own side (the left arm mirrors with a negative value on its side). The
+ * arm group starts hanging at `-0.26 * side`, so raising always increases the
+ * angle towards `π` — a raised arm never sweeps across the torso or swings
+ * behind the head, which is what used to make the hands disappear mid-move.
+ * `rx` tips the arm towards the camera (negative = forward), keeping the hands
+ * in front of the body silhouette.
  */
 function idleArmTargets(anim, elapsed, t, side) {
   const rest = { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
+  const raise = (angle, p, extra = {}) => ({
+    rz: (-0.26 + (angle + 0.26) * p) * side,
+    rx: (extra.rx ?? 0) * p,
+    ez: (extra.ez ?? 0) * side * p,
+    ex: (extra.ex ?? 0) * p,
+  })
 
   if (anim === 'apple-juggle') {
     if (elapsed < 1.5) return rest
     if (elapsed < 7) {
-      // Both arms reach forward to juggle — arms tilt forward (rx) so elbows
-      // and hands stay in front of the torso, not clipping into it.
+      // Both arms held out in front, palms up under the bouncing apple.
       const frac = (elapsed - 1.5) % 1
-      const armUp = 4 * frac * (1 - frac) // 0 → 1 → 0 per bounce
+      const bounce = 4 * frac * (1 - frac) // 0 → 1 → 0 per bounce
       return {
-        rz: 0.1 * side,
-        rx: -0.45 - armUp * 0.25,
-        ez: 0,
-        ex: -0.2 - armUp * 0.15,
+        rz: 0.55 * side,
+        rx: -1.05 - bounce * 0.22,
+        ez: -0.45 * side,
+        ex: -0.15,
       }
     }
     if (elapsed < 8) {
-      // Throw — arms reach up
-      return { rz: 2.3 * side, rx: -0.15, ez: -0.25, ex: -0.1 }
+      // Throw — both arms follow the apple up and out.
+      return { rz: 2.15 * side, rx: -0.3, ez: -0.2 * side, ex: -0.1 }
     }
-    return rest
+    const p = smooth(Math.min(1, (elapsed - 8) / 0.5))
+    return {
+      rz: (2.15 - (2.15 + 0.26) * p) * side,
+      rx: -0.3 * (1 - p),
+      ez: -0.2 * side * (1 - p),
+      ex: -0.1 * (1 - p),
+    }
   }
 
   if (anim === 'twirl') {
-    // Arms raised up-and-out in a "Y" pose so they clear the body silhouette
-    // and stay visible as the torso spins 720°.
-    if (elapsed < 0.5) {
-      const p = smooth(elapsed / 0.5)
-      return {
-        rz: (-0.26 + (-2.0 + 0.26) * p) * side,
-        rx: -0.2 * p,
-        ez: 0,
-        ex: 0,
-      }
-    }
-    if (elapsed < 4.0) {
-      return { rz: -2.0 * side, rx: -0.2, ez: 0, ex: 0 }
-    }
-    const p = smooth((elapsed - 4.0) / 0.5)
+    // Arms held up and out in a "V" so they stay clear of the head and the
+    // torso while it spins 720°.
+    if (elapsed < 0.5) return raise(2.2, smooth(elapsed / 0.5), { rx: -0.3, ez: -0.2 })
+    if (elapsed < 4.0) return { rz: 2.2 * side, rx: -0.3, ez: -0.2 * side, ex: 0 }
+    const p = smooth(Math.min(1, (elapsed - 4.0) / 0.6))
     return {
-      rz: (-2.0 + (2.0 - 0.26) * p) * side,
-      rx: -0.2 * (1 - p),
-      ez: 0,
+      rz: (2.2 - (2.2 + 0.26) * p) * side,
+      rx: -0.3 * (1 - p),
+      ez: -0.2 * side * (1 - p),
       ex: 0,
     }
   }
 
   if (anim === 'greeting') {
     if (side > 0) {
-      // Right arm raises to the side of the head and waves — kept at z≈0
-      // so the hand is always beside the head, never behind it.
-      if (elapsed < 0.3) {
-        const p = smooth(elapsed / 0.3)
-        return { rz: 2.5 * p, rx: 0, ez: -0.15 * p, ex: -0.1 * p }
+      const up = elapsed < 0.35 ? smooth(elapsed / 0.35) : 1
+      const down = elapsed > 2.8 ? 1 - smooth(Math.min(1, (elapsed - 2.8) / 0.6)) : 1
+      const lift = up * down
+      // The wave lives in the forearm, so the hand stays beside the head.
+      const wave = elapsed > 0.35 && elapsed < 2.8 ? Math.sin((elapsed - 0.35) * 7) * 0.45 : 0
+      return {
+        rz: (-0.26 + (2.5 + 0.26) * lift) * side,
+        rx: -0.25 * lift,
+        ez: (-0.35 + wave) * lift,
+        ex: -0.15 * lift,
       }
-      if (elapsed < 2.8) {
-        const wave = Math.sin((elapsed - 0.3) * 8) * 0.35
-        return { rz: 2.5 + wave, rx: 0, ez: -0.15, ex: -0.1 }
-      }
-      const p = smooth((elapsed - 2.8) / 0.7)
-      return { rz: 2.5 * (1 - p), rx: 0, ez: -0.15 * (1 - p), ex: -0.1 * (1 - p) }
     }
-    return rest
+    return { rz: -0.26 * side, rx: 0, ez: Math.sin(elapsed * 2) * 0.08, ex: 0 }
   }
 
   if (anim === 'stretch') {
-    // Both arms reach straight up for a morning stretch.
-    if (elapsed < 0.8) {
-      const p = smooth(elapsed / 0.8)
-      return {
-        rz: (-0.26 + (2.6 + 0.26) * p) * side,
-        rx: -0.05 * p,
-        ez: -0.1 * p,
-        ex: 0,
-      }
-    }
-    if (elapsed < 3.0) {
-      return { rz: 2.6 * side, rx: -0.05, ez: -0.1, ex: 0 }
-    }
-    const p = smooth((elapsed - 3.0) / 0.8)
+    // Both arms reach almost straight up for a morning stretch.
+    if (elapsed < 0.8) return raise(2.85, smooth(elapsed / 0.8), { rx: -0.15, ez: -0.1 })
+    if (elapsed < 3.0) return { rz: 2.85 * side, rx: -0.15, ez: -0.1 * side, ex: 0 }
+    const p = smooth(Math.min(1, (elapsed - 3.0) / 0.8))
     return {
-      rz: (2.6 - (2.6 + 0.26) * p) * side,
-      rx: -0.05 * (1 - p),
-      ez: -0.1 * (1 - p),
+      rz: (2.85 - (2.85 + 0.26) * p) * side,
+      rx: -0.15 * (1 - p),
+      ez: -0.1 * side * (1 - p),
       ex: 0,
     }
   }
@@ -300,37 +298,73 @@ function idleArmTargets(anim, elapsed, t, side) {
 
   if (anim === 'clap') {
     // Both arms come forward; hands meet at centre then part, repeatedly.
-    if (elapsed < 0.5) {
-      const p = smooth(elapsed / 0.5)
-      return {
-        rz: 0.1 * side * (1 - p) + 0 * p,
-        rx: -0.5 * p,
-        ez: -0.6 * side * p,
-        ex: -0.3 * p,
-      }
-    }
-    if (elapsed < 3.5) {
-      const clapOpen = Math.abs(Math.sin(elapsed * Math.PI / 0.5))
-      return {
-        rz: 0,
-        rx: -0.5,
-        ez: (-0.6 + clapOpen * 0.3) * side,
-        ex: -0.3,
-      }
-    }
-    const p = smooth((elapsed - 3.5) / 0.5)
+    const open = elapsed < 0.5
+      ? smooth(elapsed / 0.5)
+      : elapsed > 3.5 ? 1 - smooth(Math.min(1, (elapsed - 3.5) / 0.5)) : 1
+    const clapOpen = elapsed > 0.5 && elapsed < 3.5
+      ? Math.abs(Math.sin((elapsed * Math.PI) / 0.5))
+      : 0
     return {
-      rz: 0.1 * side * p,
-      rx: -0.5 * (1 - p),
-      ez: -0.6 * side * (1 - p),
-      ex: -0.3 * (1 - p),
+      rz: 0.15 * side * open,
+      rx: -0.8 * open,
+      ez: (-0.8 + clapOpen * 0.35) * side * open,
+      ex: -0.25 * open,
+    }
+  }
+
+  if (anim === 'shrug') {
+    // Shoulders up, elbows bent, palms turned up — a puzzled shrug.
+    const p = elapsed < 0.6
+      ? smooth(elapsed / 0.6)
+      : elapsed > 2.2 ? 1 - smooth(Math.min(1, (elapsed - 2.2) / 0.6)) : 1
+    return {
+      rz: (-0.26 + 1.5 * p) * side,
+      rx: -0.45 * p,
+      ez: -0.95 * side * p,
+      ex: -0.3 * p,
+    }
+  }
+
+  if (anim === 'nod') {
+    // Arms rest, a small sway follows the nodding head.
+    return {
+      rz: (-0.26 + Math.sin(elapsed * 5) * 0.05) * side,
+      rx: -0.06,
+      ez: 0,
+      ex: 0,
+    }
+  }
+
+  if (anim === 'peek') {
+    // Hands trail behind while the whole body leans in to look around.
+    const p = elapsed < 0.7
+      ? smooth(elapsed / 0.7)
+      : elapsed > 2.4 ? 1 - smooth(Math.min(1, (elapsed - 2.4) / 0.7)) : 1
+    return {
+      rz: (-0.26 + 0.24 * p) * side,
+      rx: 0.35 * p,
+      ez: 0.2 * side * p,
+      ex: 0,
+    }
+  }
+
+  if (anim === 'foot-tap') {
+    // Arms held slightly out for balance while one foot taps.
+    const p = elapsed < 0.5
+      ? smooth(elapsed / 0.5)
+      : elapsed > 2.5 ? 1 - smooth(Math.min(1, (elapsed - 2.5) / 0.5)) : 1
+    return {
+      rz: (-0.26 + 1.1 * p) * side,
+      rx: -0.2 * p,
+      ez: -0.45 * side * p,
+      ex: -0.1 * p,
     }
   }
 
   return rest
 }
 
-function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }) {
+function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, armsOnly }) {
   const recumbent = stance === 'recumbent'
   const body = useRef(null)
   const head = useRef(null)
@@ -410,10 +444,14 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
     }
 
     // --- Gait (computed early so the walking bob can use it) ---
+    // The stride is driven by the distance the robot actually covered this
+    // frame, so the feet plant in step with the ground it walks over instead
+    // of spinning at a fixed rate while it hovers across the screen.
     const travel = recumbent ? 0 : motionRef?.current?.speed || 0
-    const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 260)
-    gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 4, ease)
-    if (!reduced) gait.current.phase += ease * (1.8 + Math.min(travel, 1600) * 0.03)
+    const covered = recumbent || reduced ? 0 : motionRef?.current?.distance || 0
+    const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 210)
+    gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 5, ease)
+    if (!reduced) gait.current.phase += covered * 0.02
     const stride = gait.current.amplitude
 
     // --- Idle animation tracking ---
@@ -453,6 +491,34 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
           if (idleElapsed > 0.8 && idleElapsed < 3.0) {
             body.current.position.y = 0.06
           }
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
+        } else if (idleAnimation === 'peek') {
+          // Lean forward at the waist and hold, then settle back.
+          const p = idleElapsed < 0.7
+            ? smooth(idleElapsed / 0.7)
+            : idleElapsed > 2.4 ? 1 - smooth(Math.min(1, (idleElapsed - 2.4) / 0.7)) : 1
+          body.current.rotation.x = THREE.MathUtils.damp(body.current.rotation.x, 0.34 * p, 6, ease)
+          body.current.rotation.z = THREE.MathUtils.damp(body.current.rotation.z, 0, 8, ease)
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
+          body.current.position.y = THREE.MathUtils.damp(body.current.position.y, -0.05 * p, 6, ease)
+        } else if (idleAnimation === 'shrug') {
+          const p = idleElapsed < 0.6
+            ? smooth(idleElapsed / 0.6)
+            : idleElapsed > 2.2 ? 1 - smooth(Math.min(1, (idleElapsed - 2.2) / 0.6)) : 1
+          body.current.position.y = THREE.MathUtils.damp(body.current.position.y, 0.09 * p, 6, ease)
+          body.current.rotation.z = Math.sin(idleElapsed * 6) * 0.015 * p
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
+        } else if (idleAnimation === 'nod') {
+          body.current.position.y = THREE.MathUtils.damp(
+            body.current.position.y,
+            -0.03 * Math.abs(Math.sin(idleElapsed * 5)),
+            8,
+            ease,
+          )
+          body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
+        } else if (idleAnimation === 'foot-tap') {
+          // Weight shifts onto the standing leg while the other foot taps.
+          body.current.rotation.z = Math.sin(idleElapsed * 6) * 0.03
           body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
         } else {
           body.current.rotation.y = THREE.MathUtils.damp(body.current.rotation.y, 0, 8, ease)
@@ -604,12 +670,18 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
     }
 
     const restBreath = reduced ? 0 : Math.sin(t * 0.9) * 0.04
+    // The foot-tap idle lifts and drops one foot while the other keeps the
+    // robot standing.
+    const tapping = idleActive && idleAnimation === 'foot-tap'
+    const tap = tapping ? Math.abs(Math.sin(idleElapsed * 6)) : 0
     poseLeg(
       rightHip.current,
       rightKnee.current,
       rightFoot.current,
-      recumbent ? 0.3 + restBreath : swing * 0.8 * stride + Math.sin(t * 1.2) * idleSway,
-      recumbent ? 0.58 : undefined,
+      tapping
+        ? 0.16 + tap * 0.32
+        : recumbent ? 0.3 + restBreath : swing * 0.8 * stride + Math.sin(t * 1.2) * idleSway,
+      tapping ? 0.3 + tap * 0.6 : recumbent ? 0.58 : undefined,
     )
     poseLeg(
       leftHip.current,
@@ -630,6 +702,27 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
           head.current.rotation.y = Math.sin(idleElapsed * 1.5) * 0.6
           head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
           head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
+        } else if (idleAnimation === 'nod') {
+          head.current.rotation.x = THREE.MathUtils.damp(
+            head.current.rotation.x,
+            0.08 + Math.sin(idleElapsed * 5) * 0.28,
+            12,
+            ease,
+          )
+          head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
+          head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
+        } else if (idleAnimation === 'peek') {
+          head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, -0.18, 8, ease)
+          head.current.rotation.y = Math.sin(idleElapsed * 1.6) * 0.18
+          head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0.06, 8, ease)
+        } else if (idleAnimation === 'shrug') {
+          head.current.rotation.z = Math.sin(idleElapsed * 3) * 0.06
+          head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
+          head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
+        } else if (idleAnimation === 'foot-tap') {
+          head.current.rotation.z = Math.sin(idleElapsed * 6) * 0.04
+          head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
+          head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
         } else {
           head.current.rotation.y = THREE.MathUtils.damp(head.current.rotation.y, 0, 8, ease)
           head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0, 8, ease)
@@ -659,6 +752,19 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
       }
     }
   })
+
+  // Arms-only render: a second transparent canvas draws just the arms above
+  // the join overlay so the hands stay on top of the form while the rest of
+  // the robot sits behind it. It shares the exact pose maths of the full
+  // robot, so the two canvases line up pixel for pixel.
+  if (armsOnly) {
+    return (
+      <group>
+        <Arm side={1} armRef={rightArmRef} elbowRef={rightElbowRef} />
+        <Arm side={-1} armRef={leftArmRef} elbowRef={leftElbowRef} />
+      </group>
+    )
+  }
 
   return (
     <group ref={body} onClick={(e) => { e.stopPropagation(); triggerPose('giggle') }}>
@@ -795,7 +901,7 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation }
   )
 }
 
-function Scene({ externalPose, motionRef, pose, idleAnimation }) {
+function Scene({ externalPose, motionRef, pose, idleAnimation, armsOnly }) {
   const reduced = useReducedMotion()
   return (
     <>
@@ -805,15 +911,29 @@ function Scene({ externalPose, motionRef, pose, idleAnimation }) {
       <directionalLight position={[-5, 2, -4]} intensity={1.1} color="#8fd8ff" />
       <pointLight position={[-2.6, -1.4, 2.6]} intensity={9} distance={9} color={TEAL} />
       <pointLight position={[2.4, 2.2, -3]} intensity={6} distance={9} color={SAND} />
-      <Robot reduced={reduced} externalPose={externalPose} motionRef={motionRef} pose={pose} idleAnimation={idleAnimation} />
+      <Robot
+        reduced={reduced}
+        externalPose={externalPose}
+        motionRef={motionRef}
+        pose={pose}
+        idleAnimation={idleAnimation}
+        armsOnly={armsOnly}
+      />
     </>
   )
 }
 
-export default function Robot3D({ className = '', externalPose, motionRef, pose, idleAnimation }) {
+export default function Robot3D({
+  className = '',
+  externalPose,
+  motionRef,
+  pose,
+  idleAnimation,
+  armsOnly = false,
+}) {
   return (
     <div className={`robot-3d ${className}`}>
-      <div className="robot-3d-glow" aria-hidden="true" />
+      {!armsOnly && <div className="robot-3d-glow" aria-hidden="true" />}
       <Canvas
         className="robot-3d-canvas"
         dpr={[1, 1.8]}
@@ -821,7 +941,13 @@ export default function Robot3D({ className = '', externalPose, motionRef, pose,
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
         <Suspense fallback={null}>
-          <Scene externalPose={externalPose} motionRef={motionRef} pose={pose} idleAnimation={idleAnimation} />
+          <Scene
+            externalPose={externalPose}
+            motionRef={motionRef}
+            pose={pose}
+            idleAnimation={idleAnimation}
+            armsOnly={armsOnly}
+          />
         </Suspense>
       </Canvas>
     </div>

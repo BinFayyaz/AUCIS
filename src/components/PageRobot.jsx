@@ -9,14 +9,15 @@ import './PageRobot.css'
 // only sets a target, a rAF loop damps onto it, and the robot's real travel
 // speed drives the leg gait.
 const NAV_SAFE = 80 // the robot keeps its box clear of the fixed navigation
-const MAX_DRIFT = 220 // how far it trails behind the scroll
-const MAX_SWAY = 8 // gentle weave, there is no reserved lane on these pages
+// Fixed stations (below the navigation) the mascot walks between once it is
+// flying: it stops on one of these, never halfway towards the next.
+const STATION_STEPS = [40, 190, 100, 240]
 const FOOTER_GAP = 96
 const FADE_START = 160
 const FADE_SPAN = 420
 const MIN_OPACITY = 0.4 // ghosted once it is over page content
 const LIFT_BLEND = 240
-const STIFFNESS = 10
+const STIFFNESS = 5 // a walking pace rather than a snap
 
 /** The node's box in document coordinates, measured as it is rendered. */
 function documentBox(node) {
@@ -41,7 +42,7 @@ export default function PageRobot({ pose = 'upright', className = '' }) {
   const anchor = useRef(null)
   const target = useRef({ x: 0, y: 0 })
   const current = useRef({ x: 0, y: 0 })
-  const motion = useRef({ speed: 0 })
+  const motion = useRef({ speed: 0, distance: 0 })
   const lastY = useRef(0)
   const settle = useRef(null)
   const [flying, setFlying] = useState(false)
@@ -68,17 +69,20 @@ export default function PageRobot({ pose = 'upright', className = '' }) {
       const liftAt = Math.max(0, box.y - stationTop)
       const past = Math.max(0, y - liftAt)
       const blend = Math.min(1, past / LIFT_BLEND)
-      const travel = Math.min(MAX_DRIFT, past * 0.5)
       const laneX = window.innerWidth - box.width - (window.innerWidth < 768 ? 12 : 24)
 
-      let nextY = past > 0 ? stationTop + travel : box.y - y
+      // One fixed station per band of scrolling, along the right-hand edge.
+      const band = Math.floor(past / Math.max(360, window.innerHeight * 0.6))
+      const stationY = NAV_SAFE + STATION_STEPS[band % STATION_STEPS.length]
+
+      let nextY = past > 0 ? stationY : box.y - y
       const footer = document.querySelector('footer')
       if (footer) {
         nextY = Math.min(nextY, footer.getBoundingClientRect().top - box.height - FOOTER_GAP)
       }
 
       target.current = {
-        x: box.x + (laneX - box.x) * blend + Math.sin(y / 420) * MAX_SWAY * blend,
+        x: box.x + (laneX - box.x) * blend,
         y: nextY,
       }
 
@@ -135,6 +139,7 @@ export default function PageRobot({ pose = 'upright', className = '' }) {
       pos.x = dampTowards(pos.x, goal.x, delta, STIFFNESS)
       pos.y = dampTowards(pos.y, goal.y, delta, STIFFNESS)
       motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, delta)
+      motion.current.distance = Math.hypot(pos.x - fromX, pos.y - fromY)
       layer.style.transform = `translate3d(${pos.x.toFixed(2)}px, ${pos.y.toFixed(2)}px, 0)`
       frame = requestAnimationFrame(tick)
     }

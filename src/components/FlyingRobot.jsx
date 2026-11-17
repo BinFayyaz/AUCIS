@@ -7,52 +7,70 @@ import { dampTowards, travelSpeed } from '../lib/robotFlight.js'
 import { useRobotIdle, useWelcomeAnimation, IDLE_DURATIONS } from '../lib/robotIdle.js'
 import './JoinRegistration.css'
 
-const MAX_DRIFT = 240
-const MAX_SWAY = 110
-const MOBILE_MAX_SWAY = 12
-const MOBILE_MAX_DRIFT = 110
-const FOOTER_GAP = 124
-const TOP_SAFE = 88
+// Fixed stations the robot walks to — it only ever stands on one of these
+// spots, never at some point in between, and walks to the next one when the
+// section it follows changes. Values are fractions of the viewport height.
+const DESKTOP_STATIONS = [0.06, 0.24, 0.12, 0.3, 0.18]
+const MOBILE_STATIONS = [0.02, 0.08, 0.04, 0.1]
+
+const ROBOT_BOX =
+  'relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,30vw,400px)] md:w-[clamp(280px,26vw,350px)]'
+
+// Phases where the form has swallowed the robot: it sits completely behind the
+// overlay, so nothing of it may show while the reader fills the form in.
+const BEHIND_FORM = ['returning', 'form', 'error']
+// Phases where the panel is rising in front of the robot. Only the arms are
+// drawn above the overlay, so the hands stay on the form while the rest of the
+// body stays behind it.
+const ARMS_OVER_FORM = ['hands-down', 'hands-up']
+// The arm layer is mounted earlier than it is shown: it has to be created
+// while the robot is still at 1:1 scale, otherwise the canvas measures itself
+// against the enlarged box and comes out twice too big.
+const ARMS_LAYER_MOUNTED = ['flying-bottom', 'enlarging', ...ARMS_OVER_FORM]
+const BEHIND_OVERLAY = [
+  ...ARMS_OVER_FORM,
+  ...BEHIND_FORM,
+  'flying-bottom',
+  'enlarging',
+  'flying-up',
+]
 
 /**
  * The home-page robot. On wide screens it holds the reserved right-hand lane;
  * on phones and small tablets it sits centred in the band above the hero.
  *
- * Scrolling carries it down, weaves it left and right within its blank lane,
- * and streams energy motes the other way. The robot alternates sides with
- * each section — right on even sections, left on odd — so it diagonally flies
- * across as the reader moves between sections.
+ * Scrolling walks it between fixed stations, one per section, alternating
+ * sides — it never drifts continuously, and it keeps one size the whole way.
  *
  * When `joinPhase` is set (from the Join AUCIS sequence) the robot follows a
  * scripted animation: flying to center, enlarging, stretching arms down to
- * pull the registration form up, then returning to the right side.
+ * pull the registration form up, then slipping behind the form.
  */
 export default function FlyingRobot({ joinPhase }) {
-  const [tilt, setTilt] = useState(0)
   const [mode, setMode] = useState('idle')
   const [fade, setFade] = useState(1)
   const lastY = useRef(0)
   // Scroll only sets a target; a requestAnimationFrame loop damps the robot
-  // towards it. That keeps the flight smooth and frame-accurate instead of
+  // towards it. That keeps the walk smooth and frame-accurate instead of
   // lagging behind a long CSS transition on every scroll event.
   const targetPos = useRef({ x: 0, y: 0 })
   const currentPos = useRef({ x: 0, y: 0 })
-  const motion = useRef({ speed: 0 })
-  const onLeft = useRef(false)
-  const [onLeftSide, setOnLeftSide] = useState(false)
+  const motion = useRef({ speed: 0, distance: 0 })
   const settled = useRef(false)
   const settle = useRef(null)
   const laneRef = useRef(null)
   const robotRef = useRef(null)
   const base = useRef({ top: 0, bottom: 0 })
   const maxOffset = useRef(0)
-  const swaySpace = useRef(MAX_SWAY)
   const joinPhaseRef = useRef(null)
   joinPhaseRef.current = joinPhase
 
   const [geometry, setGeometry] = useState(null)
   const isJoining = Boolean(joinPhase)
-  const behindOverlay = ['flying-bottom', 'enlarging', 'hands-down', 'hands-up', 'flying-up', 'returning'].includes(joinPhase)
+  const behindOverlay = BEHIND_OVERLAY.includes(joinPhase)
+  const armsOverForm = ARMS_OVER_FORM.includes(joinPhase)
+  const armsLayerMounted = ARMS_LAYER_MOUNTED.includes(joinPhase)
+  const hiddenByForm = BEHIND_FORM.includes(joinPhase)
 
   // --- Idle + welcome animations ---
   const { shouldGreet, onGreetingComplete } = useWelcomeAnimation()
@@ -95,40 +113,16 @@ export default function FlyingRobot({ joinPhase }) {
       }
     }
 
-    const measureSwaySpace = () => {
-      const robot = robotRef.current
-      if (!robot) return
-      const pageContainer = document.querySelector('.home-page .container-page')
-      if (pageContainer) {
-        const styles = getComputedStyle(pageContainer)
-        const padL = parseFloat(styles.paddingLeft)
-        const padR = parseFloat(styles.paddingRight)
-        const lanePadding = Math.max(padL, padR)
-        swaySpace.current = Math.max(0, Math.min(MAX_SWAY, lanePadding - robot.offsetWidth))
-      }
-    }
-
     const onScroll = () => {
       if (joinPhaseRef.current) return
 
       const y = window.scrollY
       const delta = y - lastY.current
       lastY.current = y
+      const wide = inLane()
 
-      let next = 0
-
-      if (inLane()) {
-        next = Math.min(y * 0.5, MAX_DRIFT)
-        const footer = document.querySelector('footer')
-        if (footer) {
-          const room = footer.getBoundingClientRect().top - base.current.bottom - FOOTER_GAP
-          next = Math.min(next, room)
-        }
-        next = Math.max(next, TOP_SAFE - base.current.top)
-      } else {
-        next = Math.min(y * 0.35, MOBILE_MAX_DRIFT)
-      }
-
+      // The section the reader is on picks one fixed station: alternate sides,
+      // a repeating vertical ladder. Nothing in between is ever a target.
       const sections = document.querySelectorAll('.home-page > section')
       let activeIndex = 0
       for (let i = 0; i < sections.length; i++) {
@@ -137,41 +131,31 @@ export default function FlyingRobot({ joinPhase }) {
           activeIndex = i
         }
       }
+
       const nextLeft = activeIndex % 2 === 1
-      if (onLeft.current !== nextLeft) {
-        onLeft.current = nextLeft
-        setOnLeftSide(nextLeft)
-        measureSwaySpace()
-      }
-
-      setFade(inLane() ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
-
-      // Fixed points: robot snaps to left or right based on active section —
-      // no continuous sine-wave sway between sections.
+      const ladder = wide ? DESKTOP_STATIONS : MOBILE_STATIONS
       targetPos.current = {
-        x: nextLeft ? -maxOffset.current : 0,
-        y: next,
+        x: wide && nextLeft ? -maxOffset.current : 0,
+        y: Math.round(ladder[activeIndex % ladder.length] * window.innerHeight),
       }
+
+      setFade(wide ? 1 : Math.max(0.28, Math.min(1, 1 - (y - 140) / 420)))
 
       if (Math.abs(delta) > 1) {
-        setTilt(Math.max(-8, Math.min(8, delta * 0.3)))
         setMode(delta > 0 ? 'down' : 'up')
         window.clearTimeout(settle.current)
         settle.current = window.setTimeout(() => {
-          setTilt(0)
           setMode('idle')
-        }, 260)
+        }, 300)
       }
     }
 
     const onResize = () => {
       measure()
-      measureSwaySpace()
       onScroll()
     }
 
     measure()
-    measureSwaySpace()
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     window.addEventListener('resize', onResize)
@@ -188,8 +172,8 @@ export default function FlyingRobot({ joinPhase }) {
     }
   }, [])
 
-  // Frame-rate independent damping: the robot eases onto its scroll target,
-  // and its real travel speed is published for the 3D gait.
+  // Frame-rate independent damping: the robot eases onto its station at a
+  // walking pace, and its real travel drives the 3D gait, frame by frame.
   useEffect(() => {
     let frame = 0
     let prev = performance.now()
@@ -206,15 +190,22 @@ export default function FlyingRobot({ joinPhase }) {
         settled.current = true
       }
 
-      const fromX = pos.x
-      const fromY = pos.y
-      pos.x = dampTowards(pos.x, goal.x, dt, 6)
-      pos.y = dampTowards(pos.y, goal.y, dt)
-      motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
-
-      // While the join flight is scripted, React owns the transform.
-      if (!joinPhaseRef.current && robotRef.current) {
-        robotRef.current.style.transform = `translate3d(${pos.x.toFixed(2)}px, ${pos.y.toFixed(2)}px, 0)`
+      if (joinPhaseRef.current) {
+        // The scripted join flight owns the transform; keep the feet still.
+        pos.x = goal.x
+        pos.y = goal.y
+        motion.current.speed = 0
+        motion.current.distance = 0
+      } else {
+        const fromX = pos.x
+        const fromY = pos.y
+        pos.x = dampTowards(pos.x, goal.x, dt, 3.2)
+        pos.y = dampTowards(pos.y, goal.y, dt, 3.6)
+        motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
+        motion.current.distance = Math.hypot(pos.x - fromX, pos.y - fromY)
+        if (robotRef.current) {
+          robotRef.current.style.transform = `translate3d(${pos.x.toFixed(2)}px, ${pos.y.toFixed(2)}px, 0)`
+        }
       }
       frame = requestAnimationFrame(tick)
     }
@@ -240,47 +231,68 @@ export default function FlyingRobot({ joinPhase }) {
   }
 
   const externalPose = {
+    // The arms stay stretched down while the panel rises, so the hands keep
+    // their grip on the form instead of snapping back to the sides.
     'hands-down': 'hands-down',
+    'hands-up': 'hands-down',
     error: 'dissatisfied',
     collecting: 'pulling',
     rolling: 'rolling',
     shrinking: 'rolling',
     holding: 'holding-scroll',
   }[joinPhase] || (isJoining ? 'attentive' : null)
-  const tiltRotation = isJoining ? 0 : tilt + targetPos.current.x * 0.05
-  const opacity = isJoining ? 1 : fade
+  const opacity = isJoining ? (hiddenByForm ? 0 : 1) : fade
 
   return (
-    <div
-      ref={laneRef}
-      aria-hidden="true"
-      data-join-phase={joinPhase || 'idle'}
-      data-pose={externalPose || 'idle'}
-      className={`robot-flight ${isJoining ? 'is-joining' : ''} ${behindOverlay ? 'is-behind-overlay' : ''} pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
-        mode === 'down' ? 'is-diving' : mode === 'up' ? 'is-climbing' : 'is-gliding'
-      }`}
-      style={{ opacity }}
-    >
-      <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
-        <div
-          ref={robotRef}
-          className={`md:pointer-events-auto md:cursor-pointer ${
-            isJoining ? 'transition-transform duration-700 ease-in-out' : ''
-          }`}
-          style={joinTransform ? { transform: joinTransform } : undefined}
-        >
+    <>
+      <div
+        ref={laneRef}
+        aria-hidden="true"
+        data-join-phase={joinPhase || 'idle'}
+        data-pose={externalPose || 'idle'}
+        data-animation={activeAnimation || 'none'}
+        className={`robot-flight ${isJoining ? 'is-joining' : ''} ${behindOverlay ? 'is-behind-overlay' : ''} pointer-events-none fixed inset-x-0 top-[5.5rem] z-20 transition-opacity duration-300 md:top-[13vh] ${
+          mode === 'down' ? 'is-diving' : mode === 'up' ? 'is-climbing' : 'is-gliding'
+        }`}
+        style={{ opacity }}
+      >
+        <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
           <div
-            style={{ transform: `rotate(${tiltRotation}deg)` }}
-            className="transition-transform duration-300 ease-out"
+            ref={robotRef}
+            className={`md:pointer-events-auto md:cursor-pointer ${
+              isJoining ? 'transition-transform duration-700 ease-in-out' : ''
+            }`}
+            style={joinTransform ? { transform: joinTransform } : undefined}
           >
-            <div className={`relative h-[clamp(200px,44vw,250px)] w-[clamp(180px,40vw,225px)] md:h-[clamp(310px,30vw,400px)] md:w-[clamp(280px,26vw,350px)] transition-transform duration-500 ease-out ${onLeftSide ? 'scale-110' : 'scale-100'}`}>
-              <Robot3D externalPose={externalPose} motionRef={motion} idleAnimation={!isJoining ? activeAnimation : null} />
+            <div className={ROBOT_BOX}>
+              <Robot3D
+                externalPose={externalPose}
+                motionRef={motion}
+                idleAnimation={!isJoining ? activeAnimation : null}
+              />
               <RobotSparks mode={mode} />
               {shouldGreet && <RobotThoughtBubble />}
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Hands on the form: the same arms drawn over the overlay while the rest
+          of the robot stays behind the rising panel. */}
+      {armsLayerMounted && joinTransform && (
+        <div className={`robot-arms-overlay ${armsOverForm ? 'is-visible' : ''}`} aria-hidden="true">
+          <div className="mx-auto flex w-full max-w-6xl justify-end px-6 sm:px-8">
+            <div
+              className="transition-transform duration-700 ease-in-out"
+              style={{ transform: joinTransform }}
+            >
+              <div className={ROBOT_BOX}>
+                <Robot3D armsOnly externalPose={externalPose} motionRef={motion} />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
