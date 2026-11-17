@@ -15,6 +15,9 @@ if (previewMode) {
 allowedHosts.push('localhost', '127.0.0.1')
 
 export default defineConfig({
+  // Expose VITE_* and IDLE_* env vars to client code, so Vercel's IDLE_TIMEOUT
+  // (in seconds) is available as import.meta.env.IDLE_TIMEOUT.
+  envPrefix: ['VITE_', 'IDLE_'],
   plugins: [react()],
   server: {
     host: '0.0.0.0',
