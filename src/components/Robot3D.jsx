@@ -449,9 +449,10 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
     // of spinning at a fixed rate while it hovers across the screen.
     const travel = recumbent ? 0 : motionRef?.current?.speed || 0
     const covered = recumbent || reduced ? 0 : motionRef?.current?.distance || 0
-    const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 210)
+    const gaitTarget = reduced || recumbent ? 0 : Math.min(1, travel / 160)
     gait.current.amplitude = THREE.MathUtils.damp(gait.current.amplitude, gaitTarget, 5, ease)
-    if (!reduced) gait.current.phase += covered * 0.02
+    // Capped so a fast flick of the wheel cannot spin the legs into a blur.
+    if (!reduced) gait.current.phase += Math.min(0.6, covered * 0.02)
     const stride = gait.current.amplitude
 
     // --- Idle animation tracking ---
@@ -532,7 +533,10 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
           body.current.rotation.z = Math.sin(t * 28) * 0.1
           body.current.position.x = Math.sin(t * 28) * 0.04
         } else {
-          body.current.rotation.z = reduced ? 0 : Math.sin(t * 0.55) * 0.03
+          // A little weight shift onto the planted leg while walking.
+          body.current.rotation.z = reduced
+            ? 0
+            : Math.sin(t * 0.55) * 0.03 + stride * Math.sin(gait.current.phase) * 0.035
           body.current.position.x = THREE.MathUtils.damp(body.current.position.x, 0, 8, ease)
         }
       }
@@ -658,15 +662,30 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
     }
 
     // --- Legs ---
-    const swing = Math.sin(gait.current.phase)
+    const phase = gait.current.phase
     const idleSway = 0.06 * (1 - stride)
 
-    const poseLeg = (hip, knee, foot, hipAngle, kneeBend) => {
+    const poseLeg = (hip, knee, foot, hipAngle, kneeBend, footAngle, lift = 0) => {
       if (!hip || !knee) return
       const bend = kneeBend ?? 0.14 + Math.max(0, -hipAngle) * 0.9
       hip.rotation.x = hipAngle
+      hip.position.y = -0.5 + lift
       knee.rotation.x = bend
-      if (foot) foot.rotation.x = -(hipAngle + bend) * 0.6
+      if (foot) foot.rotation.x = footAngle ?? -(hipAngle + bend) * 0.6
+    }
+
+    // One step of the stride at cycle angle `theta`: planted forward, rolled
+    // back under the body, pushed off at the back, then swung through with a
+    // bent knee, a lifted heel and the toe dropped — so the foot clears the
+    // ground instead of sliding along it.
+    const stepLeg = (hip, knee, foot, theta, sway) => {
+      const forward = Math.cos(theta) // +1 planted ahead, -1 behind
+      const swinging = Math.max(0, -Math.sin(theta)) // 1 mid-swing, heel up
+      const pushing = Math.max(0, -forward) // 1 at the back of the stride
+      const hipAngle = forward * 0.8 * stride + sway
+      const bend = 0.15 + (swinging * 0.9 + pushing * 0.18) * stride
+      const footAngle = -(hipAngle + bend) * 0.6 + (pushing * 0.35 - swinging * 0.28) * stride
+      poseLeg(hip, knee, foot, hipAngle, bend, footAngle, swinging * 0.05 * stride)
     }
 
     const restBreath = reduced ? 0 : Math.sin(t * 0.9) * 0.04
@@ -674,22 +693,25 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
     // robot standing.
     const tapping = idleActive && idleAnimation === 'foot-tap'
     const tap = tapping ? Math.abs(Math.sin(idleElapsed * 6)) : 0
-    poseLeg(
-      rightHip.current,
-      rightKnee.current,
-      rightFoot.current,
-      tapping
-        ? 0.16 + tap * 0.32
-        : recumbent ? 0.3 + restBreath : swing * 0.8 * stride + Math.sin(t * 1.2) * idleSway,
-      tapping ? 0.3 + tap * 0.6 : recumbent ? 0.58 : undefined,
-    )
-    poseLeg(
-      leftHip.current,
-      leftKnee.current,
-      leftFoot.current,
-      recumbent ? 0.1 + restBreath : -swing * 0.8 * stride + Math.sin(t * 1.2 + 1.7) * idleSway,
-      recumbent ? 0.24 : undefined,
-    )
+    if (recumbent || tapping) {
+      poseLeg(
+        rightHip.current,
+        rightKnee.current,
+        rightFoot.current,
+        tapping ? 0.16 + tap * 0.32 : 0.3 + restBreath,
+        tapping ? 0.3 + tap * 0.6 : 0.58,
+      )
+      poseLeg(
+        leftHip.current,
+        leftKnee.current,
+        leftFoot.current,
+        recumbent ? 0.1 + restBreath : Math.sin(t * 1.2 + 1.7) * idleSway,
+        recumbent ? 0.24 : undefined,
+      )
+    } else {
+      stepLeg(rightHip.current, rightKnee.current, rightFoot.current, phase, Math.sin(t * 1.2) * idleSway)
+      stepLeg(leftHip.current, leftKnee.current, leftFoot.current, phase + Math.PI, Math.sin(t * 1.2 + 1.7) * idleSway)
+    }
 
     // --- Head ---
     if (head.current) {

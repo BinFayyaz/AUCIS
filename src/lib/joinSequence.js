@@ -49,10 +49,11 @@ export function getJoinRobotTarget(phase, viewport, robot) {
   // arms reach just past the panel's top edge, so the hands land on the form
   // while the torso stays above it and the legs disappear behind it.
   const pull = { x: vw / 2, y: vh * 0.44, scale: mobile ? 1.5 : 1.8 }
-  // Released from the pull: it rises up beside the form and settles into place.
+  // Released from the pull: it rises up beside the form, then settles down into
+  // its parked spot. Never so high that the enlarged robot leaves the screen.
   const lifted = {
     x: gutterX,
-    y: mobile ? 60 : Math.max(120, parkedY - 80),
+    y: mobile ? 60 : Math.round(Math.max(parkedY - 160, (height * parked.scale) / 2 + 20)),
     scale: parked.scale,
   }
 
