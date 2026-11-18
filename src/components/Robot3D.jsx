@@ -203,6 +203,7 @@ function Robot({ reduced, externalPose, motionRef, pose: stance }) {
   const leftKnee = useRef(null)
   const leftFoot = useRef(null)
   const gait = useRef({ phase: 0, amplitude: 0 })
+  const headTurn = useRef(0)
 
   const pointer = useRef({ x: 0, y: 0 })
   const aim = useRef({ x: 0, y: 0 })
@@ -366,7 +367,14 @@ function Robot({ reduced, externalPose, motionRef, pose: stance }) {
         head.current.rotation.x = THREE.MathUtils.damp(head.current.rotation.x, 0.1, 4, ease)
         head.current.rotation.z = reduced ? 0 : Math.sin(t * 0.9) * 0.03
       } else {
-        head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+        // Sideways travel turns the head towards the way the body is moving.
+        const travelYaw = THREE.MathUtils.clamp((motionRef?.current?.vx || 0) * 0.0018, -0.85, 0.85)
+        const lookYaw = externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+        headTurn.current = THREE.MathUtils.damp(headTurn.current, travelYaw, 7, ease)
+        head.current.rotation.y =
+          eff === 'dissatisfied' && !reduced
+            ? Math.sin(t * 7) * 0.18
+            : THREE.MathUtils.damp(head.current.rotation.y, lookYaw + headTurn.current, 8, ease)
         head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
         head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02
       }

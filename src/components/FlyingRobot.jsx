@@ -35,7 +35,7 @@ export default function FlyingRobot({ joinPhase }) {
   // lagging behind a long CSS transition on every scroll event.
   const targetPos = useRef({ x: 0, y: 0 })
   const currentPos = useRef({ x: 0, y: 0 })
-  const motion = useRef({ speed: 0 })
+  const motion = useRef({ speed: 0, vx: 0 })
   const onLeft = useRef(false)
   const settled = useRef(false)
   const settle = useRef(null)
@@ -191,6 +191,8 @@ export default function FlyingRobot({ joinPhase }) {
       pos.x = dampTowards(pos.x, goal.x, dt)
       pos.y = dampTowards(pos.y, goal.y, dt)
       motion.current.speed = travelSpeed(fromX, fromY, pos.x, pos.y, dt)
+      // Sideways velocity, so the model can turn its head the way it travels.
+      motion.current.vx = dt > 0 ? (pos.x - fromX) / dt : 0
 
       // While the join flight is scripted, React owns the transform.
       if (!joinPhaseRef.current && robotRef.current) {
