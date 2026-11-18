@@ -8,15 +8,9 @@ function Logo() {
   return (
     <Link to="/" className="group flex items-center gap-3" aria-label="AUCIS home">
       <img
-        src="/au-logo-dark.png"
-        alt="Air University Kamra"
-        className="logo-dark h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
-      />
-      <img
-        src="/au-logo-light.png"
-        alt=""
-        aria-hidden="true"
-        className="logo-light h-11 w-auto shrink-0 object-contain"
+        src="/aucis-mark.png"
+        alt="AUCIS — Computing & Innovation Society, Air University Kamra"
+        className="h-11 w-11 shrink-0 object-contain opacity-95 transition duration-500 group-hover:opacity-100"
       />
       <span className="leading-none">
         <span className="block font-heavy text-lg tracking-[0.22em] text-cream">AUCIS</span>
