@@ -751,7 +751,12 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
           head.current.rotation.z = THREE.MathUtils.damp(head.current.rotation.z, 0, 8, ease)
         }
       } else {
-        head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+        // Walking to the other side of the page turns the head the way it is
+        // going; the pointer only has a say once the robot settles again.
+        const turn = reduced ? 0 : motionRef?.current?.turn || 0
+        const look = pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
+        const yaw = turn * 0.62 + look * (1 - Math.min(1, Math.abs(turn)))
+        head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : yaw
         head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
         head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02
       }

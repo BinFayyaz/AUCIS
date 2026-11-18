@@ -58,7 +58,7 @@ export default function FlyingRobot({ joinPhase }) {
   // lagging behind a long CSS transition on every scroll event.
   const targetPos = useRef({ x: 0, y: 0 })
   const currentPos = useRef({ x: 0, y: 0 })
-  const motion = useRef({ speed: 0, distance: 0 })
+  const motion = useRef({ speed: 0, distance: 0, turn: 0 })
   // How far the page itself scrolled since the last frame. The robot only
   // changes station every section, but its legs should still walk while the
   // reader scrolls, so the page's own travel drives the gait too.
@@ -216,12 +216,23 @@ export default function FlyingRobot({ joinPhase }) {
         pos.y = goal.y
         motion.current.speed = 0
         motion.current.distance = 0
+        motion.current.turn = 0
         scrollTravel.current = 0
       } else {
         const fromX = pos.x
         const fromY = pos.y
         pos.x = dampTowards(pos.x, goal.x, dt, 3.2)
         pos.y = dampTowards(pos.y, goal.y, dt, 3.6)
+        // Which way the robot is walking sideways, as a signed 0…±1 value the
+        // 3D head reads so it looks towards the side it is heading for. It
+        // eases back to 0 once the robot settles on its station.
+        const dx = pos.x - fromX
+        motion.current.turn = dampTowards(
+          motion.current.turn,
+          Math.abs(dx) > 0.08 ? Math.sign(dx) : 0,
+          dt,
+          4,
+        )
         // Walk over whatever the robot crossed itself plus the distance the
         // page scrolled, so the feet keep stepping with the reader's scroll.
         const travelled = Math.hypot(pos.x - fromX, pos.y - fromY) + scrollTravel.current
