@@ -156,18 +156,6 @@
     @apply h-px w-full bg-gradient-to-r from-transparent via-cream/15 to-transparent;
   }
 
-  .logo-light {
-    display: none;
-  }
-
-  [data-theme='light'] .logo-dark {
-    display: none;
-  }
-
-  [data-theme='light'] .logo-light {
-    display: block;
-  }
-
   /* =========================================================
      CONTACT PAGE — DUAL-THEME STYLING
      ========================================================= */
