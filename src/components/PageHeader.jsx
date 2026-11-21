@@ -1,4 +1,4 @@
-import Aurora from './Aurora.jsx'
+
 import PageRobot from './PageRobot.jsx'
 import Reveal from './Reveal.jsx'
 
@@ -13,7 +13,7 @@ export default function PageHeader({ eyebrow, title, accent, intro, robot = 'hov
 
   return (
     <section className="relative overflow-hidden border-b border-cream/5">
-      <Aurora className="opacity-60" />
+  
       <div className="container-page relative py-20 sm:py-24">
         <div className={hovering ? 'md:grid md:grid-cols-[1fr_auto] md:items-start md:gap-10' : ''}>
           <div>

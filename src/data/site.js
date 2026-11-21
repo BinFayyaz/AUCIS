@@ -8,7 +8,7 @@
 export const site = {
   name: 'AUCIS',
   campus: 'Air University · Kamra Campus',
-  tagline: 'Innovate. Compete. Soar.',
+  tagline: 'Learn. Lead. Innovate.',
   intro:
     'AUCIS is the student computing and innovation society of Air University, Kamra Campus — a home for builders, problem solvers and the endlessly curious.',
   email: null, // e.g. 'aucis@au.edu.pk'

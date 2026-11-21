@@ -1,4 +1,4 @@
-/** Soft moving colour fields behind the page content. */
+/** Soft moving colour fields behind the page content. 
 export default function Aurora({ className = '' }) {
   return (
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`} aria-hidden="true">
@@ -13,4 +13,4 @@ export default function Aurora({ className = '' }) {
       />
     </div>
   )
-}
+}*/

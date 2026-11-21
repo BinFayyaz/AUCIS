@@ -527,7 +527,9 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
       } else {
         // Normal grounded stance: a gentle walking bob replaces the old hover
         body.current.position.y = reduced ? 0 : stride * Math.sin(gait.current.phase * 2) * 0.04
-        body.current.rotation.y = reduced || externalPose ? 0 : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
+        body.current.rotation.y = reduced || externalPose
+  ? 0
+  : Math.sin(t * 0.42) * 0.28 + pointer.current.x * 0.34
         body.current.rotation.x = reduced || externalPose ? 0 : Math.cos(t * 0.36) * 0.04 - pointer.current.y * 0.1
         if (eff === 'giggle') {
           body.current.rotation.z = Math.sin(t * 28) * 0.1
@@ -564,7 +566,47 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
       if (eff === 'rolling') {
         return { rz: -0.65 * side, rx: side * roll, ez: 0, ex: 0 }
       }
-      return { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
+      // Natural idle hand movements and walking arm swing.
+if (!reduced && !externalPose) {
+  if (stride < 0.08) {
+    // Standing: gentle, slightly asymmetric hand movements.
+    const phase = t * 1.15 + side * 0.9
+    const secondary = t * 1.7 + side * 1.4
+
+    // Tiny shoulder movements make the arms feel relaxed.
+    const shoulderSway = Math.sin(phase) * 0.065
+
+    // Small elbow bends create more expressive hand movement.
+    const elbowBend = Math.sin(secondary) * 0.11
+
+    // Occasional gentle outward hand movement.
+    const littleGesture = Math.max(
+      0,
+      Math.sin(t * 0.65 + side * 1.8)
+    ) * 0.07
+
+    return {
+      rz: (-0.26 + shoulderSway + littleGesture) * side,
+      rx: -0.035 + Math.sin(phase * 0.7) * 0.035,
+      ez: (elbowBend - 0.035) * side,
+      ex: Math.sin(secondary) * 0.045,
+    }
+  }
+
+  // Walking: arms naturally counter-swing with the legs.
+  const walkingSwing = Math.sin(
+    gait.current.phase + (side > 0 ? Math.PI : 0)
+  ) * stride * 0.24
+
+  return {
+    rz: (-0.26 + walkingSwing) * side,
+    rx: 0,
+    ez: Math.sin(gait.current.phase + side) * stride * 0.12 * side,
+    ex: 0,
+  }
+}
+
+return { rz: -0.26 * side, rx: 0, ez: 0, ex: 0 }
     }
 
     // When an idle animation is active, override the arm targets
@@ -753,9 +795,16 @@ function Robot({ reduced, externalPose, motionRef, pose: stance, idleAnimation, 
       } else {
         // Walking to the other side of the page turns the head the way it is
         // going; the pointer only has a say once the robot settles again.
-        const turn = reduced ? 0 : motionRef?.current?.turn || 0
-        const look = pointer.current.x * 0.3 + (reduced ? 0 : Math.sin(t * 0.63) * 0.08)
-        const yaw = turn * 0.62 + look * (1 - Math.min(1, Math.abs(turn)))
+        const facing = reduced ? 0 : motionRef?.current?.facing || 0
+const turn = reduced ? 0 : motionRef?.current?.turn || 0
+
+// A subtle head turn toward the page content.
+const contentLook = facing * 0.25
+const movementLook = turn * 0.10
+const naturalLook = pointer.current.x * 0.08 +
+  (reduced ? 0 : Math.sin(t * 0.63) * 0.035)
+
+const yaw = contentLook + movementLook + naturalLook
         head.current.rotation.y = eff === 'dissatisfied' && !reduced ? Math.sin(t * 7) * 0.18 : externalPose ? 0 : yaw
         head.current.rotation.x = externalPose ? 0 : pointer.current.y * 0.16
         head.current.rotation.z = eff === 'dissatisfied' ? -0.1 : reduced ? 0 : Math.sin(t * 0.9) * 0.02

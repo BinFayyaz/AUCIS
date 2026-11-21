@@ -1,3 +1,4 @@
+
 import PageHeader from '../components/PageHeader.jsx'
 import Reveal from '../components/Reveal.jsx'
 import Icon from '../components/Icon.jsx'
@@ -35,7 +36,9 @@ export default function About() {
                 <Icon name={block.icon} size={18} />
               </span>
               <h2 className="mt-6 text-2xl">{block.label}</h2>
-              <p className="mt-3 text-base leading-relaxed text-cream/55">{block.text}</p>
+              <p className="mt-3 text-base leading-relaxed text-cream/55">
+                {block.text}
+              </p>
             </div>
           </Reveal>
         ))}
@@ -53,6 +56,7 @@ export default function About() {
               What we set out to <span className="italic text-sand/90">do</span>.
             </h2>
           </Reveal>
+
           <ul className="space-y-1">
             {objectives.map((objective, i) => (
               <Reveal key={objective} delay={i * 70}>
@@ -60,7 +64,9 @@ export default function About() {
                   <span className="mt-1 font-display text-sm text-sand/60">
                     {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span className="text-base leading-relaxed text-cream/65">{objective}</span>
+                  <span className="text-base leading-relaxed text-cream/65">
+                    {objective}
+                  </span>
                 </li>
               </Reveal>
             ))}
@@ -83,15 +89,18 @@ export default function About() {
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
           {pillars.map((pillar, i) => (
             <Reveal key={pillar.title} delay={i * 80}>
-              <article className="surface surface-hover group relative h-full overflow-hidden p-8">
-                <div className="pointer-events-none absolute -right-12 -top-12 h-32 w-32 rounded-full bg-sage/10 blur-2xl transition duration-700 group-hover:bg-sand/20" />
-                <div className="relative flex items-center gap-3">
-                  <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/80">
-                    <Icon name={pillar.icon} size={18} />
-                  </span>
-                  <h3 className="text-2xl">{pillar.title}</h3>
-                </div>
-                <p className="relative mt-4 text-sm leading-relaxed text-cream/55">{pillar.text}</p>
+              <article className="surface surface-hover h-full p-8">
+                <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/80">
+                  <Icon name={pillar.icon} size={18} />
+                </span>
+
+                <h3 className="mt-6 text-2xl">
+                  {pillar.title}
+                </h3>
+
+                <p className="mt-3 text-base leading-relaxed text-cream/55">
+                  {pillar.text}
+                </p>
               </article>
             </Reveal>
           ))}
@@ -102,7 +111,6 @@ export default function About() {
       <section className="container-page pb-24">
         <Reveal>
           <div className="surface relative overflow-hidden p-8 sm:p-12">
-            <div className="pointer-events-none absolute -left-16 -top-20 h-56 w-56 rounded-full bg-steel/25 blur-3xl" />
             <div className="relative grid gap-8 md:grid-cols-[0.9fr_1.1fr]">
               <div>
                 <span className="eyebrow">
@@ -113,6 +121,7 @@ export default function About() {
                   Degrees teach theory. Practice needs a room full of people.
                 </h2>
               </div>
+
               <div className="space-y-4 text-base leading-relaxed text-cream/55">
                 <p>
                   Students arrive with ambition and leave with a transcript — often without a

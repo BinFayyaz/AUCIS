@@ -58,7 +58,12 @@ export default function FlyingRobot({ joinPhase }) {
   // lagging behind a long CSS transition on every scroll event.
   const targetPos = useRef({ x: 0, y: 0 })
   const currentPos = useRef({ x: 0, y: 0 })
-  const motion = useRef({ speed: 0, distance: 0, turn: 0 })
+  const motion = useRef({
+  speed: 0,
+  distance: 0,
+  turn: 0,
+  facing: -1,
+})
   // How far the page itself scrolled since the last frame. The robot only
   // changes station every section, but its legs should still walk while the
   // reader scrolls, so the page's own travel drives the gait too.
