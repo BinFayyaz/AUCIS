@@ -77,46 +77,63 @@
     line-height: 1.5;
 }
 
+
 [data-theme='dark'] .team-page {
-    --bg: #090d16;
-    --surface: #141c2e;
-    --surface-2: #0e1523;
-    --border: #1f2b40;
+    --bg: #0f172a;
+    --surface: #111c30;
+    --surface-2: #0e1525;
+    --border: #26344a;
 
     --text: #e8ecf3;
-    --text-strong: #ffffff;
+    --text-strong: #f5f7fb;
     --muted: #8b97ab;
     --muted-2: #a9b3c4;
 
-    --blue: #38bdf8;
-    --blue-rgb: 56, 189, 248;
-    --green: #34d399;
-    --green-rgb: 52, 211, 153;
-    --gold: #e2b653;
-    --gold-rgb: 226, 182, 83;
+    --blue: #3b82f6;
+    --blue-rgb: 59, 130, 246;
+
+    --green: #93a8c7;
+    --green-rgb: 147, 168, 199;
+
+    --gold: #60a5fa;
+    --gold-rgb: 96, 165, 250;
 
     --header-bg:
-        radial-gradient(700px 300px at 85% 0, rgba(143, 179, 155, 0.08), transparent 70%),
-        linear-gradient(100deg, #0e1520 0%, #131c2b 55%, #16202f 100%);
+        radial-gradient(
+            700px 300px at 85% 0,
+            rgba(59, 130, 246, 0.08),
+            transparent 70%
+        ),
+        linear-gradient(
+            100deg,
+            #0f172a 0%,
+            #111c30 55%,
+            #162238 100%
+        );
+
     --header-border: rgba(255, 255, 255, 0.06);
-    --header-eyebrow: #b3a77d;
-    --header-title: #f6f1dd;
-    --header-em: #8fb39b;
-    --header-desc: #98a2b0;
+    --header-eyebrow: #60a5fa;
+    --header-title: #f5f7fb;
+    --header-em: #93a8c7;
+    --header-desc: #94a3b8;
 
     --card-shadow:
         0 1px 0 rgba(255, 255, 255, 0.06) inset,
         0 14px 30px rgba(0, 0, 0, 0.35);
+
     --card-hover-shadow:
         0 1px 0 rgba(255, 255, 255, 0.08) inset,
         0 24px 48px rgba(0, 0, 0, 0.5),
         0 0 0 1px rgba(var(--tone-rgb), 0.18),
         0 12px 40px rgba(var(--tone-rgb), 0.2);
+
     --avatar-bg: #263449;
+
     --avatar-shadow:
         0 0 0 6px rgba(var(--tone-rgb), 0.12),
         0 0 0 7px rgba(var(--tone-rgb), 0.22),
         0 12px 24px rgba(0, 0, 0, 0.45);
+
     --patron-avatar-shadow:
         0 0 0 8px rgba(var(--tone-rgb), 0.14),
         0 0 0 9px rgba(var(--tone-rgb), 0.28),
@@ -125,22 +142,28 @@
     --accordion-shadow:
         0 1px 0 rgba(255, 255, 255, 0.06) inset,
         0 10px 24px rgba(0, 0, 0, 0.3);
+
     --accordion-open-shadow:
         0 1px 0 rgba(255, 255, 255, 0.08) inset,
         0 18px 44px rgba(0, 0, 0, 0.45),
         0 10px 40px rgba(var(--tone-rgb), 0.12);
+
     --panel-divider: rgba(255, 255, 255, 0.06);
     --member-chip-bg: rgba(255, 255, 255, 0.025);
     --member-chip-border: rgba(255, 255, 255, 0.07);
 
-    --line: rgba(52, 211, 153, 0.55);
-    --line-glow: rgba(52, 211, 153, 0.35);
+    --line: rgba(59, 130, 246, 0.45);
+    --line-glow: rgba(59, 130, 246, 0.2);
 
     background:
-        radial-gradient(900px 400px at 50% -140px, rgba(56, 189, 248, 0.16), transparent 70%),
-        radial-gradient(600px 400px at 100% 40%, rgba(52, 211, 153, 0.05), transparent 70%),
-        radial-gradient(600px 400px at 0% 70%, rgba(226, 182, 83, 0.05), transparent 70%);
+        radial-gradient(
+            900px 400px at 50% -140px,
+            rgba(59, 130, 246, 0.12),
+            transparent 70%
+        ),
+        #0f172a;
 }
+
 
 .team-page h1,
 .team-page h2,

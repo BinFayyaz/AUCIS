@@ -1,3 +1,4 @@
+
 import './Team.css';
 import TeamAccordion, { TeamAvatar } from '../components/TeamAccordion.jsx';
 
@@ -62,44 +63,64 @@ const generalSecretaries = [
 
 function MemberCard({ member, variant }) {
   return (
-    <div className={`member-card ${variant}-card`}>
-      <TeamAvatar person={member} className="member-image" />
+    <article className={`member-card ${variant}-card`}>
+      <TeamAvatar
+        person={member}
+        className="member-image"
+      />
+
       <div className="member-info">
         <h3>{member.name}</h3>
-        <p className="member-role">{member.role}</p>
-        <p className="member-description">{member.description}</p>
+
+        <p className="member-role">
+          {member.role}
+        </p>
+
+        <p className="member-description">
+          {member.description}
+        </p>
       </div>
-    </div>
+    </article>
   );
 }
 
 function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="section-heading">
-      <p className="eyebrow">{eyebrow}</p>
+      <p className="eyebrow">
+        {eyebrow}
+      </p>
+
       <h2>{title}</h2>
-      <p className="section-description">{description}</p>
+
+      <p className="section-description">
+        {description}
+      </p>
     </div>
   );
 }
 
 export default function Team() {
   return (
-    <div className="team-page">
+    <main className="team-page">
       <section className="page-header">
         <div className="page-header-inner">
-          <p className="eyebrow">Air University Computing &amp; Innovation Society</p>
+          <p className="eyebrow">
+            Air University Computing &amp; Innovation Society
+          </p>
+
           <h1>
             Our <em>Team.</em>
           </h1>
+
           <p className="page-description">
-            Meet the people driving innovation, collaboration and excellence at AUCIS.
+            Meet the people driving innovation, collaboration
+            and excellence at AUCIS.
           </p>
         </div>
       </section>
 
       <div className="team-container">
-        {/* ============ PATRONS ============ */}
         <section className="members-section patron-section">
           <SectionHeading
             eyebrow="SOCIETY PATRONS"
@@ -108,13 +129,16 @@ export default function Team() {
           />
 
           <div className="patron-grid">
-            {patrons.map((p) => (
-              <MemberCard key={p.name} member={p} variant="patron" />
+            {patrons.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="patron"
+              />
             ))}
           </div>
         </section>
 
-        {/* ============ CORE TEAM ============ */}
         <section className="members-section">
           <SectionHeading
             eyebrow="SOCIETY LEADERSHIP"
@@ -123,32 +147,43 @@ export default function Team() {
           />
 
           <div className="supervisor-section">
-            <MemberCard member={president} variant="supervisor" />
+            <MemberCard
+              member={president}
+              variant="supervisor"
+            />
           </div>
 
           <div className="executive-grid">
-            {vicePresidents.map((m) => (
-              <MemberCard key={m.name} member={m} variant="executive" />
+            {vicePresidents.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="executive"
+              />
             ))}
           </div>
 
           <div className="leadership-grid">
-            {generalSecretaries.map((m) => (
-              <MemberCard key={m.name} member={m} variant="leadership" />
+            {generalSecretaries.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="leadership"
+              />
             ))}
           </div>
         </section>
 
-        {/* ============ TEAMS ============ */}
         <section className="members-section">
           <SectionHeading
             eyebrow="OUR DEPARTMENTS"
             title="Our Teams"
             description="Select a team to meet its leads, co-leads and members."
           />
+
           <TeamAccordion />
         </section>
       </div>
-    </div>
+    </main>
   );
 }
