@@ -1,0 +1,424 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,900;1,900&family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   AUCIS — GLOBAL THEME SYSTEM
+   Light mode is the default.
+   Dark mode is activated through data-theme="dark".
+   ========================================================= */
+
+@layer base {
+  :root {
+    color-scheme: light;
+
+    /* Light palette */
+    --c-ink: 255 255 255;
+    --c-navy: 247 249 252;
+    --c-depth: 237 243 252;
+    --c-steel: 100 116 139;
+    --c-sage: 23 107 69;
+    --c-sand: 7 86 201;
+    --c-cream: 23 40 63;
+    --c-title: 23 40 63;
+  }
+
+  /* Dark palette */
+  [data-theme='dark'] {
+    color-scheme: dark;
+
+    --c-ink: 15 23 42;
+    --c-navy: 23 40 63;
+    --c-depth: 30 48 72;
+    --c-steel: 148 163 184;
+    --c-sage: 75 160 125;
+    --c-sand: 75 139 240;
+    --c-cream: 241 245 249;
+    --c-title: 226 236 250;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink font-sans text-cream/80 antialiased;
+    background-color: rgb(var(--c-ink));
+    background-image: none;
+    transition: background-color 250ms ease, color 250ms ease;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-sans text-cream;
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  ::selection {
+    background: rgba(7, 86, 201, 0.2);
+    color: #17283f;
+  }
+
+  [data-theme='dark'] ::selection {
+    background: rgba(75, 139, 240, 0.3);
+    color: #ffffff;
+  }
+}
+
+/* =========================================================
+   REUSABLE COMPONENT STYLES
+   ========================================================= */
+
+@layer components {
+
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-6 sm:px-8;
+  }
+
+  /* Existing robot layout spacing preserved */
+  @media (min-width: 768px) {
+    .home-page .container-page {
+      padding-right: calc(clamp(210px, 26vw, 440px) + 3.5rem);
+    }
+
+    .home-page .container-page.robot-left {
+      padding-right: 2rem;
+      padding-left: calc(clamp(210px, 26vw, 440px) + 3.5rem);
+    }
+  }
+
+  /* Small section labels */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em];
+    color: rgb(var(--c-sand));
+  }
+
+  /* Cards and surfaces */
+  .surface {
+    @apply rounded-2xl border backdrop-blur-sm;
+    background-color: rgb(var(--c-navy));
+    border-color: #dce4ef;
+  }
+
+  .surface-hover {
+    @apply transition duration-300;
+  }
+
+  .surface-hover:hover {
+    border-color: rgb(var(--c-sand) / 0.5);
+    transform: translateY(-3px);
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition duration-300;
+  }
+
+  .btn-primary {
+    @apply btn text-white;
+    background-color: #0756c9;
+    box-shadow: 0 5px 15px rgba(7, 86, 201, 0.16);
+  }
+
+  .btn-primary:hover {
+    background-color: #0648aa;
+    transform: translateY(-2px);
+    box-shadow: 0 9px 22px rgba(7, 86, 201, 0.23);
+  }
+
+  [data-theme='dark'] .btn-primary {
+    background-color: #397be0;
+    color: #ffffff;
+  }
+
+  [data-theme='dark'] .btn-primary:hover {
+    background-color: #5591ee;
+  }
+
+  .btn-ghost {
+    @apply btn border;
+    color: rgb(var(--c-cream));
+    border-color: #dce4ef;
+    background-color: transparent;
+  }
+
+  .btn-ghost:hover {
+    border-color: #0756c9;
+    background-color: #edf3fc;
+  }
+
+  [data-theme='dark'] .btn-ghost {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  [data-theme='dark'] .btn-ghost:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+    border-color: #397be0;
+  }
+
+  /* Form fields */
+  .field {
+    @apply w-full rounded-xl border px-4 py-3 text-sm outline-none transition;
+    background-color: rgb(var(--c-navy));
+    border-color: #dce4ef;
+    color: rgb(var(--c-cream));
+  }
+
+  .field::placeholder {
+    color: #94a3b8;
+  }
+
+  .field:focus {
+    border-color: #0756c9;
+    background-color: rgb(var(--c-ink));
+    box-shadow: 0 0 0 3px rgba(7, 86, 201, 0.1);
+  }
+
+  [data-theme='dark'] .field {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  [data-theme='dark'] .field:focus {
+    border-color: #397be0;
+    background-color: rgb(var(--c-navy));
+  }
+
+  /* Form labels */
+  .label {
+    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.15em];
+    color: rgb(var(--c-steel));
+  }
+
+  /* Dividers */
+  .rule {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+      to right,
+      transparent,
+      #dce4ef,
+      transparent
+    );
+  }
+
+  [data-theme='dark'] .rule {
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(255, 255, 255, 0.15),
+      transparent
+    );
+  }
+
+  /* Logo theme switching */
+  .logo-light {
+    display: none;
+  }
+
+  [data-theme='dark'] .logo-dark {
+    display: none;
+  }
+
+  [data-theme='dark'] .logo-light {
+    display: block;
+  }
+
+  /* =========================================================
+     CONTACT PAGE
+     ========================================================= */
+
+  .contact-page .contact-card {
+    @apply rounded-2xl border transition duration-300;
+    background-color: rgb(var(--c-navy));
+    border-color: #dce4ef;
+  }
+
+  .contact-page .contact-card-hover:hover {
+    border-color: #0756c9;
+    transform: translateY(-3px);
+  }
+
+  .contact-page .contact-icon-badge {
+    border: 1px solid #dce4ef;
+    background-color: #edf3fc;
+    color: #0756c9;
+  }
+
+  .contact-page .contact-pill {
+    border: 1px solid rgba(23, 107, 69, 0.2);
+    background-color: rgba(23, 107, 69, 0.08);
+    color: #176b45;
+  }
+
+  .contact-page .contact-field {
+    @apply w-full rounded-xl border px-4 py-3 text-sm outline-none transition;
+    background-color: rgb(var(--c-navy));
+    border-color: #dce4ef;
+    color: rgb(var(--c-cream));
+  }
+
+  .contact-page .contact-field::placeholder {
+    color: #94a3b8;
+  }
+
+  .contact-page .contact-field:focus {
+    border-color: #0756c9;
+    box-shadow: 0 0 0 3px rgba(7, 86, 201, 0.1);
+  }
+
+  .contact-page .contact-submit {
+    @apply btn-primary w-full;
+  }
+
+  .contact-page .contact-social-link {
+    @apply inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition;
+    border-color: #dce4ef;
+    background-color: #ffffff;
+    color: #17283f;
+  }
+
+  .contact-page .contact-social-link:hover {
+    border-color: #0756c9;
+    background-color: #0756c9;
+    color: #ffffff;
+  }
+
+  /* Dark contact page overrides */
+  [data-theme='dark'] .contact-page .contact-card {
+    background-color: rgb(var(--c-navy));
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  [data-theme='dark'] .contact-page .contact-card-hover:hover {
+    border-color: #397be0;
+  }
+
+  [data-theme='dark'] .contact-page .contact-icon-badge {
+    background-color: rgba(57, 123, 224, 0.15);
+    border-color: rgba(57, 123, 224, 0.3);
+    color: #82b1ff;
+  }
+
+  [data-theme='dark'] .contact-page .contact-pill {
+    background-color: rgba(75, 160, 125, 0.15);
+    border-color: rgba(75, 160, 125, 0.3);
+    color: #a5d6bd;
+  }
+
+  [data-theme='dark'] .contact-page .contact-field {
+    background-color: rgb(var(--c-ink));
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #f1f5f9;
+  }
+
+  [data-theme='dark'] .contact-page .contact-field:focus {
+    border-color: #397be0;
+  }
+
+  [data-theme='dark'] .contact-page .contact-submit {
+    background-color: #397be0;
+  }
+
+  [data-theme='dark'] .contact-page .contact-social-link {
+    background-color: rgb(var(--c-navy));
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #f1f5f9;
+  }
+
+  [data-theme='dark'] .contact-page .contact-social-link:hover {
+    background-color: #397be0;
+    border-color: #397be0;
+  }
+
+  [data-theme='dark'] .contact-page .contact-divider {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  [data-theme='dark'] .contact-page .contact-heading {
+    color: #f1f5f9;
+  }
+
+  [data-theme='dark'] .contact-page .contact-body {
+    color: #cbd5e1;
+  }
+
+  [data-theme='dark'] .contact-page .contact-meta {
+    color: #94a3b8;
+  }
+
+  [data-theme='dark'] .contact-page .contact-label {
+    color: #cbd5e1;
+  }
+}
+
+/* =========================================================
+   CUSTOM UTILITIES
+   ========================================================= */
+
+@layer utilities {
+
+  .text-gradient {
+    color: rgb(var(--c-title));
+  }
+
+  .tracking-mega {
+    letter-spacing: 0.42em;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 900ms cubic-bezier(0.22, 1, 0.36, 1),
+      transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .grain::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background-image: radial-gradient(
+      rgba(23, 40, 63, 0.12) 0.5px,
+      transparent 0.5px
+    );
+    background-size: 4px 4px;
+  }
+
+  [data-theme='dark'] .grain::after {
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.12) 0.5px,
+      transparent 0.5px
+    );
+  }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}

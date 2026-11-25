@@ -1,0 +1,139 @@
+
+.robot-sparks {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0;
+  height: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.robot-spark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  background: var(--spark-color);
+
+  /* Softer, more professional lighting */
+  box-shadow:
+    0 0 4px 1px var(--spark-color),
+    0 0 9px var(--spark-color);
+
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.robot-spark-star {
+  border-radius: 0;
+  clip-path: polygon(
+    50% 0,
+    62% 36%,
+    100% 50%,
+    62% 64%,
+    50% 100%,
+    38% 64%,
+    0 50%,
+    38% 36%
+  );
+
+  filter: drop-shadow(0 0 2px var(--spark-color));
+}
+
+/* Idle: slow, smooth and subtle orbital movement */
+.robot-sparks.is-idle .robot-spark {
+  animation:
+    robot-spiral
+    calc(var(--spark-duration) * 2.4)
+    cubic-bezier(0.45, 0, 0.25, 1)
+    var(--spark-delay)
+    infinite;
+}
+
+@keyframes robot-spiral {
+  0% {
+    opacity: 0;
+    transform:
+      rotate(var(--spark-a))
+      translateY(calc(var(--spark-r) * 0.2))
+      scale(0.35);
+  }
+
+  15% {
+    opacity: 0.65;
+  }
+
+  55% {
+    opacity: 0.8;
+  }
+
+  85% {
+    opacity: 0.35;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      rotate(calc(var(--spark-a) + var(--spark-turn)))
+      translateY(var(--spark-r))
+      scale(0.85);
+  }
+}
+
+/* Travelling: softer particle trails */
+.robot-sparks.is-up .robot-spark,
+.robot-sparks.is-down .robot-spark {
+  animation:
+    robot-stream
+    calc(var(--spark-duration) * 1.5)
+    cubic-bezier(0.45, 0, 0.25, 1)
+    var(--spark-delay)
+    infinite;
+}
+
+@keyframes robot-stream {
+  0% {
+    opacity: 0;
+    transform:
+      translate3d(var(--spark-x0), var(--spark-y0), 0)
+      scale(0.4);
+  }
+
+  20% {
+    opacity: 0.6;
+  }
+
+  100% {
+    opacity: 0;
+    transform:
+      translate3d(var(--spark-x1), var(--spark-y1), 0)
+      scale(0.75);
+  }
+}
+
+/* Climbing: particles move downward */
+.robot-sparks.is-up .robot-spark {
+  --spark-y0: calc(var(--spark-r) * -0.4);
+  --spark-y1: calc(var(--spark-r) * 1.15);
+}
+
+/* Dropping: particles move upward */
+.robot-sparks.is-down .robot-spark {
+  --spark-y0: calc(var(--spark-r) * 0.6);
+  --spark-y1: calc(var(--spark-r) * -1.15);
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .robot-spark {
+    animation: none;
+  }
+
+  .robot-spark:nth-child(4n) {
+    opacity: 0.5;
+    transform:
+      rotate(var(--spark-a))
+      translateY(var(--spark-r));
+  }
+}

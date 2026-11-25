@@ -1,0 +1,47 @@
+name: app
+
+services:
+  web:
+    image: node:22-bookworm-slim
+    working_dir: /workspace
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    environment:
+      - BASE44_PREVIEW_MODE
+      - BASE44_PUBLIC_HOST_SUFFIX
+      - BASE44_SANDBOX_HOST_DOMAIN
+      - NODE_ENV=development
+      - API_PORT=4000
+      - DATA_DIR=/data
+    volumes:
+      - "${BASE44_PROJECT_ROOT:-.}:/workspace"
+      - node_modules:/workspace/node_modules
+      - api_data:/data
+    command:
+      - sh
+      - -ec
+      - |
+        npm install --no-audit --no-fund
+        node server/index.js &
+        exec npx vite --host 0.0.0.0 --port 3000
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          node -e "Promise.all([
+            fetch('http://127.0.0.1:3000/'),
+            fetch('http://127.0.0.1:4000/api/health')
+          ]).then((rs) => {
+            if (rs.every((r) => r.ok)) process.exit(0);
+            console.error('unhealthy: web/api ->', rs.map((r) => r.status).join(','));
+            process.exit(1);
+          }).catch((e) => { console.error('unhealthy:', e.message); process.exit(1); });"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 120s
+
+volumes:
+  node_modules:
+  api_data:
