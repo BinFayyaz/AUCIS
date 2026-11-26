@@ -251,7 +251,7 @@ export default function Contact() {
                   disabled={status === 'sending'}
                   className="contact-submit mt-7 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {status === 'sending' ? 'Transmitting Message…' : 'Transmit Message to AUCIS'}
+                  {status === 'sending' ? 'Transmitting Message…' : 'Message to AUCIS'}
                   {status !== 'sending' && <Icon name="arrowRight" size={16} />}
                 </button>
               </form>

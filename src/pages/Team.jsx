@@ -1,87 +1,189 @@
-import PageHeader from '../components/PageHeader.jsx'
-import Reveal from '../components/Reveal.jsx'
-import TeamCard from '../components/TeamCard.jsx'
-import HierarchyChart from '../components/HierarchyChart.jsx'
-import Icon from '../components/Icon.jsx'
-import { coreRoles, executiveBody, supervisors } from '../data/site.js'
 
-function Group({ label, description, people, delay = 0 }) {
+import './Team.css';
+import TeamAccordion, { TeamAvatar } from '../components/TeamAccordion.jsx';
+
+const patrons = [
+  {
+    name: 'Mustajab Hassan',
+    role: 'Society Mentor',
+    description: 'Mentors the society and guides its growth and direction.',
+    image: '/pictures/Mr. Mustajab Hussain.jpg',
+    alt: 'Mustajab Hussain',
+  },
+  {
+    name: 'Dr. Muhammad Saud Khan',
+    role: 'Chairperson',
+    description: 'Chairs AUCIS and oversees its academic and strategic direction.',
+    image: '/pictures/dr saud.jpg',
+    alt: 'Dr. Muhammad Saud Khan',
+  },
+];
+
+const president = {
+  name: 'Abdul Rehman',
+  role: 'President',
+  description: 'Leads AUCIS, establishes its vision and represents the society.',
+  image: '/picture/member.jpg',
+  alt: 'Abdul Rehman',
+};
+
+const vicePresidents = [
+  {
+    name: 'Tayyab',
+    role: 'Vice President',
+    description: 'Assists the President and oversees society operations.',
+    image: '/picture/tayyab.jpg',
+    alt: 'Tayyab',
+  },
+  {
+    name: 'Areeba Noor',
+    role: 'Vice President',
+    description: 'Supports leadership and coordinates society activities.',
+    image: '/picture/areeba-noor.jpg',
+    alt: 'Areeba Noor',
+  },
+];
+
+const generalSecretaries = [
+  {
+    name: 'Jawad Mustafa',
+    role: 'General Secretary',
+    description: 'Manages official communication, records and administrative coordination.',
+    image: '/picture/jawad mustafa.jpg',
+    alt: 'Jawad Mustafa',
+  },
+  {
+    name: 'Samrana Abbas',
+    role: 'General Secretary',
+    description: 'Coordinates society programmes and supports administrative activities.',
+    image: '/picture/samrana-abbass.jpg',
+    alt: 'Samrana Abbas',
+  },
+];
+
+function MemberCard({ member, variant }) {
   return (
-    <section className="container-page py-10 first:pt-16">
-      {description && <div className="sr-only">{description}</div>}
-      <Reveal delay={delay}>
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="text-2xl sm:text-3xl">{label}</h2>
-          <span className="text-[11px] uppercase tracking-[0.24em] text-cream/35">
-            {people.length} {people.length === 1 ? 'member' : 'members'}
-          </span>
-        </div>
-        <div className="rule mt-5" />
-      </Reveal>
+    <article className={`member-card ${variant}-card`}>
+      <TeamAvatar
+        person={member}
+        className="member-image"
+      />
 
-      {people.length === 0 ? (
-        <Reveal delay={delay + 80}>
-          <div className="surface mt-6 flex items-center gap-4 p-6">
-            <span className="grid h-11 w-11 place-items-center rounded-full border border-cream/10 bg-white/[0.03] text-sand/70">
-              <Icon name="users" size={18} />
-            </span>
-            <p className="text-sm text-cream/50">Names will be announced here soon.</p>
-          </div>
-        </Reveal>
-      ) : (
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {people.map((person, i) => (
-            <Reveal key={person.name + person.role} delay={delay + 80 + i * 70}>
-              <TeamCard person={person} />
-            </Reveal>
-          ))}
-        </div>
-      )}
-    </section>
-  )
+      <div className="member-info">
+        <h3>{member.name}</h3>
+
+        <p className="member-role">
+          {member.role}
+        </p>
+
+        <p className="member-description">
+          {member.description}
+        </p>
+      </div>
+    </article>
+  );
+}
+
+function SectionHeading({ eyebrow, title, description }) {
+  return (
+    <div className="section-heading">
+      <p className="eyebrow">
+        {eyebrow}
+      </p>
+
+      <h2>{title}</h2>
+
+      <p className="section-description">
+        {description}
+      </p>
+    </div>
+  );
 }
 
 export default function Team() {
   return (
-    <>
-      <PageHeader
-        eyebrow="The people"
-        title="A team of"
-        accent="students."
-        intro="The society is run by students, guided by faculty. Photos and short bios are on the way."
-        robot="resting"
-      />
+    <main className="team-page">
+      <section className="page-header">
+        <div className="page-header-inner">
+          <p className="eyebrow">
+            Air University Computing &amp; Innovation Society
+          </p>
 
-      <div className="pb-14">
-        <HierarchyChart />
+          <h1>
+            Our <em>Team.</em>
+          </h1>
 
-        <Group
-          label="Supervisors"
-          description="Faculty supervisors guiding the society."
-          people={supervisors}
-        />
-        <Group
-          label="Executive Body"
-          description="The students leading AUCIS."
-          people={executiveBody}
-          delay={60}
-        />
-        <Group label="Core Roles" description="The core team." people={coreRoles} delay={60} />
-
-        <div className="container-page pt-8">
-          <Reveal>
-            <div className="surface flex flex-wrap items-center justify-between gap-4 p-6">
-              <p className="text-sm text-cream/55">
-                More members are joining the team — this page will grow with them.
-              </p>
-              <span className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.24em] text-sand/70">
-                <Icon name="plus" size={14} />
-                Adding soon
-              </span>
-            </div>
-          </Reveal>
+          <p className="page-description">
+            Meet the people driving innovation, collaboration
+            and excellence at AUCIS.
+          </p>
         </div>
+      </section>
+
+      <div className="team-container">
+        <section className="members-section patron-section">
+          <SectionHeading
+            eyebrow="SOCIETY PATRONS"
+            title="Our Patrons"
+            description="The guidance and mentorship behind AUCIS."
+          />
+
+          <div className="patron-grid">
+            {patrons.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="patron"
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="members-section">
+          <SectionHeading
+            eyebrow="SOCIETY LEADERSHIP"
+            title="Core Team"
+            description="The leadership guiding the vision and direction of AUCIS."
+          />
+
+          <div className="supervisor-section">
+            <MemberCard
+              member={president}
+              variant="supervisor"
+            />
+          </div>
+
+          <div className="executive-grid">
+            {vicePresidents.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="executive"
+              />
+            ))}
+          </div>
+
+          <div className="leadership-grid">
+            {generalSecretaries.map((member) => (
+              <MemberCard
+                key={member.name}
+                member={member}
+                variant="leadership"
+              />
+            ))}
+          </div>
+        </section>
+
+        <section className="members-section">
+          <SectionHeading
+            eyebrow="OUR DEPARTMENTS"
+            title="Our Teams"
+            description="Select a team to meet its leads, co-leads and members."
+          />
+
+          <TeamAccordion />
+        </section>
       </div>
-    </>
-  )
+    </main>
+  );
 }

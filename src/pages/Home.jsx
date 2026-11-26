@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import Aurora from '../components/Aurora.jsx'
 import CountUp from '../components/CountUp.jsx'
 import FlyingRobot from '../components/FlyingRobot.jsx'
 import Icon from '../components/Icon.jsx'
@@ -108,8 +107,7 @@ export default function Home() {
       )}
 
       {/* Hero */}
-      <section className="relative overflow-hidden">
-        <Aurora />
+<section className="relative overflow-hidden bg-ink">
         <div className="container-page relative pb-24 pt-40 sm:pt-44 md:pt-16 lg:pb-28 lg:pt-20">
           <div>
             <Reveal>

@@ -1,5 +1,5 @@
-/* Live 3D mascot: the canvas fills this box, a soft teal bloom sits behind it
-   so the hologram reads against both the light and the dark theme. */
+
+/* Live 3D mascot: soft blue bloom behind the robot. */
 .robot-3d {
   position: relative;
   width: 100%;
@@ -19,8 +19,8 @@
   border-radius: 999px;
   background: radial-gradient(
     50% 50% at 50% 56%,
-    rgba(92, 214, 192, 0.32),
-    rgba(92, 214, 192, 0.09) 54%,
+    rgba(96, 165, 250, 0.30),
+    rgba(59, 130, 246, 0.12) 54%,
     transparent 72%
   );
   filter: blur(16px);
@@ -33,5 +33,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .robot-3d-glow { animation: none; }
+  .robot-3d-glow {
+    animation: none;
+  }
 }

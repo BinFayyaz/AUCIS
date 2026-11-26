@@ -8,16 +8,20 @@
 export const site = {
   name: 'AUCIS',
   campus: 'Air University · Kamra Campus',
-  tagline: 'Innovate. Compete. Soar.',
+  tagline: 'Learn. Lead. Innovate.',
   intro:
     'AUCIS is the student computing and innovation society of Air University, Kamra Campus — a home for builders, problem solvers and the endlessly curious.',
-  email: null, // e.g. 'aucis@au.edu.pk'
+  email: 'aucisauk@gmail.com',
   location: {
     line1: 'Air University, Kamra Campus',
     line2: 'Attock, Punjab, Pakistan',
   },
   socials: [
-    // { label: 'Instagram', href: 'https://instagram.com/...' },
+     {
+      label: 'Instagram',
+      href: 'https://instagram.com//aucis.au/',
+      icon: 'instagram',
+    },
   ],
 }
 

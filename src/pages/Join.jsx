@@ -1,8 +1,8 @@
+
 import { useState } from 'react'
 import PageHeader from '../components/PageHeader.jsx'
 import Reveal from '../components/Reveal.jsx'
 import Icon from '../components/Icon.jsx'
-import { postJson } from '../lib/api.js'
 import { codeOfConduct, interests, memberBenefits } from '../data/site.js'
 
 const eligibility = [
@@ -25,43 +25,153 @@ const initialForm = {
   agreed: false,
 }
 
+// Only these characters are allowed in each field.
+const cleanName = (value) =>
+  value.replace(/[^\p{L}\p{M}\s.'’-]/gu, '')
+
+const cleanRollNumber = (value) =>
+  value.replace(/[^A-Za-z0-9/-]/g, '').slice(0, 20)
+
+const cleanDepartment = (value) =>
+  value.replace(/[^\p{L}\p{M}0-9\s&()./-]/gu, '').slice(0, 80)
+
+const validateField = (key, value) => {
+  switch (key) {
+    case 'name': {
+      const name = value.trim()
+
+      if (!name) return 'Please enter your full name.'
+      if (name.length < 2) return 'Your name must contain at least 2 characters.'
+      if (!/^[\p{L}\p{M}]+(?:[ .'-][\p{L}\p{M}]+)*$/u.test(name)) {
+        return 'Use letters only, with spaces, hyphens, apostrophes or periods.'
+      }
+      return ''
+    }
+
+    case 'email': {
+      const email = value.trim()
+
+      if (!email) return 'Please enter your email address.'
+      if (email.length > 254) return 'Email address is too long.'
+      if (!/^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?)+$/i.test(email)) {
+        return 'Please enter a valid email address, e.g. name@example.com.'
+      }
+      return ''
+    }
+
+    case 'rollNumber': {
+      const roll = value.trim()
+
+      if (!roll) return 'Please enter your roll number.'
+      if (!/^[A-Za-z0-9/-]{4,20}$/.test(roll)) {
+        return 'Use 4–20 characters: letters, numbers, hyphens or slashes.'
+      }
+      return ''
+    }
+
+    case 'department': {
+      const department = value.trim()
+
+      if (!department) return 'Please enter your department.'
+      if (department.length < 2) return 'Department name must contain at least 2 characters.'
+      if (!/[\p{L}\p{M}]/u.test(department)) {
+        return 'Department name must contain letters.'
+      }
+      if (!/^[\p{L}\p{M}0-9\s&()./-]+$/u.test(department)) {
+        return 'Please remove unsupported characters from the department name.'
+      }
+      return ''
+    }
+
+    case 'year':
+      if (!years.includes(value)) return 'Please select a valid year of study.'
+      return ''
+
+    case 'interests':
+      if (!Array.isArray(value) || value.length === 0) {
+        return 'Please select at least one area of interest.'
+      }
+      if (!value.every((item) => interests.includes(item))) {
+        return 'Please select valid areas of interest.'
+      }
+      return ''
+
+    case 'motivation': {
+      const motivation = value.trim()
+
+      if (!motivation) return 'Please tell us why you want to join.'
+      if (motivation.length < 20) return 'Please write at least 20 characters.'
+      if (motivation.length > 1000) return 'Please keep your answer under 1,000 characters.'
+      return ''
+    }
+
+    case 'agreed':
+      if (value !== true) return 'You must agree to the code of conduct.'
+      return ''
+
+    default:
+      return ''
+  }
+}
+
 export default function Join() {
   const [form, setForm] = useState(initialForm)
   const [status, setStatus] = useState('idle')
-  const [error, setError] = useState('')
+  const [errors, setErrors] = useState({})
 
-  const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }))
+  const update = (key, value) => {
+    setForm((prev) => ({ ...prev, [key]: value }))
 
-  const toggleInterest = (interest) => {
-    setForm((prev) => ({
-      ...prev,
-      interests: prev.interests.includes(interest)
-        ? prev.interests.filter((item) => item !== interest)
-        : [...prev.interests, interest],
-    }))
+    // Clear the previous error while the user corrects the field.
+    setErrors((prev) => ({ ...prev, [key]: '' }))
   }
 
-  const onSubmit = async (event) => {
-    event.preventDefault()
-    setError('')
-    setStatus('sending')
+  const checkField = (key, value) => {
+    const error = validateField(key, value)
+    setErrors((prev) => ({ ...prev, [key]: error }))
+  }
 
-    try {
-      await postJson('/api/applications', {
-        name: form.name,
-        email: form.email,
-        rollNumber: form.rollNumber,
-        department: form.department,
-        year: form.year,
-        interests: form.interests,
-        motivation: form.motivation,
-      })
-      setStatus('sent')
-      setForm(initialForm)
-    } catch (err) {
-      setError(err.message)
+  const toggleInterest = (interest) => {
+    const updatedInterests = form.interests.includes(interest)
+      ? form.interests.filter((item) => item !== interest)
+      : [...form.interests, interest]
+
+    update('interests', updatedInterests)
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    Object.entries(form).forEach(([key, value]) => {
+      const error = validateField(key, value)
+
+      if (error) {
+        newErrors[key] = error
+      }
+    })
+
+    return newErrors
+  }
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+
+    const validationErrors = validateForm()
+    setErrors(validationErrors)
+
+    if (Object.keys(validationErrors).length > 0) {
       setStatus('idle')
+      return
     }
+
+    // Frontend validation only. No application is sent or saved yet.
+    setStatus('validated')
+  }
+
+  const startAnother = () => {
+    setForm(initialForm)
+    setErrors({})
+    setStatus('idle')
   }
 
   return (
@@ -91,7 +201,9 @@ export default function Join() {
                   <Icon name="check" size={16} className="text-sage" />
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-cream/50">{item.text}</p>
+                <p className="mt-2 text-sm leading-relaxed text-cream/50">
+                  {item.text}
+                </p>
               </div>
             </Reveal>
           ))}
@@ -106,11 +218,20 @@ export default function Join() {
               <span className="h-px w-8 bg-sand/50" />
               Member benefits
             </span>
-            <h2 className="mt-5 text-2xl sm:text-3xl">What you get out of it</h2>
+            <h2 className="mt-5 text-2xl sm:text-3xl">
+              What you get out of it
+            </h2>
             <ul className="mt-6 space-y-3">
               {memberBenefits.map((benefit) => (
-                <li key={benefit} className="flex items-start gap-3 text-sm leading-relaxed text-cream/60">
-                  <Icon name="star" size={15} className="mt-0.5 shrink-0 text-sand/70" />
+                <li
+                  key={benefit}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-cream/60"
+                >
+                  <Icon
+                    name="star"
+                    size={15}
+                    className="mt-0.5 shrink-0 text-sand/70"
+                  />
                   {benefit}
                 </li>
               ))}
@@ -122,11 +243,20 @@ export default function Join() {
               <span className="h-px w-8 bg-sand/50" />
               Code of conduct
             </span>
-            <h2 className="mt-5 text-2xl sm:text-3xl">How we work together</h2>
+            <h2 className="mt-5 text-2xl sm:text-3xl">
+              How we work together
+            </h2>
             <ul className="mt-6 space-y-3">
               {codeOfConduct.map((rule) => (
-                <li key={rule} className="flex items-start gap-3 text-sm leading-relaxed text-cream/60">
-                  <Icon name="shield" size={15} className="mt-0.5 shrink-0 text-sage/80" />
+                <li
+                  key={rule}
+                  className="flex items-start gap-3 text-sm leading-relaxed text-cream/60"
+                >
+                  <Icon
+                    name="shield"
+                    size={15}
+                    className="mt-0.5 shrink-0 text-sage/80"
+                  />
                   {rule}
                 </li>
               ))}
@@ -152,87 +282,173 @@ export default function Join() {
           </Reveal>
 
           <Reveal delay={120}>
-            {status === 'sent' ? (
+            {status === 'validated' ? (
               <div className="surface p-8">
                 <span className="grid h-12 w-12 place-items-center rounded-full border border-sage/40 bg-sage/10 text-sage">
                   <Icon name="check" size={20} />
                 </span>
-                <h3 className="mt-5 text-2xl">Application received.</h3>
+
+                <h3 className="mt-5 text-2xl">
+                  Form validated successfully.
+                </h3>
+
                 <p className="mt-2 text-sm leading-relaxed text-cream/55">
-                  Thank you for applying to AUCIS. The executive body will be in touch at the email
-                  address you gave us.
+                  All your information looks valid. However, the application
+                  has not been submitted or saved because the AUCIS backend
+                  is not connected yet.
                 </p>
+
                 <button
                   type="button"
-                  onClick={() => setStatus('idle')}
+                  onClick={startAnother}
                   className="btn-ghost mt-6 text-[13px]"
                 >
-                  Submit another application
+                  Fill another application
                 </button>
               </div>
             ) : (
-              <form onSubmit={onSubmit} className="surface p-6 sm:p-8">
+              <form
+                onSubmit={onSubmit}
+                noValidate
+                className="surface p-6 sm:p-8"
+              >
                 <div className="grid gap-5 sm:grid-cols-2">
+                  {/* Full name */}
                   <div>
                     <label className="label" htmlFor="name">
-                      Full name
+                      Full name *
                     </label>
                     <input
                       id="name"
+                      name="name"
+                      type="text"
                       className="field"
                       value={form.name}
-                      onChange={(e) => update('name', e.target.value)}
+                      onChange={(e) => update('name', cleanName(e.target.value))}
+                      onBlur={() => checkField('name', form.name)}
                       placeholder="Your full name"
+                      autoComplete="name"
+                      maxLength={80}
                       required
+                      aria-invalid={!!errors.name}
+                      aria-describedby={errors.name ? 'name-error' : undefined}
                     />
+                    {errors.name && (
+                      <p id="name-error" className="mt-2 text-xs text-red-300">
+                        {errors.name}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Email */}
                   <div>
                     <label className="label" htmlFor="email">
-                      Email
+                      Email *
                     </label>
                     <input
                       id="email"
+                      name="email"
                       type="email"
                       className="field"
                       value={form.email}
                       onChange={(e) => update('email', e.target.value)}
+                      onBlur={() => checkField('email', form.email)}
                       placeholder="you@example.com"
+                      autoComplete="email"
+                      maxLength={254}
                       required
+                      aria-invalid={!!errors.email}
+                      aria-describedby={errors.email ? 'email-error' : undefined}
                     />
+                    {errors.email && (
+                      <p id="email-error" className="mt-2 text-xs text-red-300">
+                        {errors.email}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Roll number */}
                   <div>
                     <label className="label" htmlFor="rollNumber">
-                      Roll number
+                      Roll number *
                     </label>
                     <input
                       id="rollNumber"
+                      name="rollNumber"
+                      type="text"
                       className="field"
                       value={form.rollNumber}
-                      onChange={(e) => update('rollNumber', e.target.value)}
+                      onChange={(e) =>
+                        update('rollNumber', cleanRollNumber(e.target.value))
+                      }
+                      onBlur={() => checkField('rollNumber', form.rollNumber)}
                       placeholder="e.g. 240123"
+                      autoComplete="off"
+                      maxLength={20}
+                      required
+                      aria-invalid={!!errors.rollNumber}
+                      aria-describedby={
+                        errors.rollNumber ? 'rollNumber-error' : undefined
+                      }
                     />
+                    {errors.rollNumber && (
+                      <p
+                        id="rollNumber-error"
+                        className="mt-2 text-xs text-red-300"
+                      >
+                        {errors.rollNumber}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Department */}
                   <div>
                     <label className="label" htmlFor="department">
-                      Department
+                      Department *
                     </label>
                     <input
                       id="department"
+                      name="department"
+                      type="text"
                       className="field"
                       value={form.department}
-                      onChange={(e) => update('department', e.target.value)}
+                      onChange={(e) =>
+                        update('department', cleanDepartment(e.target.value))
+                      }
+                      onBlur={() => checkField('department', form.department)}
                       placeholder="e.g. Computer Science"
+                      maxLength={80}
+                      required
+                      aria-invalid={!!errors.department}
+                      aria-describedby={
+                        errors.department ? 'department-error' : undefined
+                      }
                     />
+                    {errors.department && (
+                      <p
+                        id="department-error"
+                        className="mt-2 text-xs text-red-300"
+                      >
+                        {errors.department}
+                      </p>
+                    )}
                   </div>
+
+                  {/* Year */}
                   <div className="sm:col-span-2">
                     <label className="label" htmlFor="year">
-                      Year of study
+                      Year of study *
                     </label>
                     <select
                       id="year"
+                      name="year"
                       className="field appearance-none"
                       value={form.year}
                       onChange={(e) => update('year', e.target.value)}
+                      onBlur={() => checkField('year', form.year)}
+                      required
+                      aria-invalid={!!errors.year}
+                      aria-describedby={errors.year ? 'year-error' : undefined}
                     >
                       <option value="">Select your year</option>
                       {years.map((year) => (
@@ -241,14 +457,24 @@ export default function Join() {
                         </option>
                       ))}
                     </select>
+                    {errors.year && (
+                      <p id="year-error" className="mt-2 text-xs text-red-300">
+                        {errors.year}
+                      </p>
+                    )}
                   </div>
                 </div>
 
+                {/* Areas of interest */}
                 <fieldset className="mt-6">
-                  <legend className="label">Areas of interest</legend>
+                  <legend className="label">
+                    Areas of interest *
+                  </legend>
+
                   <div className="flex flex-wrap gap-2">
                     {interests.map((interest) => {
                       const active = form.interests.includes(interest)
+
                       return (
                         <button
                           type="button"
@@ -266,42 +492,91 @@ export default function Join() {
                       )
                     })}
                   </div>
+
+                  {errors.interests && (
+                    <p className="mt-2 text-xs text-red-300">
+                      {errors.interests}
+                    </p>
+                  )}
                 </fieldset>
 
+                {/* Motivation */}
                 <div className="mt-6">
                   <label className="label" htmlFor="motivation">
-                    Why do you want to join?
+                    Why do you want to join? *
                   </label>
                   <textarea
                     id="motivation"
+                    name="motivation"
                     className="field min-h-[120px] resize-y"
                     value={form.motivation}
                     onChange={(e) => update('motivation', e.target.value)}
+                    onBlur={() => checkField('motivation', form.motivation)}
                     placeholder="A few honest lines are enough."
+                    minLength={20}
+                    maxLength={1000}
+                    required
+                    aria-invalid={!!errors.motivation}
+                    aria-describedby={
+                      errors.motivation ? 'motivation-error' : 'motivation-count'
+                    }
                   />
+
+                  <div className="mt-2 flex items-center justify-between">
+                    {errors.motivation ? (
+                      <p
+                        id="motivation-error"
+                        className="text-xs text-red-300"
+                      >
+                        {errors.motivation}
+                      </p>
+                    ) : (
+                      <span className="text-xs text-cream/35">
+                        Minimum 20 characters
+                      </span>
+                    )}
+
+                    <span
+                      id="motivation-count"
+                      className="text-xs text-cream/35"
+                    >
+                      {form.motivation.length}/1000
+                    </span>
+                  </div>
                 </div>
 
-                <label className="mt-6 flex items-start gap-3 text-sm leading-relaxed text-cream/55">
-                  <input
-                    type="checkbox"
-                    checked={form.agreed}
-                    onChange={(e) => update('agreed', e.target.checked)}
-                    className="mt-0.5 h-4 w-4 rounded border-cream/30 bg-navy accent-sand"
-                    required
-                  />
-                  I have read and agree to the AUCIS code of conduct.
-                </label>
+                {/* Code of conduct agreement */}
+                <div className="mt-6">
+                  <label className="flex items-start gap-3 text-sm leading-relaxed text-cream/55">
+                    <input
+                      type="checkbox"
+                      name="agreed"
+                      checked={form.agreed}
+                      onChange={(e) => update('agreed', e.target.checked)}
+                      className="mt-0.5 h-4 w-4 rounded border-cream/30 bg-navy accent-sand"
+                      required
+                    />
+                    I have read and agree to the AUCIS code of conduct.
+                  </label>
 
-                {error && <p className="mt-4 text-sm text-red-300/90">{error}</p>}
+                  {errors.agreed && (
+                    <p className="mt-2 text-xs text-red-300">
+                      {errors.agreed}
+                    </p>
+                  )}
+                </div>
 
                 <button
                   type="submit"
-                  disabled={status === 'sending'}
-                  className="btn-primary mt-7 w-full disabled:cursor-not-allowed disabled:opacity-60"
+                  className="btn-primary mt-7 w-full"
                 >
-                  {status === 'sending' ? 'Sending…' : 'Submit application'}
-                  {status !== 'sending' && <Icon name="arrowRight" size={16} />}
+                  Validate application
+                  <Icon name="arrowRight" size={16} />
                 </button>
+
+                <p className="mt-4 text-center text-xs text-cream/35">
+                  Demo form — applications are not yet submitted or stored.
+                </p>
               </form>
             )}
           </Reveal>

@@ -157,16 +157,17 @@ export default function Layout() {
                 </span>
               ) : (
                 site.socials.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="grid h-9 w-9 place-items-center rounded-full border border-cream/10 text-cream/60 transition hover:border-sand/40 hover:text-cream"
-                    aria-label={social.label}
-                  >
-                    <Icon name={social.icon || 'arrowUpRight'} size={16} />
-                  </a>
+                 <a
+  key={social.label}
+  href={social.href}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex h-9 items-center gap-2 rounded-full border border-cream/10 px-4 text-sm text-cream/60 transition hover:border-sand/40 hover:text-cream"
+  aria-label="Open AUCIS Instagram"
+>
+  <Icon name={social.icon || 'arrowUpRight'} size={16} />
+  <span>Open Instagram</span>
+</a>
                 ))
               )}
             </div>
@@ -215,7 +216,7 @@ export default function Layout() {
 
         <div className="container-page flex flex-col gap-2 border-t border-cream/10 py-6 text-[11px] uppercase tracking-[0.2em] text-cream/30 sm:flex-row sm:items-center sm:justify-between">
           <span>© {new Date().getFullYear()} AUCIS · Air University Kamra</span>
-          <span>Built by the society, for the society</span>
+          
         </div>
       </footer>
     </div>

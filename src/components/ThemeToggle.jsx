@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react'
 import Icon from './Icon.jsx'
 
@@ -5,9 +6,11 @@ const STORAGE_KEY = 'aucis-theme'
 
 function readTheme() {
   try {
-    return localStorage.getItem(STORAGE_KEY) === 'light' ? 'light' : 'dark'
+    const savedTheme = localStorage.getItem(STORAGE_KEY)
+
+    return savedTheme === 'dark' ? 'dark' : 'light'
   } catch {
-    return 'dark'
+    return 'light'
   }
 }
 
@@ -17,6 +20,7 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
+
     try {
       localStorage.setItem(STORAGE_KEY, theme)
     } catch {
