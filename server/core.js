@@ -1,8 +1,7 @@
 import fs from 'node:fs/promises'
 import path from 'node:path'
 
-// One place for form validation + storage, shared by the local Express server
-// and the Vercel functions in /api.
+
 const DATA_DIR = process.env.DATA_DIR || '/tmp/aucis-data'
 
 export class ValidationError extends Error {

@@ -1,87 +1,55 @@
-/* =====================================================
-   AUCIS | Our Team (Scoped to .team-page)
-   ===================================================== */
-
 .team-page {
     --bg: #ffffff;
     --surface: #f7f9fc;
-    --surface-2: #edf3fc;
-    --border: #dce4ef;
+    --surface-2: #f7f9fc;
+    --border: #e3e9f2;
 
     --text: #17283f;
     --text-strong: #0f172a;
     --muted: #64748b;
-    --muted-2: #475569;
+    --muted-2: #64748b;
 
     --blue: #0756c9;
     --blue-rgb: 7, 86, 201;
-    --green: #176b45;
-    --green-rgb: 23, 107, 69;
-    --gold: #b7791f;
-    --gold-rgb: 183, 121, 31;
 
-    --header-bg:
-        radial-gradient(700px 300px at 85% 0, rgba(23, 107, 69, 0.07), transparent 70%),
-        linear-gradient(100deg, #f7f9fc 0%, #edf3fc 55%, #e8f0fb 100%);
-    --header-border: #dce4ef;
-    --header-eyebrow: #8a6d3b;
+    --tone: var(--blue); 
+    --tone-rgb: var(--blue-rgb);
+
+    --header-bg: #ffffff;
+    --header-border: #e6ebf2;
+    --header-eyebrow: #0756c9;
     --header-title: #17283f;
-    --header-em: #176b45;
-    --header-desc: #475569;
+    --header-em: #17283f;
+    --header-desc: #64748b;
 
-    --card-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.8) inset,
-        0 10px 26px rgba(15, 23, 42, 0.06);
-    --card-hover-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 20px 40px rgba(15, 23, 42, 0.1),
-        0 0 0 1px rgba(var(--tone-rgb), 0.18),
-        0 10px 28px rgba(var(--tone-rgb), 0.12);
+    --card-shadow: none;
+    --card-hover-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     --avatar-bg: #e2e8f0;
-    --avatar-shadow:
-        0 0 0 6px rgba(var(--tone-rgb), 0.12),
-        0 0 0 7px rgba(var(--tone-rgb), 0.22),
-        0 10px 20px rgba(15, 23, 42, 0.14);
-    --patron-avatar-shadow:
-        0 0 0 8px rgba(var(--tone-rgb), 0.14),
-        0 0 0 9px rgba(var(--tone-rgb), 0.28),
-        0 14px 28px rgba(15, 23, 42, 0.16);
+    --avatar-border: #dce4ef;
 
-    --accordion-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.8) inset,
-        0 8px 22px rgba(15, 23, 42, 0.06);
-    --accordion-open-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.9) inset,
-        0 16px 36px rgba(15, 23, 42, 0.1),
-        0 10px 30px rgba(var(--tone-rgb), 0.1);
-    --panel-divider: #dce4ef;
-    --member-chip-bg: rgba(255, 255, 255, 0.72);
-    --member-chip-border: #dce4ef;
+    --accordion-shadow: none;
+    --accordion-open-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    --panel-divider: #e3e9f2;
+    --member-chip-bg: #ffffff;
+    --member-chip-border: #e3e9f2;
 
-    /* hierarchy connector lines */
-    --line: rgba(23, 107, 69, 0.48);
-    --line-glow: rgba(23, 107, 69, 0.22);
-    --gap-v: 28px; /* vertical length of each connector */
+    --line: rgba(7, 86, 201, 0.35);
+    --gap-v: 28px; 
 
-    --radius: 22px;
+    --radius: 18px;
     --font: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
 
     font-family: var(--font);
     color: var(--text);
-    background:
-        radial-gradient(900px 400px at 50% -140px, rgba(7, 86, 201, 0.08), transparent 70%),
-        radial-gradient(600px 400px at 100% 40%, rgba(23, 107, 69, 0.05), transparent 70%),
-        radial-gradient(600px 400px at 0% 70%, rgba(183, 121, 31, 0.05), transparent 70%);
-    background-repeat: no-repeat;
+    background: var(--bg);
     -webkit-font-smoothing: antialiased;
     line-height: 1.5;
 }
 
-
 [data-theme='dark'] .team-page {
     --bg: #0f172a;
     --surface: #111c30;
-    --surface-2: #0e1525;
+    --surface-2: #111c30;
     --border: #26344a;
 
     --text: #e8ecf3;
@@ -92,78 +60,24 @@
     --blue: #3b82f6;
     --blue-rgb: 59, 130, 246;
 
-    --green: #93a8c7;
-    --green-rgb: 147, 168, 199;
-
-    --gold: #60a5fa;
-    --gold-rgb: 96, 165, 250;
-
-    --header-bg:
-        radial-gradient(
-            700px 300px at 85% 0,
-            rgba(59, 130, 246, 0.08),
-            transparent 70%
-        ),
-        linear-gradient(
-            100deg,
-            #0f172a 0%,
-            #111c30 55%,
-            #162238 100%
-        );
-
+    --header-bg: #0f172a;
     --header-border: rgba(255, 255, 255, 0.06);
     --header-eyebrow: #60a5fa;
     --header-title: #f5f7fb;
-    --header-em: #93a8c7;
+    --header-em: #f5f7fb;
     --header-desc: #94a3b8;
 
-    --card-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.06) inset,
-        0 14px 30px rgba(0, 0, 0, 0.35);
-
-    --card-hover-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.08) inset,
-        0 24px 48px rgba(0, 0, 0, 0.5),
-        0 0 0 1px rgba(var(--tone-rgb), 0.18),
-        0 12px 40px rgba(var(--tone-rgb), 0.2);
-
+    --card-hover-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
     --avatar-bg: #263449;
+    --avatar-border: #26344a;
 
-    --avatar-shadow:
-        0 0 0 6px rgba(var(--tone-rgb), 0.12),
-        0 0 0 7px rgba(var(--tone-rgb), 0.22),
-        0 12px 24px rgba(0, 0, 0, 0.45);
-
-    --patron-avatar-shadow:
-        0 0 0 8px rgba(var(--tone-rgb), 0.14),
-        0 0 0 9px rgba(var(--tone-rgb), 0.28),
-        0 18px 36px rgba(0, 0, 0, 0.55);
-
-    --accordion-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.06) inset,
-        0 10px 24px rgba(0, 0, 0, 0.3);
-
-    --accordion-open-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.08) inset,
-        0 18px 44px rgba(0, 0, 0, 0.45),
-        0 10px 40px rgba(var(--tone-rgb), 0.12);
-
+    --accordion-open-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
     --panel-divider: rgba(255, 255, 255, 0.06);
     --member-chip-bg: rgba(255, 255, 255, 0.025);
     --member-chip-border: rgba(255, 255, 255, 0.07);
 
-    --line: rgba(59, 130, 246, 0.45);
-    --line-glow: rgba(59, 130, 246, 0.2);
-
-    background:
-        radial-gradient(
-            900px 400px at 50% -140px,
-            rgba(59, 130, 246, 0.12),
-            transparent 70%
-        ),
-        #0f172a;
+    --line: rgba(59, 130, 246, 0.4);
 }
-
 
 .team-page h1,
 .team-page h2,
@@ -177,16 +91,13 @@
     width: 92%;
     max-width: 1180px;
     margin: auto;
-    padding: 48px 0 88px;
+    padding: 64px 0 96px;
 }
-
-/* ================= PAGE HEADER BANNER ================= */
 
 .team-page .page-header {
     width: 100%;
-    padding: 52px 0 44px;
+    padding: 80px 0 64px;
     background: var(--header-bg);
-    border-top: 1px solid var(--header-border);
     border-bottom: 1px solid var(--header-border);
 }
 
@@ -205,48 +116,46 @@
     text-transform: uppercase;
 }
 
-/* Eyebrow with a leading line */
 .team-page .page-header .eyebrow {
     display: flex;
     align-items: center;
     gap: 14px;
-    margin-bottom: 14px;
+    margin-bottom: 18px;
     color: var(--header-eyebrow);
     font-size: 11px;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.24em;
 }
 
 .team-page .page-header .eyebrow::before {
     content: "";
-    width: 32px;
+    width: 28px;
     height: 1px;
     background: var(--header-eyebrow);
-    opacity: 0.7;
+    opacity: 0.8;
 }
 
 .team-page .page-header h1 {
-    font-family: "Archivo", var(--font);
-    font-size: clamp(34px, 5vw, 52px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-family: var(--font);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
     color: var(--header-title);
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .team-page .page-header h1 em {
     font-style: italic;
+    font-weight: 800;
     color: var(--header-em);
 }
 
 .team-page .page-description {
-    max-width: 640px;
+    max-width: 560px;
     color: var(--header-desc);
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.65;
 }
-
-/* ================= SECTIONS ================= */
 
 .team-page .members-section + .members-section {
     margin-top: 96px;
@@ -254,10 +163,9 @@
 
 .team-page .section-heading {
     text-align: center;
-    margin-bottom: 34px;
+    margin-bottom: 36px;
 }
 
-/* Eyebrow flanked by fading lines */
 .team-page .section-heading .eyebrow {
     display: flex;
     align-items: center;
@@ -294,85 +202,27 @@
     margin-top: 10px;
 }
 
-/* =====================================================
-   CARDS
-   Each card sets --tone (colour) and --tone-rgb;
-   border, ring, role badge, bar and glow all follow it.
-   ===================================================== */
-
 .team-page .member-card {
-    --tone: var(--blue);
-    --tone-rgb: var(--blue-rgb);
-
     position: relative;
     display: flex;
     align-items: center;
     gap: 24px;
     min-width: 0;
-    padding: 28px 28px 28px 36px;
-    border: 1px solid rgba(var(--tone-rgb), 0.24);
+    padding: 28px 28px 28px 30px;
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
-    background:
-        radial-gradient(320px 160px at 0 0, rgba(var(--tone-rgb), 0.14), transparent 70%),
-        radial-gradient(220px 160px at 100% 100%, rgba(var(--tone-rgb), 0.06), transparent 70%),
-        linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    background: var(--surface);
     box-shadow: var(--card-shadow);
-    transition: transform 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     animation: team-rise 0.6s ease backwards;
 }
 
-/* Accent bar on the left edge */
-.team-page .member-card::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 24px;
-    bottom: 24px;
-    width: 4px;
-    border-radius: 0 4px 4px 0;
-    background: linear-gradient(180deg, var(--tone), rgba(var(--tone-rgb), 0.3));
-    box-shadow: 0 0 16px rgba(var(--tone-rgb), 0.55);
-}
-
-/* Soft shine that sweeps across on hover */
-.team-page .member-card::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -60%;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.08), transparent);
-    transform: skewX(-18deg);
-    transition: left 0.8s ease;
-    pointer-events: none;
-}
-
-.team-page .member-card:hover::after {
-    left: 130%;
-}
-
 .team-page .member-card:hover {
-    transform: translateY(-6px);
-    border-color: rgba(var(--tone-rgb), 0.6);
+    transform: translateY(-3px);
+    border-color: rgba(var(--blue-rgb), 0.4);
     box-shadow: var(--card-hover-shadow);
 }
-
-/* Colour variants */
-.team-page .supervisor-card,
-.team-page .executive-card,
-.team-page .leadership-card {
-    --tone: var(--green);
-    --tone-rgb: var(--green-rgb);
-}
-
-.team-page .patron-card {
-    --tone: var(--gold);
-    --tone-rgb: var(--gold-rgb);
-}
-
-/* ================= MEMBER IMAGE ================= */
 
 .team-page .member-image {
     flex-shrink: 0;
@@ -384,8 +234,7 @@
     display: grid;
     place-items: center;
     background: var(--avatar-bg);
-    border: 3px solid var(--tone, var(--blue));
-    box-shadow: var(--avatar-shadow);
+    border: 2px solid var(--avatar-border);
 }
 
 .team-page .member-image img {
@@ -397,18 +246,16 @@
 }
 
 .team-page .member-card:hover .member-image img {
-    transform: scale(1.1);
+    transform: scale(1.06);
 }
 
 .team-page .avatar-initials {
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    color: var(--tone);
+    color: var(--blue);
     user-select: none;
 }
-
-/* ================= MEMBER INFORMATION ================= */
 
 .team-page .member-info {
     min-width: 0;
@@ -422,16 +269,15 @@
     margin-bottom: 10px;
 }
 
-/* Role as a pill badge */
 .team-page .member-role {
     display: inline-block;
     max-width: 100%;
     padding: 6px 14px;
     margin-bottom: 12px;
-    border: 1px solid rgba(var(--tone-rgb), 0.35);
+    border: 1px solid rgba(var(--blue-rgb), 0.22);
     border-radius: 999px;
-    background: rgba(var(--tone-rgb), 0.12);
-    color: var(--tone);
+    background: rgba(var(--blue-rgb), 0.08);
+    color: var(--blue);
     font-size: 11.5px;
     font-weight: 700;
     letter-spacing: 0.09em;
@@ -449,8 +295,6 @@
     line-height: 1.65;
 }
 
-/* ================= PATRONS: MENTOR & CHAIRPERSON ================= */
-
 .team-page .patron-grid {
     max-width: 880px;
     margin: 0 auto;
@@ -466,33 +310,15 @@
     justify-content: center;
     text-align: center;
     gap: 24px;
-    padding: 48px 32px 40px;
-    border-radius: 26px;
-    overflow: hidden;
-    border-color: rgba(var(--tone-rgb), 0.38);
-    background:
-        radial-gradient(320px 190px at 50% 0, rgba(var(--tone-rgb), 0.18), transparent 75%),
-        linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
-}
-
-/* Top bar instead of left bar */
-.team-page .patron-card::before {
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: auto;
-    width: auto;
-    height: 4px;
-    border-radius: 0;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    padding: 44px 32px 40px;
+    border-radius: 22px;
 }
 
 .team-page .patron-card .member-image {
-    width: 150px;
-    height: 150px;
-    min-width: 150px;
-    border-width: 4px;
-    box-shadow: var(--patron-avatar-shadow);
+    width: 140px;
+    height: 140px;
+    min-width: 140px;
+    border-width: 3px;
 }
 
 .team-page .patron-card .avatar-initials {
@@ -515,8 +341,6 @@
     font-size: 14.5px;
 }
 
-/* ================= CORE TEAM: PRESIDENT ================= */
-
 .team-page .supervisor-section {
     position: relative;
     display: flex;
@@ -524,7 +348,6 @@
     padding-bottom: var(--gap-v);
 }
 
-/* Stem from the President down to the Vice President bracket */
 .team-page .supervisor-section::after {
     content: "";
     position: absolute;
@@ -534,26 +357,19 @@
     height: var(--gap-v);
     transform: translateX(-1px);
     background: var(--line);
-    box-shadow: 0 0 10px var(--line-glow);
 }
 
 .team-page .supervisor-card {
     width: 580px;
     max-width: 100%;
     gap: 28px;
-    padding: 34px 34px 34px 42px;
-    border-color: rgba(var(--tone-rgb), 0.45);
-    background:
-        radial-gradient(380px 170px at 0 0, rgba(var(--tone-rgb), 0.2), transparent 70%),
-        radial-gradient(240px 160px at 100% 100%, rgba(var(--tone-rgb), 0.08), transparent 70%),
-        linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    padding: 34px 34px 34px 36px;
 }
 
 .team-page .supervisor-card .member-image {
     width: 128px;
     height: 128px;
     min-width: 128px;
-    border-width: 4px;
 }
 
 .team-page .supervisor-card .avatar-initials {
@@ -573,8 +389,6 @@
     font-size: 14.5px;
 }
 
-/* ================= CORE TEAM: VICE PRESIDENTS ================= */
-
 .team-page .executive-grid {
     position: relative;
     max-width: 980px;
@@ -585,8 +399,6 @@
     gap: 26px;
 }
 
-/* Bracket: horizontal bar with a drop down to each Vice President.
-   Column centres sit at (100% - gap) / 4 from each side. */
 .team-page .executive-grid::before {
     content: "";
     position: absolute;
@@ -596,7 +408,6 @@
     height: var(--gap-v);
     border: 2px solid var(--line);
     border-bottom: 0;
-    box-shadow: 0 0 10px var(--line-glow);
     pointer-events: none;
 }
 
@@ -610,8 +421,6 @@
     min-width: 108px;
 }
 
-/* ================= CORE TEAM: GENERAL SECRETARIES ================= */
-
 .team-page .leadership-grid {
     position: relative;
     max-width: 980px;
@@ -622,7 +431,6 @@
     gap: 26px;
 }
 
-/* Straight connectors from each Vice President down to the card below */
 .team-page .leadership-grid::before {
     content: "";
     position: absolute;
@@ -632,7 +440,6 @@
     height: 40px;
     border-left: 2px solid var(--line);
     border-right: 2px solid var(--line);
-    filter: drop-shadow(0 0 5px var(--line-glow));
     pointer-events: none;
 }
 
@@ -645,8 +452,6 @@
     height: 108px;
     min-width: 108px;
 }
-
-/* ================= ENTRANCE ANIMATION ================= */
 
 @keyframes team-rise {
     from {
@@ -667,8 +472,6 @@
     animation-delay: 0.16s;
 }
 
-/* ================= TABLET ================= */
-
 @media (max-width: 900px) {
     .team-page .executive-grid,
     .team-page .leadership-grid {
@@ -680,16 +483,14 @@
     }
 }
 
-/* ================= MOBILE ================= */
-
 @media (max-width: 640px) {
     .team-page .team-container {
         width: 94%;
-        padding: 32px 0 56px;
+        padding: 40px 0 56px;
     }
 
     .team-page .page-header {
-        padding: 36px 0 32px;
+        padding: 48px 0 40px;
     }
 
     .team-page .page-header-inner {
@@ -715,7 +516,6 @@
         gap: 16px;
     }
 
-    /* One column: swap the bracket for a single centre spine */
     .team-page .executive-grid::before,
     .team-page .leadership-grid::before {
         left: 50%;
@@ -742,7 +542,7 @@
 
     .team-page .member-card,
     .team-page .supervisor-card {
-        padding: 20px 18px 20px 24px;
+        padding: 20px 18px;
         gap: 18px;
         min-height: 0;
     }
@@ -762,26 +562,20 @@
     }
 
     .team-page .patron-card {
-        padding: 40px 22px 34px;
+        padding: 36px 22px 32px;
     }
 
     .team-page .patron-card .member-image {
-        width: 130px;
-        height: 130px;
-        min-width: 130px;
+        width: 120px;
+        height: 120px;
+        min-width: 120px;
     }
 }
-
-/* ================= ACCESSIBILITY ================= */
 
 @media (prefers-reduced-motion: reduce) {
     .team-page .member-card {
         animation: none;
         transition: none;
-    }
-
-    .team-page .member-card::after {
-        display: none;
     }
 
     .team-page .member-card:hover {
@@ -797,38 +591,31 @@
     }
 }
 
-/* =====================================================
-   TEAMS ACCORDION
-   ===================================================== */
-
 .team-page .team-accordion {
-    --team-speed: 0.85s; /* open / close duration - raise it for slower, lower for faster */
+    --team-speed: 0.85s; 
     --team-ease: cubic-bezier(0.4, 0, 0.2, 1);
 
     max-width: 980px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
 }
 
 .team-page .team-item {
-    --tone: var(--blue);
-    --tone-rgb: var(--blue-rgb);
-
-    border: 1px solid rgba(var(--tone-rgb), 0.22);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    background: var(--surface);
     box-shadow: var(--accordion-shadow);
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .team-page .team-item:hover {
-    border-color: rgba(var(--tone-rgb), 0.45);
+    border-color: rgba(var(--blue-rgb), 0.4);
 }
 
 .team-page .team-item.is-open {
-    border-color: rgba(var(--tone-rgb), 0.55);
+    border-color: rgba(var(--blue-rgb), 0.45);
     box-shadow: var(--accordion-open-shadow);
 }
 
@@ -839,7 +626,6 @@
     letter-spacing: normal;
 }
 
-/* The clickable team title row */
 .team-page .team-toggle {
     width: 100%;
     display: flex;
@@ -862,7 +648,7 @@
 
 .team-page .team-index {
     min-width: 28px;
-    color: var(--tone);
+    color: var(--blue);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.14em;
@@ -894,9 +680,9 @@
     flex-shrink: 0;
     width: 34px;
     height: 34px;
-    border: 1px solid rgba(var(--tone-rgb), 0.35);
+    border: 1px solid var(--border);
     border-radius: 50%;
-    background: rgba(var(--tone-rgb), 0.1);
+    background: var(--bg);
     transition: transform var(--team-speed) var(--team-ease), background 0.3s ease;
 }
 
@@ -907,17 +693,16 @@
     top: 50%;
     width: 8px;
     height: 8px;
-    border-right: 2px solid var(--tone);
-    border-bottom: 2px solid var(--tone);
+    border-right: 2px solid var(--blue);
+    border-bottom: 2px solid var(--blue);
     transform: translate(-50%, -65%) rotate(45deg);
 }
 
 .team-page .team-item.is-open .team-chevron {
     transform: rotate(180deg);
-    background: rgba(var(--tone-rgb), 0.2);
+    background: rgba(var(--blue-rgb), 0.1);
 }
 
-/* Smooth open / close (animates 0fr -> 1fr) */
 .team-page .team-panel {
     display: grid;
     grid-template-rows: 0fr;
@@ -968,10 +753,8 @@
     content: "";
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, rgba(var(--tone-rgb), 0.35), transparent);
+    background: linear-gradient(90deg, var(--border), transparent);
 }
-
-/* ---------- Leaders: big cards ---------- */
 
 .team-page .team-leaders {
     display: flex;
@@ -984,14 +767,9 @@
 .team-page .team-leader-card {
     flex: 0 1 calc(50% - 11px);
     min-height: 140px;
-    padding: 26px 26px 26px 34px;
+    padding: 24px 26px;
     gap: 22px;
-}
-
-/* Leads are gold, co-leads / coordinators stay blue */
-.team-page .team-leader-card.is-lead {
-    --tone: var(--gold);
-    --tone-rgb: var(--gold-rgb);
+    background: var(--bg);
 }
 
 .team-page .team-leader-card .member-image {
@@ -1017,8 +795,6 @@
     line-height: 1.6;
 }
 
-/* ---------- Members: compact cards ---------- */
-
 .team-page .team-members {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -1039,8 +815,8 @@
 
 .team-page .team-member-card:hover {
     transform: translateY(-2px);
-    border-color: rgba(var(--tone-rgb), 0.4);
-    background: rgba(var(--tone-rgb), 0.06);
+    border-color: rgba(var(--blue-rgb), 0.4);
+    background: rgba(var(--blue-rgb), 0.05);
 }
 
 .team-page .member-avatar {
@@ -1050,7 +826,7 @@
     overflow: hidden;
     display: grid;
     place-items: center;
-    border: 2px solid rgba(var(--tone-rgb), 0.6);
+    border: 2px solid var(--avatar-border);
     border-radius: 50%;
     background: var(--avatar-bg);
 }
@@ -1084,8 +860,6 @@
     letter-spacing: 0.03em;
 }
 
-/* ---------- Teams: responsive ---------- */
-
 @media (max-width: 700px) {
     .team-page .team-toggle {
         padding: 18px 18px;
@@ -1103,7 +877,7 @@
     .team-page .team-leader-card {
         flex-basis: 100%;
         min-height: 0;
-        padding: 20px 18px 20px 24px;
+        padding: 20px 18px;
         gap: 18px;
     }
 

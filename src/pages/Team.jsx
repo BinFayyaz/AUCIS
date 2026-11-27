@@ -1,4 +1,3 @@
-
 import './Team.css';
 import TeamAccordion, { TeamAvatar } from '../components/TeamAccordion.jsx';
 
@@ -64,21 +63,12 @@ const generalSecretaries = [
 function MemberCard({ member, variant }) {
   return (
     <article className={`member-card ${variant}-card`}>
-      <TeamAvatar
-        person={member}
-        className="member-image"
-      />
+      <TeamAvatar person={member} className="member-image" />
 
       <div className="member-info">
         <h3>{member.name}</h3>
-
-        <p className="member-role">
-          {member.role}
-        </p>
-
-        <p className="member-description">
-          {member.description}
-        </p>
+        <p className="member-role">{member.role}</p>
+        <p className="member-description">{member.description}</p>
       </div>
     </article>
   );
@@ -87,15 +77,9 @@ function MemberCard({ member, variant }) {
 function SectionHeading({ eyebrow, title, description }) {
   return (
     <div className="section-heading">
-      <p className="eyebrow">
-        {eyebrow}
-      </p>
-
+      <p className="eyebrow">{eyebrow}</p>
       <h2>{title}</h2>
-
-      <p className="section-description">
-        {description}
-      </p>
+      <p className="section-description">{description}</p>
     </div>
   );
 }
@@ -105,17 +89,14 @@ export default function Team() {
     <main className="team-page">
       <section className="page-header">
         <div className="page-header-inner">
-          <p className="eyebrow">
-            Air University Computing &amp; Innovation Society
-          </p>
+          <p className="eyebrow">Air University Computing &amp; Innovation Society</p>
 
           <h1>
             Our <em>Team.</em>
           </h1>
 
           <p className="page-description">
-            Meet the people driving innovation, collaboration
-            and excellence at AUCIS.
+            Meet the people driving innovation, collaboration and excellence at AUCIS.
           </p>
         </div>
       </section>
@@ -130,11 +111,7 @@ export default function Team() {
 
           <div className="patron-grid">
             {patrons.map((member) => (
-              <MemberCard
-                key={member.name}
-                member={member}
-                variant="patron"
-              />
+              <MemberCard key={member.name} member={member} variant="patron" />
             ))}
           </div>
         </section>
@@ -147,29 +124,18 @@ export default function Team() {
           />
 
           <div className="supervisor-section">
-            <MemberCard
-              member={president}
-              variant="supervisor"
-            />
+            <MemberCard member={president} variant="supervisor" />
           </div>
 
           <div className="executive-grid">
             {vicePresidents.map((member) => (
-              <MemberCard
-                key={member.name}
-                member={member}
-                variant="executive"
-              />
+              <MemberCard key={member.name} member={member} variant="executive" />
             ))}
           </div>
 
           <div className="leadership-grid">
             {generalSecretaries.map((member) => (
-              <MemberCard
-                key={member.name}
-                member={member}
-                variant="leadership"
-              />
+              <MemberCard key={member.name} member={member} variant="leadership" />
             ))}
           </div>
         </section>

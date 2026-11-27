@@ -1,7 +1,4 @@
-/**
- * Wraps a form handler as a Vercel Node function (POST only, JSON in/out).
- * Request bodies arrive already parsed by the Vercel runtime.
- */
+
 export function jsonHandler(save) {
   return async function handler(req, res) {
     if (req.method !== 'POST') {

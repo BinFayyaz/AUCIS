@@ -3,7 +3,18 @@ import { teams } from '../data/teams.js';
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 
-const PHOTO_DIR = '/picture/team'; // = public/picture/team/<team-id>/<name>.jpg
+const PHOTO_DIR = '/picture/team';
+
+const orderedTeams = (() => {
+  const list = [...teams];
+  const technicalIndex = list.findIndex(
+    (team) => /technical/i.test(team.name) || /technical/i.test(team.id)
+  );
+  if (technicalIndex > 0) {
+    [list[0], list[technicalIndex]] = [list[technicalIndex], list[0]];
+  }
+  return list;
+})();
 
 const slugify = (name) =>
   name
@@ -22,7 +33,6 @@ const getInitials = (name) =>
     .join('')
     .toUpperCase();
 
-/* Same as the core team cards: a plain <img> inside the circle, with initials fallback if missing */
 export function TeamAvatar({ person, className }) {
   const [imgError, setImgError] = useState(false);
 
@@ -44,7 +54,6 @@ export function TeamAvatar({ person, className }) {
   );
 }
 
-/* Big card: Lead / Co-Lead / Coordinator */
 function LeaderCard({ person }) {
   const isLead = !/co-lead|coordinator/i.test(person.role);
 
@@ -60,7 +69,6 @@ function LeaderCard({ person }) {
   );
 }
 
-/* Compact card: regular member */
 function MemberChip({ person, role }) {
   return (
     <div className="team-member-card">
@@ -74,8 +82,6 @@ function MemberChip({ person, role }) {
 }
 
 function TeamItem({ team, index, isOpen, onToggle }) {
-  // Give everyone a photo path (unless one is set by hand). A name that repeats
-  // inside the team gets -2, -3 ... so two people never share one file.
   const seen = {};
   const withPhoto = (person) => {
     if (person.image) return person;
@@ -153,12 +159,11 @@ function TeamItem({ team, index, isOpen, onToggle }) {
 }
 
 function TeamAccordion() {
-  // Only one team open at a time. Click the open team again to close it.
   const [openId, setOpenId] = useState(null);
 
   return (
     <div className="team-accordion">
-      {teams.map((team, i) => (
+      {orderedTeams.map((team, i) => (
         <TeamItem
           key={team.id}
           team={team}
